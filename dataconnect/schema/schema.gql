@@ -1,0 +1,22 @@
+# Mirror your Postgres-backed Data Connect schema. Deploy with Firebase CLI.
+# Link Auth0/Firebase users via optional `firebaseUid` or match on `email` (as used in app).
+
+type User @table {
+  id: UUID! @default(expr: "uuidV4()")
+  username: String!
+  role: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+  email: String
+  studentId: String
+  photoUrl: String
+  firebaseUid: String @unique
+}
+
+type HubInfo @table {
+  name: String!
+  hoursOfOperation: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+  description: String
+  location: String
+}

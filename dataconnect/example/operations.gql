@@ -1,0 +1,53 @@
+# Reference operations — tighten `@auth` when you expose client-side callers.
+# Server in this repo uses Admin `executeGraphql` / `executeGraphqlRead` (bypasses client auth).
+
+query ListHubInfosPublic @auth(level: PUBLIC) {
+  hubInfos {
+    id
+    name
+    hoursOfOperation
+    description
+    location
+    createdAt
+    updatedAt
+  }
+}
+
+# Only callable with Firebase Admin SDK (Next.js server, cron, etc.)
+mutation AdminUpdateHubInfo(
+  $id: UUID!
+  $name: String!
+  $hoursOfOperation: String!
+  $description: String
+  $location: String
+) @auth(level: NO_ACCESS) {
+  hubInfo_update(
+    first: { where: { id: { eq: $id } } }
+    data: {
+      name: $name
+      hoursOfOperation: $hoursOfOperation
+      description: $description
+      location: $location
+      updatedAt_expr: "request.time"
+    }
+  )
+}
+
+query LookupUserRoleByEmail($email: String!) @auth(level: NO_ACCESS) {
+  users(where: { email: { eq: $email } }, limit: 1) {
+    id
+    role
+    email
+    firebaseUid
+  }
+}
+
+# Prefer this for authorization; matches Firebase Auth `uid` / Auth0-mapped `firebaseUid`.
+query LookupUserByFirebaseUid($uid: String!) @auth(level: NO_ACCESS) {
+  users(where: { firebaseUid: { eq: $uid } }, limit: 1) {
+    id
+    role
+    email
+    firebaseUid
+  }
+}

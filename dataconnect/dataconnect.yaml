@@ -1,0 +1,8 @@
+# Sync `serviceId` / `location` with FIREBASE_DATACONNECT_* in .env
+specVersion: "v1alpha"
+serviceId: "the-hub-hackathon-service"
+location: "us-central1"
+schema:
+  source: "./schema/schema.gql"
+connectorDirs:
+  - "./example"
