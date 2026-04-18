@@ -10,6 +10,7 @@ type AnalyzeResponse = {
 };
 
 type InventoryItem = {
+  sku?: string;
   itemName: string;
   description: string;
   packageDetails: string;
@@ -39,6 +40,7 @@ Use this exact schema:
   "sceneSummary": "string",
   "inventoryItems": [
     {
+      "sku": "string or null",
       "itemName": "string",
       "description": "short identifying description",
       "packageDetails": "size/count such as 12 oz or 5-pack",
@@ -52,6 +54,7 @@ Use this exact schema:
 
 Rules:
 - estimatedQuantityVisible must be an integer.
+- sku is optional. Use null when not visible.
 - If uncertain, still include best estimate and explain uncertainty in notes.
 - Include every distinct visible item type.
 `.trim();
@@ -69,6 +72,10 @@ function parseInventoryJson(raw: string): InventorySnapshot {
   const items = Array.isArray(parsed.inventoryItems)
     ? parsed.inventoryItems.map((item) => ({
         itemName: String(item?.itemName ?? "Unknown item"),
+        sku:
+          item?.sku == null || String(item?.sku).trim() === ""
+            ? ""
+            : String(item?.sku),
         description: String(item?.description ?? ""),
         packageDetails: String(item?.packageDetails ?? ""),
         estimatedQuantityVisible: Number.isFinite(Number(item?.estimatedQuantityVisible))
@@ -139,6 +146,8 @@ export default function InventoryPage() {
   const [analysis, setAnalysis] = useState("");
   const [snapshot, setSnapshot] = useState<InventorySnapshot>(EMPTY_SNAPSHOT);
   const [error, setError] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const extractedKey = useMemo(() => extractApiKey(envInput), [envInput]);
@@ -156,6 +165,7 @@ export default function InventoryPage() {
     setImageFile(file);
     setAnalysis("");
     setSnapshot(EMPTY_SNAPSHOT);
+    setSaveStatus("");
     setError("");
 
     if (!file) {
@@ -172,6 +182,7 @@ export default function InventoryPage() {
     setError("");
     setAnalysis("");
     setSnapshot(EMPTY_SNAPSHOT);
+    setSaveStatus("");
 
     if (!imageFile) {
       setError("Upload an inventory photo first.");
@@ -212,6 +223,52 @@ export default function InventoryPage() {
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const onSendToDataConnect = async () => {
+    if (!snapshot.inventoryItems.length) {
+      setSaveStatus("No parsed items to send yet.");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveStatus("");
+    try {
+      const response = await fetch("/api/dataconnect/inventory-items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: snapshot.inventoryItems.map((item) => ({
+            sku: item.sku || null,
+            name: item.itemName,
+            quantity: item.estimatedQuantityVisible,
+            "package-size": item.packageDetails,
+              description: item.description,
+          })),
+        }),
+      });
+
+      const payload = (await response.json()) as {
+        savedCount?: number;
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Failed to save items to Data Connect.");
+      }
+
+      setSaveStatus(`Saved ${payload.savedCount ?? 0} items to InventoryItem.`);
+    } catch (saveError) {
+      setSaveStatus(
+        saveError instanceof Error
+          ? saveError.message
+          : "Unexpected error while saving to Data Connect."
+      );
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -331,6 +388,7 @@ export default function InventoryPage() {
                 <table className="min-w-full divide-y divide-white/10 text-left text-sm">
                   <thead className="bg-slate-800/70 text-slate-200">
                     <tr>
+                      <th className="px-3 py-2 font-semibold">SKU</th>
                       <th className="px-3 py-2 font-semibold">Item</th>
                       <th className="px-3 py-2 font-semibold">Quantity</th>
                       <th className="px-3 py-2 font-semibold">Package</th>
@@ -343,6 +401,7 @@ export default function InventoryPage() {
                     {snapshot.inventoryItems.length ? (
                       snapshot.inventoryItems.map((item, index) => (
                         <tr key={`${item.itemName}-${index}`}>
+                          <td className="px-3 py-2 text-slate-300">{item.sku || "-"}</td>
                           <td className="px-3 py-2 text-slate-100">{item.itemName}</td>
                           <td className="px-3 py-2 text-slate-200">{item.estimatedQuantityVisible}</td>
                           <td className="px-3 py-2 text-slate-200">{item.packageDetails || "-"}</td>
@@ -353,13 +412,31 @@ export default function InventoryPage() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={6} className="px-3 py-4 text-center text-slate-400">
+                        <td colSpan={7} className="px-3 py-4 text-center text-slate-400">
                           No parsed items yet.
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
+              </div>
+
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={onSendToDataConnect}
+                  disabled={isSaving || !snapshot.inventoryItems.length}
+                  className="inline-flex items-center justify-center rounded-xl border border-cyan-300/40 bg-cyan-300/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {isSaving ? "Sending to Data Connect..." : "Send Items To Data Connect"}
+                </button>
+                {saveStatus ? (
+                  <p className="text-sm text-slate-300">{saveStatus}</p>
+                ) : (
+                  <p className="text-sm text-slate-500">
+                    Writes to Data Connect table: InventoryItem
+                  </p>
+                )}
               </div>
 
               {snapshot.notes.length ? (
