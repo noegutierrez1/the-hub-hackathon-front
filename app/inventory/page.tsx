@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
 type AnalyzeResponse = {
   text?: string;
@@ -101,30 +101,6 @@ function parseInventoryJson(raw: string): InventorySnapshot {
   };
 }
 
-function extractApiKey(input: string): string {
-  const trimmed = input.trim();
-  if (!trimmed) {
-    return "";
-  }
-
-  const lines = trimmed.split(/\r?\n/);
-  for (const line of lines) {
-    const match = line.match(/^(?:export\s+)?([A-Z0-9_]+)\s*=\s*(.+)$/);
-    if (!match) {
-      continue;
-    }
-
-    const [, name, rawValue] = match;
-    if (!["GEMINI_API_KEY", "GOOGLE_API_KEY", "API_KEY"].includes(name)) {
-      continue;
-    }
-
-    return rawValue.trim().replace(/^['\"]|['\"]$/g, "");
-  }
-
-  return trimmed.replace(/^['\"]|['\"]$/g, "");
-}
-
 function toBase64Data(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -175,34 +151,43 @@ async function readApiPayload(response: Response): Promise<{
 export default function InventoryPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
-  const [envInput, setEnvInput] = useState("");
-  const [prompt, setPrompt] = useState(DEFAULT_INVENTORY_PROMPT);
-  const [analysis, setAnalysis] = useState("");
   const [snapshot, setSnapshot] = useState<InventorySnapshot>(EMPTY_SNAPSHOT);
-  const [shelfIdInput, setShelfIdInput] = useState("");
   const [error, setError] = useState("");
-  const [saveStatus, setSaveStatus] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-  const [isCheckingConnection, setIsCheckingConnection] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [shelfName, setShelfName] = useState("");
+  const [shelfLocationDescription, setShelfLocationDescription] = useState("");
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [isStartingCamera, setIsStartingCamera] = useState(false);
+  const [cameraError, setCameraError] = useState("");
 
-  const extractedKey = useMemo(() => extractApiKey(envInput), [envInput]);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const cameraVideoRef = useRef<HTMLVideoElement>(null);
+  const cameraStreamRef = useRef<MediaStream | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imagePreview]);
+  const stopCameraStream = () => {
+    const stream = cameraStreamRef.current;
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      cameraStreamRef.current = null;
+    }
 
-  const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
+    if (cameraVideoRef.current) {
+      cameraVideoRef.current.srcObject = null;
+    }
+  };
+
+  const closeCamera = () => {
+    stopCameraStream();
+    setIsCameraOpen(false);
+    setIsStartingCamera(false);
+  };
+
+  const setSelectedImage = (file: File | null) => {
     setImageFile(file);
-    setAnalysis("");
     setSnapshot(EMPTY_SNAPSHOT);
-    setSaveStatus("");
+    setStatus("");
     setError("");
 
     if (!file) {
@@ -214,79 +199,174 @@ export default function InventoryPage() {
     setImagePreview(previewUrl);
   };
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
+  useEffect(() => {
+    return () => {
+      stopCameraStream();
+    };
+  }, []);
+
+  const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setSelectedImage(file);
+    closeCamera();
+  };
+
+  const onTakePhoto = async () => {
+    setCameraError("");
+
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      cameraInputRef.current?.click();
+      return;
+    }
+
+    setIsStartingCamera(true);
+
+    try {
+      stopCameraStream();
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+        },
+        audio: false,
+      });
+
+      cameraStreamRef.current = stream;
+      setIsCameraOpen(true);
+
+      requestAnimationFrame(() => {
+        if (!cameraVideoRef.current) {
+          return;
+        }
+
+        cameraVideoRef.current.srcObject = stream;
+        void cameraVideoRef.current.play().catch(() => {
+          setCameraError(
+            "Camera started but preview could not autoplay. Tap Capture if preview remains blank."
+          );
+        });
+      });
+    } catch {
+      setCameraError("Could not access camera. Use Upload Existing Photo instead.");
+      cameraInputRef.current?.click();
+    } finally {
+      setIsStartingCamera(false);
+    }
+  };
+
+  const onUploadPhoto = () => {
+    closeCamera();
+    uploadInputRef.current?.click();
+  };
+
+  const onCaptureFromCamera = async () => {
+    const video = cameraVideoRef.current;
+    if (!video) {
+      setCameraError("Camera preview is not ready yet.");
+      return;
+    }
+
+    const width = video.videoWidth || 1280;
+    const height = video.videoHeight || 720;
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+      setCameraError("Could not capture camera frame.");
+      return;
+    }
+
+    context.drawImage(video, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(resolve, "image/jpeg", 0.92);
+    });
+
+    if (!blob) {
+      setCameraError("Could not generate image from camera capture.");
+      return;
+    }
+
+    const file = new File([blob], `inventory-camera-${Date.now()}.jpg`, {
+      type: "image/jpeg",
+    });
+
+    setSelectedImage(file);
+    closeCamera();
+  };
+
+  const onProcessAndSave = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
-    setAnalysis("");
     setSnapshot(EMPTY_SNAPSHOT);
-    setSaveStatus("");
+    setStatus("");
 
     if (!imageFile) {
       setError("Upload an inventory photo first.");
       return;
     }
 
-    setIsLoading(true);
+    if (!shelfName.trim()) {
+      setError("Enter a shelf group name so this upload is linked to a shelf.");
+      return;
+    }
+
+    setIsProcessing(true);
     try {
       const imageBase64 = await toBase64Data(imageFile);
-      const response = await fetch("/api/analyze", {
+      const analyzeResponse = await fetch("/api/analyze", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          apiKey: extractedKey,
-          prompt,
+          prompt: DEFAULT_INVENTORY_PROMPT,
           imageBase64,
           mimeType: imageFile.type,
           responseMimeType: "application/json",
         }),
       });
 
-      const { json, text } = await readApiPayload(response);
-      const payload = (json || {}) as AnalyzeResponse;
-      if (!response.ok) {
+      const { json: analyzeJson, text: analyzeText } = await readApiPayload(analyzeResponse);
+      const analyzePayload = (analyzeJson || {}) as AnalyzeResponse;
+      if (!analyzeResponse.ok) {
         throw new Error(
-          payload.error ||
-            `Inventory parsing failed (${response.status}). ${
-              text ? text.slice(0, 160) : ""
+          analyzePayload.error ||
+            `Inventory parsing failed (${analyzeResponse.status}). ${
+              analyzeText ? analyzeText.slice(0, 160) : ""
             }`
         );
       }
 
-      const rawText = payload.text || "";
-      setAnalysis(rawText);
+      const rawText = analyzePayload.text || "";
       const parsedSnapshot = parseInventoryJson(rawText);
       setSnapshot(parsedSnapshot);
-    } catch (submitError) {
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "Unexpected error while parsing this inventory photo."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const onSendToDataConnect = async () => {
-    if (!snapshot.inventoryItems.length) {
-      setSaveStatus("No parsed items to send yet.");
-      return;
-    }
+      if (!parsedSnapshot.inventoryItems.length) {
+        setStatus("No inventory items detected in this photo.");
+        return;
+      }
 
-    setIsSaving(true);
-    setSaveStatus("");
-    try {
-      const response = await fetch("/api/dataconnect/inventory-items", {
+      const saveResponse = await fetch("/api/dataconnect/inventory-items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          items: snapshot.inventoryItems.map((item, index) => ({
+          shelfName: shelfName.trim(),
+          shelfLocationDescription: shelfLocationDescription.trim() || undefined,
+          items: parsedSnapshot.inventoryItems.map((item, index) => ({
             sku: item.sku || null,
-            shelfId: shelfIdInput.trim() || null,
+            shelfId: null,
             name: item.itemName,
             brand: item.brand,
             quantity: item.estimatedQuantityVisible,
@@ -298,183 +378,144 @@ export default function InventoryPage() {
         }),
       });
 
-      const { json, text } = await readApiPayload(response);
-      const payload = (json || {}) as {
+      const { json: saveJson, text: saveText } = await readApiPayload(saveResponse);
+      const savePayload = (saveJson || {}) as {
         savedCount?: number;
+        shelf?: {
+          id?: string;
+          name?: string | null;
+        };
         error?: string;
       };
 
-      if (!response.ok) {
-        const htmlHint = text.trim().startsWith("<!DOCTYPE")
-          ? "Received HTML instead of JSON. Check API route path and deployment logs."
-          : text.slice(0, 160);
+      if (!saveResponse.ok) {
+        const details = saveText.trim().startsWith("<!DOCTYPE")
+          ? "Received HTML instead of JSON. Check API deployment."
+          : saveText.slice(0, 160);
         throw new Error(
-          payload.error ||
-            `Failed to save items to Data Connect (${response.status}). ${htmlHint}`
+          savePayload.error ||
+            `Failed to save inventory (${saveResponse.status}). ${details}`
         );
       }
 
-      setSaveStatus(`Saved ${payload.savedCount ?? 0} items to InventoryItem.`);
-    } catch (saveError) {
-      setSaveStatus(
-        saveError instanceof Error
-          ? saveError.message
-          : "Unexpected error while saving to Data Connect."
+      const savedShelfName = savePayload.shelf?.name || shelfName;
+      setStatus(
+        `Saved ${savePayload.savedCount ?? 0} inventory rows to shelf "${savedShelfName}".`
+      );
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Unexpected error while parsing this inventory photo."
       );
     } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const onSendTestPayload = async () => {
-    setIsSaving(true);
-    setSaveStatus("");
-
-    try {
-      const response = await fetch("/api/dataconnect/inventory-items", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: [
-            {
-              sku: "TEST-WATER-12OZ",
-              shelfId: null,
-              name: "Bottled Water",
-              brand: "Aqua Pure",
-              quantity: 5,
-              "package-size": "12 oz, 1 bottle",
-              category: "beverage",
-              description: "Test payload item for Data Connect insert verification.",
-              photoUrl: "https://images.example.com/hub/test-water-1.jpg",
-            },
-            {
-              sku: null,
-              shelfId: null,
-              name: "Granola Bar",
-              brand: "Campus Pantry",
-              quantity: 8,
-              "package-size": "1 bar",
-              category: "dry",
-              description: "No SKU example from test payload.",
-              photoUrl: "https://images.example.com/hub/test-granola-2.jpg",
-            },
-          ],
-        }),
-      });
-
-      const { json, text } = await readApiPayload(response);
-      const payload = (json || {}) as {
-        savedCount?: number;
-        error?: string;
-      };
-
-      if (!response.ok) {
-        const htmlHint = text.trim().startsWith("<!DOCTYPE")
-          ? "Received HTML instead of JSON. Check API route path and deployment logs."
-          : text.slice(0, 160);
-        throw new Error(
-          payload.error ||
-            `Test payload failed (${response.status}). ${htmlHint}`
-        );
-      }
-
-      setSaveStatus(`Test payload saved ${payload.savedCount ?? 0} items to InventoryItem.`);
-    } catch (saveError) {
-      setSaveStatus(
-        saveError instanceof Error
-          ? saveError.message
-          : "Unexpected error while sending test payload."
-      );
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const onCheckDataConnect = async () => {
-    setIsCheckingConnection(true);
-    setConnectionStatus("");
-
-    try {
-      const response = await fetch("/api/dataconnect/health", {
-        method: "GET",
-      });
-
-      const { json, text } = await readApiPayload(response);
-      const payload = (json || {}) as {
-        ok?: boolean;
-        source?: string;
-        message?: string;
-      };
-
-      if (!response.ok || !payload.ok) {
-        const fallback = text.trim().startsWith("<!DOCTYPE")
-          ? "Received HTML instead of JSON. Check API route deployment."
-          : text.slice(0, 160);
-        setConnectionStatus(
-          `Connection failed: ${payload.message || fallback || "Unknown error"}`
-        );
-        return;
-      }
-
-      setConnectionStatus(
-        `Connected. Source: ${payload.source || "unknown"}. ${
-          payload.message || ""
-        }`
-      );
-    } catch (checkError) {
-      setConnectionStatus(
-        checkError instanceof Error
-          ? `Connection check failed: ${checkError.message}`
-          : "Connection check failed."
-      );
-    } finally {
-      setIsCheckingConnection(false);
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 px-4 py-8 text-slate-100 md:px-8">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(34,197,94,0.2),transparent_35%),radial-gradient(circle_at_85%_15%,rgba(6,182,212,0.25),transparent_40%),linear-gradient(120deg,#020617,#0f172a_45%,#1e293b)]" />
-      <main className="relative z-10 mx-auto w-full max-w-6xl rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-xl md:p-8">
+    <div className="min-h-screen bg-slate-100 px-4 py-8 text-slate-900 md:px-8">
+      <main className="mx-auto w-full max-w-6xl rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-8">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="inline-flex rounded-full border border-emerald-300/40 bg-emerald-300/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-emerald-200">
-              Hub Inventory Tracker
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Admin Inventory Scanner
             </p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white md:text-4xl">
-              Upload shelf photos and estimate inventory with Gemini
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
+              Capture Shelf Photo and Save to Database
             </h1>
           </div>
           <Link
             href="/"
-            className="rounded-xl border border-white/20 bg-slate-900/60 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-300/60"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
           >
             Back to Homepage
           </Link>
         </div>
 
-        <p className="mb-6 max-w-4xl text-sm text-slate-300 md:text-base">
-          This route is designed for Hub staff. It parses a photo into item names, package details,
-          estimated counts, category labels, and confidence notes so students can check stock before
-          showing up.
+        <p className="mb-6 max-w-4xl text-sm text-slate-600 md:text-base">
+          Simple workflow: take a photo, detect inventory items, and save them to the database in one step.
         </p>
 
-        <form className="grid gap-6 xl:grid-cols-[1fr_1.15fr]" onSubmit={onSubmit}>
-          <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-950/35 p-4 md:p-5">
-            <label className="block text-sm font-medium text-slate-200" htmlFor="inventory-image">
+        <form className="grid gap-6 xl:grid-cols-[1fr_1.1fr]" onSubmit={onProcessAndSave}>
+          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
+            <label className="block text-sm font-semibold text-slate-700">
               Inventory image
             </label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={onTakePhoto}
+                disabled={isStartingCamera}
+                className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isStartingCamera ? "Opening Camera..." : "Take Photo"}
+              </button>
+              <button
+                type="button"
+                onClick={onUploadPhoto}
+                className="inline-flex w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Upload Existing Photo
+              </button>
+            </div>
+
             <input
               id="inventory-image"
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={onImageChange}
+              className="hidden"
+            />
+            <input
+              id="inventory-image-upload"
+              ref={uploadInputRef}
               type="file"
               accept="image/*"
               onChange={onImageChange}
-              className="block w-full cursor-pointer rounded-xl border border-white/15 bg-slate-900/70 px-3 py-2 text-sm text-slate-200 file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-cyan-300 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-950 hover:border-cyan-300/40"
+              className="hidden"
             />
+            <p className="text-xs text-slate-400">
+              On desktop this opens your webcam preview. On mobile it opens your camera. Captures are used in-app only and are not downloaded to your device.
+            </p>
 
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/70">
+            {cameraError ? (
+              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                {cameraError}
+              </p>
+            ) : null}
+
+            {isCameraOpen ? (
+              <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <video
+                  ref={cameraVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="h-64 w-full rounded-lg bg-black object-cover"
+                />
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={onCaptureFromCamera}
+                    className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+                  >
+                    Capture Photo
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeCamera}
+                    className="inline-flex w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Cancel Camera
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               {imagePreview ? (
                 <Image
                   src={imagePreview}
@@ -485,112 +526,103 @@ export default function InventoryPage() {
                   className="h-80 w-full object-contain"
                 />
               ) : (
-                <div className="flex h-80 items-center justify-center px-6 text-center text-sm text-slate-400">
-                  Upload a shelf, fridge, or pantry photo to preview it here.
+                <div className="flex h-80 items-center justify-center px-6 text-center text-sm text-slate-500">
+                  Take or upload a shelf, fridge, or pantry photo to preview it here.
                 </div>
               )}
             </div>
-
-            <label className="block text-sm font-medium text-slate-200" htmlFor="env-input">
-              API key or env line (optional)
-            </label>
-            <textarea
-              id="env-input"
-              value={envInput}
-              onChange={(event) => setEnvInput(event.target.value)}
-              placeholder="GEMINI_API_KEY=AIza..."
-              rows={3}
-              className="w-full rounded-xl border border-white/15 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 focus:border-cyan-300/70 focus:outline-none"
-            />
-            <p className="text-xs text-slate-400">
-              Leave this blank to use GEMINI_API_KEY / GOOGLE_API_KEY from Vercel env.
-            </p>
-
-            <label className="block text-sm font-medium text-slate-200" htmlFor="shelf-id-input">
-              Shelf ID (optional UUID)
-            </label>
-            <input
-              id="shelf-id-input"
-              value={shelfIdInput}
-              onChange={(event) => setShelfIdInput(event.target.value)}
-              placeholder="2f3b8f2a-9f82-4fbf-b1ce-3d8d2a73e7d5"
-              className="w-full rounded-xl border border-white/15 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 focus:border-cyan-300/70 focus:outline-none"
-            />
-            <p className="text-xs text-slate-400">
-              Provide this only if you want items linked to an existing Shelf record.
-            </p>
           </section>
 
-          <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-950/35 p-4 md:p-5">
-            <label className="block text-sm font-medium text-slate-200" htmlFor="prompt-input">
-              Inventory prompt
-            </label>
-            <textarea
-              id="prompt-input"
-              value={prompt}
-              onChange={(event) => setPrompt(event.target.value)}
-              rows={14}
-              className="w-full rounded-xl border border-white/15 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 focus:border-emerald-300/70 focus:outline-none"
-            />
+          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
+            <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+              Uses your configured server Gemini key and a fixed parser prompt.
+            </p>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="text-sm font-medium text-slate-700">
+                Shelf group name
+                <input
+                  type="text"
+                  value={shelfName}
+                  onChange={(event) => setShelfName(event.target.value)}
+                  placeholder="Example: Fridge A - Monday delivery"
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-slate-300 transition focus:ring"
+                  required
+                />
+              </label>
+
+              <label className="text-sm font-medium text-slate-700">
+                Shelf location (optional)
+                <input
+                  type="text"
+                  value={shelfLocationDescription}
+                  onChange={(event) => setShelfLocationDescription(event.target.value)}
+                  placeholder="Example: Back wall fridge"
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-slate-300 transition focus:ring"
+                />
+              </label>
+            </div>
 
             <button
               type="submit"
-              disabled={isLoading}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-cyan-300 via-emerald-300 to-lime-200 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.01] hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={isProcessing}
+              className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isLoading ? "Analyzing inventory photo..." : "Generate inventory snapshot"}
+              {isProcessing ? "Processing and saving..." : "Process Photo and Save to DB"}
             </button>
 
             {error ? (
-              <p className="rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                 {error}
               </p>
             ) : null}
 
-            <div className="rounded-xl border border-white/10 bg-slate-900/70 p-3">
-              <h2 className="mb-3 text-sm font-semibold text-slate-100">Organized inventory output</h2>
+            {status ? (
+              <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                {status}
+              </p>
+            ) : null}
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <h2 className="mb-3 text-sm font-semibold text-slate-800">Detected inventory items</h2>
 
               {snapshot.sceneSummary ? (
-                <p className="mb-3 rounded-lg border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-sm text-slate-100">
+                <p className="mb-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
                   {snapshot.sceneSummary}
                 </p>
               ) : (
-                <p className="mb-3 text-sm text-slate-400">
-                  The inventory summary will appear here after analysis.
+                <p className="mb-3 text-sm text-slate-500">
+                  Process a photo to view detected items.
                 </p>
               )}
 
-              <div className="max-h-[20rem] overflow-auto rounded-lg border border-white/10">
+              <div className="hidden max-h-88 overflow-auto rounded-lg border border-slate-200 bg-white md:block">
                 <table className="min-w-full divide-y divide-white/10 text-left text-sm">
-                  <thead className="bg-slate-800/70 text-slate-200">
+                  <thead className="bg-slate-100 text-slate-700">
                     <tr>
-                      <th className="px-3 py-2 font-semibold">SKU</th>
-                      <th className="px-3 py-2 font-semibold">Item</th>
                       <th className="px-3 py-2 font-semibold">Brand</th>
+                      <th className="px-3 py-2 font-semibold">Item</th>
                       <th className="px-3 py-2 font-semibold">Quantity</th>
-                      <th className="px-3 py-2 font-semibold">Package</th>
                       <th className="px-3 py-2 font-semibold">Category</th>
+                      <th className="px-3 py-2 font-semibold">Package</th>
                       <th className="px-3 py-2 font-semibold">Confidence</th>
-                      <th className="px-3 py-2 font-semibold">Description</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/10 bg-slate-900/60">
+                  <tbody className="divide-y divide-slate-200 text-slate-700">
                     {snapshot.inventoryItems.length ? (
                       snapshot.inventoryItems.map((item, index) => (
                         <tr key={`${item.itemName}-${index}`}>
-                          <td className="px-3 py-2 text-slate-300">{item.sku || "-"}</td>
-                          <td className="px-3 py-2 text-slate-100">{item.itemName}</td>
-                          <td className="px-3 py-2 text-slate-200">{item.brand || "Unknown"}</td>
-                          <td className="px-3 py-2 text-slate-200">{item.estimatedQuantityVisible}</td>
-                          <td className="px-3 py-2 text-slate-200">{item.packageDetails || "-"}</td>
-                          <td className="px-3 py-2 text-slate-200">{item.category}</td>
-                          <td className="px-3 py-2 text-slate-200">{item.confidence}</td>
-                          <td className="px-3 py-2 text-slate-300">{item.description || "-"}</td>
+                          <td className="px-3 py-2">{item.brand || "Unknown"}</td>
+                          <td className="px-3 py-2 font-medium text-slate-900">{item.itemName}</td>
+                          <td className="px-3 py-2">{item.estimatedQuantityVisible}</td>
+                          <td className="px-3 py-2">{item.category || "other"}</td>
+                          <td className="px-3 py-2">{item.packageDetails || "-"}</td>
+                          <td className="px-3 py-2">{item.confidence}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={8} className="px-3 py-4 text-center text-slate-400">
+                        <td colSpan={6} className="px-3 py-4 text-center text-slate-500">
                           No parsed items yet.
                         </td>
                       </tr>
@@ -599,66 +631,43 @@ export default function InventoryPage() {
                 </table>
               </div>
 
-              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-                <button
-                  type="button"
-                  onClick={onCheckDataConnect}
-                  disabled={isCheckingConnection || isSaving}
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-300/40 bg-slate-300/10 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-slate-300/20 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {isCheckingConnection
-                    ? "Checking Data Connect..."
-                    : "Check Data Connect"}
-                </button>
-                <button
-                  type="button"
-                  onClick={onSendToDataConnect}
-                  disabled={isSaving || !snapshot.inventoryItems.length}
-                  className="inline-flex items-center justify-center rounded-xl border border-cyan-300/40 bg-cyan-300/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {isSaving ? "Sending to Data Connect..." : "Send Items To Data Connect"}
-                </button>
-                <button
-                  type="button"
-                  onClick={onSendTestPayload}
-                  disabled={isSaving}
-                  className="inline-flex items-center justify-center rounded-xl border border-emerald-300/40 bg-emerald-300/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-300/20 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {isSaving ? "Sending test payload..." : "Send Test Payload"}
-                </button>
-                {saveStatus ? (
-                  <p className="text-sm text-slate-300">{saveStatus}</p>
+              <div className="space-y-2 md:hidden">
+                {snapshot.inventoryItems.length ? (
+                  snapshot.inventoryItems.map((item, index) => (
+                    <article
+                      key={`${item.itemName}-${index}`}
+                      className="rounded-lg border border-slate-200 bg-white p-3 text-sm"
+                    >
+                      <p className="text-xs uppercase tracking-wide text-slate-500">
+                        {item.category || "other"}
+                      </p>
+                      <p className="mt-1 font-semibold text-slate-900">
+                        {item.brand || "Unknown"} {item.itemName}
+                      </p>
+                      <p className="mt-1 text-slate-700">Qty: {item.estimatedQuantityVisible}</p>
+                      <p className="text-slate-600">Size: {item.packageDetails || "-"}</p>
+                      <p className="text-slate-600">Confidence: {item.confidence}</p>
+                      {item.description ? (
+                        <p className="mt-1 text-slate-700">{item.description}</p>
+                      ) : null}
+                    </article>
+                  ))
                 ) : (
-                  <p className="text-sm text-slate-500">
-                    Writes to Data Connect table: InventoryItem
+                  <p className="rounded-lg border border-slate-200 bg-white px-3 py-4 text-center text-sm text-slate-500">
+                    No parsed items yet.
                   </p>
                 )}
               </div>
 
-              {connectionStatus ? (
-                <p className="mt-2 text-sm text-slate-300">{connectionStatus}</p>
-              ) : null}
-
               {snapshot.notes.length ? (
-                <div className="mt-3 rounded-lg border border-emerald-300/20 bg-emerald-400/5 p-3">
-                  <h3 className="mb-1 text-sm font-semibold text-emerald-200">Notes</h3>
-                  <ul className="list-disc space-y-1 pl-5 text-sm text-slate-200">
+                <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3">
+                  <h3 className="mb-1 text-sm font-semibold text-slate-800">Notes</h3>
+                  <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700">
                     {snapshot.notes.map((note, index) => (
                       <li key={`${note}-${index}`}>{note}</li>
                     ))}
                   </ul>
                 </div>
-              ) : null}
-
-              {analysis && !snapshot.inventoryItems.length && !snapshot.sceneSummary ? (
-                <details className="mt-3 rounded-lg border border-white/10 bg-slate-900/70 p-3">
-                  <summary className="cursor-pointer text-sm font-medium text-slate-200">
-                    Raw model output
-                  </summary>
-                  <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap text-xs text-slate-300">
-                    {analysis}
-                  </pre>
-                </details>
               ) : null}
             </div>
           </section>
