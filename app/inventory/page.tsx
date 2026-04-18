@@ -138,6 +138,23 @@ function toBase64Data(file: File): Promise<string> {
   });
 }
 
+async function readApiPayload(response: Response): Promise<{
+  json: Record<string, unknown> | null;
+  text: string;
+}> {
+  const rawText = await response.text();
+  if (!rawText) {
+    return { json: null, text: "" };
+  }
+
+  try {
+    const parsed = JSON.parse(rawText) as Record<string, unknown>;
+    return { json: parsed, text: rawText };
+  } catch {
+    return { json: null, text: rawText };
+  }
+}
+
 export default function InventoryPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
@@ -206,9 +223,15 @@ export default function InventoryPage() {
         }),
       });
 
-      const payload = (await response.json()) as AnalyzeResponse;
+      const { json, text } = await readApiPayload(response);
+      const payload = (json || {}) as AnalyzeResponse;
       if (!response.ok) {
-        throw new Error(payload.error || "Inventory parsing failed.");
+        throw new Error(
+          payload.error ||
+            `Inventory parsing failed (${response.status}). ${
+              text ? text.slice(0, 160) : ""
+            }`
+        );
       }
 
       const rawText = payload.text || "";
@@ -251,13 +274,20 @@ export default function InventoryPage() {
         }),
       });
 
-      const payload = (await response.json()) as {
+      const { json, text } = await readApiPayload(response);
+      const payload = (json || {}) as {
         savedCount?: number;
         error?: string;
       };
 
       if (!response.ok) {
-        throw new Error(payload.error || "Failed to save items to Data Connect.");
+        const htmlHint = text.trim().startsWith("<!DOCTYPE")
+          ? "Received HTML instead of JSON. Check API route path and deployment logs."
+          : text.slice(0, 160);
+        throw new Error(
+          payload.error ||
+            `Failed to save items to Data Connect (${response.status}). ${htmlHint}`
+        );
       }
 
       setSaveStatus(`Saved ${payload.savedCount ?? 0} items to InventoryItem.`);
