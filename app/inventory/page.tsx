@@ -329,11 +329,21 @@ Schema:
   "notes": ["string"]
 }
 
+DO NOT CREATE an inventoryItems entry for any of these — they are NOT products:
+- QR codes, barcodes, or the square shelf tag the QR is printed on.
+- Shelf-edge price tags / price cards / signage (e.g. "$2.99 CORNBREAD CRISPS" strips). They describe nearby products; they ARE NOT products themselves.
+- Empty shelf space, shelf rails, peg hooks, shelf liner, the pricing board, or the floor/wall.
+- Wholly obscured or unreadable blobs where you cannot tell what category the package even is.
+Skip those regions entirely. Do not invent an item at the QR's location.
+
 Identification rules (STRICT):
-- Only use words you can literally read off the package. If the label text is not legible, the name MUST be exactly "Unknown <type>" (for example "Unknown dried fruit", "Unknown cereal", "Unknown snack bar"). Do not compose plausible-sounding product names from colors, shapes, or adjacent items.
-- The "name" field must NEVER be a bare category word like "Cereal", "Chips", "Snack", "Food", "Item", or "Product". Those are types, not names. If you cannot read a real product name, use "Unknown <type>" instead.
+- Only use words you can literally read off the package OR the price tag that is clearly attached to that product's shelf slot. If neither is legible, the name MUST be exactly "Unknown <type>" (for example "Unknown dried fruit", "Unknown cereal", "Unknown snack bar"). Do not compose plausible-sounding product names from colors, shapes, or adjacent items.
+- The "name" field MUST include the product's distinctive marketing words, not just the category. It must NEVER be a bare category word like "Cereal", "Chips", "Crackers", "Jam", "Peanut Butter", "Snack", "Food", "Item", or "Product". Those are types, not names. If all you can read is the category, look at the shelf-edge price tag directly in front of that product for the marketing name. If that too is unreadable, use "Unknown <type>" — do not emit a bare category name.
+  Good name examples: "Trader Joe's Cornbread Crisps", "Organic Creamy Almond Butter", "Raw Wildflower Honey", "Organic Blue Agave Nectar", "Freeze Dried Mango".
+  Bad name examples (NEVER emit these as the final name): "Crackers", "Jam", "Peanut Butter", "Cereal", "Dried Fruit", "Chips".
 - Never combine a real brand with an invented product word (e.g. a brand logo plus a guessed flavor is NOT allowed). Either copy the full product name verbatim, or fall back to "Unknown <type>".
-- brand MUST be copied verbatim from the package if visible; otherwise set brand to "" (empty string). Never guess a brand.
+- brand MUST be copied verbatim from the package if visible; otherwise set brand to "" (empty string). Never guess a brand. If the store's private-label branding is clearly on the package (e.g. "Trader Joe's"), copy it verbatim.
+- Use the shelf-edge price tag TEXT only as a source of product NAME words. Never output the price tag itself as a row, and never include "$", price digits, or "per lb" in the name.
 
 Type classification rules (CRITICAL — do NOT let shelf context override package content):
 - type MUST describe what is physically inside THIS package, judged from THIS package's shape, material, imagery, and readable words. Shelf context (what's next to it, what the shelf is "usually" stocked with) is IRRELEVANT for choosing type.
@@ -373,7 +383,8 @@ Depth estimation procedure (follow in order):
     * Clearly empty behind → quantity = visibleQuantity.
 - quantity MUST be >= visibleQuantity.
 - quantityEstimated = true whenever quantity > visibleQuantity; false only when you have direct evidence nothing is behind.
-- Cap the behind-front-row multiplier at 4 rows deep.
+- Cap the behind-front-row multiplier at 4 rows deep — quantity MUST NEVER exceed visibleQuantity × 4. If you think more than that is stocked, still cap at ×4.
+- quantity MUST be a sane integer for a single shelf slot (never more than ~60). Do not emit absurd totals like 100+ unless you can literally count that many visible front-row facings.
 - When quantity is estimated, briefly note the reasoning in description (e.g. "5 visible in front, matching box tops peek behind → estimated ~10 total (2 rows deep)").
 - quantity and visibleQuantity must be positive integers.
 - size is REQUIRED. If package size/count is not readable, estimate and suffix with "(estimated)".
@@ -1474,7 +1485,8 @@ function mergeDuplicateRows(rows: SaveRow[]): {
 async function cropImageToBase64(
   file: File,
   location: ItemLocation,
-  outputSize = 768
+  outputSize = 768,
+  paddingMultiplier = 1.6
 ): Promise<{ base64: string; mimeType: string }> {
   const objectUrl = URL.createObjectURL(file);
 
@@ -1491,7 +1503,8 @@ async function cropImageToBase64(
     const scaleX = naturalWidth / location.imageWidth;
     const scaleY = naturalHeight / location.imageHeight;
 
-    const boxRadius = Math.max(location.radius * 1.6, 80);
+    const safePadding = Math.max(1.05, paddingMultiplier);
+    const boxRadius = Math.max(location.radius * safePadding, 60);
     const boxMax = Math.min(naturalWidth, naturalHeight);
     const cropSize = Math.max(64, Math.min(Math.round(boxRadius * 2 * scaleX), boxMax));
 
@@ -1552,11 +1565,16 @@ Return ONLY valid JSON, no markdown, with this exact schema:
   "confidence": "high|medium|low"
 }
 
+If this crop shows ONLY a QR code / barcode / shelf tag / price tag / shelf rail / empty shelf — it is NOT a product. In that case return name="Unknown item", brand="", type="other", category="other", confidence="low", and note in description exactly what you see (e.g. "QR code tag, no product visible").
+
 Rules:
-- Only use words you can literally read off the package. If the product name is not legible, the "name" field MUST be exactly "Unknown <type>" (for example "Unknown dried fruit", "Unknown snack bar"). Do not compose plausible product names from colors or shapes.
-- The "name" field must NEVER be a bare category word like "Cereal", "Chips", "Snack", "Food", "Item", or "Product". Use "Unknown <type>" instead.
+- Only use words you can literally read off the package OR the attached shelf-edge price tag. If neither is legible, the "name" field MUST be exactly "Unknown <type>" (for example "Unknown dried fruit", "Unknown snack bar"). Do not compose plausible product names from colors or shapes.
+- The "name" field MUST include the product's distinctive marketing words. It must NEVER be a bare category word like "Cereal", "Chips", "Crackers", "Jam", "Peanut Butter", "Snack", "Food", "Item", or "Product". Use "Unknown <type>" instead when only the category is readable.
+  Good: "Trader Joe's Cornbread Crisps", "Organic Creamy Almond Butter", "Raw Wildflower Honey".
+  Bad: "Crackers", "Jam", "Peanut Butter", "Cereal".
 - Never combine a visible brand with a guessed product word. Either copy the full readable product name, or fall back to "Unknown <type>".
 - brand: copy verbatim from the label if readable; otherwise "". Never guess a brand.
+- If you can read price-tag words attached to the slot (like "CORNBREAD CRISPS $2.99"), use the product words for the name; ignore the price.
 - type MUST describe what THIS package physically contains, judged from its format, imagery, and readable words only. Ignore what kind of shelf it came from.
     * rigid rectangular box with cereal/flakes/bran/granola/O's imagery or wording → cereal / granola / oatmeal.
     * soft plastic pouch / resealable bag with fruit imagery (berries, raisins, mango, apricots) → "dried fruit" (NOT cereal).
@@ -1614,7 +1632,10 @@ async function refineDetectedItem(
   _previousItem: RawInventoryItem
 ): Promise<RefinementResult | null> {
   void _previousItem;
-  const { base64, mimeType } = await cropImageToBase64(file, location, 768);
+  // Tight 1.25× padding + 1024-px output so small label text is readable on
+  // the refinement pass, which is specifically meant to rescue uncertain or
+  // bare-named detections.
+  const { base64, mimeType } = await cropImageToBase64(file, location, 1024, 1.25);
   const response = await fetch("/api/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1845,6 +1866,148 @@ function assignCodesToItems(input: {
   return { items: next, assignedCount };
 }
 
+// Heuristic: a detected "product" whose text field looks like a shelf-QR
+// payload is the model hallucinating a product out of the QR tag. Reject it.
+// Matches JSON-ish text or our known shelf-QR keys, independent of brand lists.
+function looksLikeShelfQrPayloadText(value: string): boolean {
+  const text = (value || "").trim();
+  if (!text) return false;
+  if (/^[\s]*[{[]/.test(text)) return true;
+  const lowered = text.toLowerCase();
+  if (
+    lowered.includes("hub-shelf") ||
+    lowered.includes('"shelfuid"') ||
+    lowered.includes('"shelf_uid"') ||
+    lowered.includes('"planid"') ||
+    lowered.includes('"kind"')
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function itemTextLooksLikeQrPayload(item: RawInventoryItem): boolean {
+  return (
+    looksLikeShelfQrPayloadText(item.name) ||
+    looksLikeShelfQrPayloadText(item.brand) ||
+    looksLikeShelfQrPayloadText(item.description)
+  );
+}
+
+// An item's detection circle "overlaps" a decoded QR region when its center
+// sits close to the QR center relative to the QR's own size. We're generous
+// with the threshold so borderline cases (model detected the QR tag plus a
+// thin border) are caught.
+function itemOverlapsQrCode(
+  item: RawInventoryItem,
+  qrLocations: ItemLocation[],
+  dimensions: ImageDimensions
+): boolean {
+  if (!item.location || qrLocations.length === 0) return false;
+  const scaled = normalizeLocationToRealDimensions(item.location, dimensions);
+  for (const qr of qrLocations) {
+    const dx = scaled.centerX - qr.centerX;
+    const dy = scaled.centerY - qr.centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const itemRadius = Math.max(20, scaled.radius || 0);
+    const qrRadius = Math.max(20, qr.radius || 0);
+    // If the item's center is within the QR's own radius, that detection is
+    // clearly centered on the QR tag itself.
+    if (distance <= qrRadius * 1.3) return true;
+    // Or the item's detection circle is largely eaten by the QR circle.
+    if (distance + itemRadius <= qrRadius * 1.8 && qrRadius >= itemRadius * 0.8) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Drop detections that are clearly the shelf QR tag misread as a product,
+// plus any detection whose text payload leaked the shelf-QR JSON.
+function dropQrArtifacts(
+  items: RawInventoryItem[],
+  qrLocations: ItemLocation[],
+  dimensions: ImageDimensions
+): { kept: RawInventoryItem[]; droppedCount: number } {
+  let droppedCount = 0;
+  const kept = items.filter((item) => {
+    if (itemTextLooksLikeQrPayload(item)) {
+      droppedCount += 1;
+      return false;
+    }
+    if (itemOverlapsQrCode(item, qrLocations, dimensions)) {
+      droppedCount += 1;
+      return false;
+    }
+    return true;
+  });
+  return { kept, droppedCount };
+}
+
+// When two detections in the same image overlap spatially and one has a bare /
+// "Unknown" name while the other has a real product name, the bare one is the
+// same physical product detected twice. Drop the bare copy.
+function dropBareNameOverlaps(
+  items: RawInventoryItem[],
+  dimensions: ImageDimensions
+): { kept: RawInventoryItem[]; droppedCount: number } {
+  if (items.length <= 1) return { kept: items, droppedCount: 0 };
+
+  const normalized = items.map((item) => ({
+    item,
+    location: item.location
+      ? normalizeLocationToRealDimensions(item.location, dimensions)
+      : null,
+    isBare: nameIsBareLabel(item.name),
+  }));
+
+  const kept = new Set<number>(normalized.map((_, i) => i));
+  let droppedCount = 0;
+
+  for (let i = 0; i < normalized.length; i += 1) {
+    if (!kept.has(i)) continue;
+    const a = normalized[i];
+    if (!a.location || !a.isBare) continue;
+    for (let j = 0; j < normalized.length; j += 1) {
+      if (i === j || !kept.has(j)) continue;
+      const b = normalized[j];
+      if (!b.location || b.isBare) continue;
+      const dx = a.location.centerX - b.location.centerX;
+      const dy = a.location.centerY - b.location.centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const threshold =
+        Math.max(a.location.radius, b.location.radius, 1) * 0.9 +
+        Math.min(a.location.radius, b.location.radius, 1) * 0.4;
+      if (distance <= threshold) {
+        kept.delete(i);
+        droppedCount += 1;
+        break;
+      }
+    }
+  }
+
+  return {
+    kept: normalized.filter((_, i) => kept.has(i)).map((entry) => entry.item),
+    droppedCount,
+  };
+}
+
+// Final sanity-cap so the model cannot emit absurd shelf totals like 100+.
+// Pantry shelf slots typically hold well under 60 units even with back rows.
+function capItemQuantity(item: RawInventoryItem): RawInventoryItem {
+  const visible = Math.max(1, Math.floor(item.visibleQuantity || 1));
+  const reported = Math.max(visible, Math.floor(item.quantity || visible));
+  const depthCap = visible * 4;
+  const hardCap = 60;
+  const capped = Math.min(reported, depthCap, hardCap);
+  if (capped === reported) return item;
+  return {
+    ...item,
+    quantity: capped,
+    quantityEstimated: capped > visible,
+  };
+}
+
 async function analyzeOneImage(file: File, shelfName: string): Promise<AnalyzeOneResult> {
   const dimensions = await readImageDimensions(file);
   // Full-resolution base64 is still uploaded to Cloudinary so the student page
@@ -1915,19 +2078,39 @@ async function analyzeOneImage(file: File, shelfName: string): Promise<AnalyzeOn
 
   const snapshot = parseInventoryJson(payload.text || "");
 
-  if (!snapshot.inventoryItems.length) {
-    return {
-      rows: [],
-      detectedCount: 0,
-      notes: [...snapshot.notes, ...codeSnapshot.notes.map((note) => `${codeScanNotesPrefix} ${note}`)],
-    };
+  // Collect QR-code centers & sizes in source-image pixel coords. We use them
+  // both to reject item detections that sit on top of a QR tag and to avoid
+  // surfacing the shelf QR itself as a product.
+  const qrLocations: ItemLocation[] = codeSnapshot.codes
+    .filter((code) => code.symbology === "qr" && code.location)
+    .map((code) =>
+      normalizeLocationToRealDimensions(code.location!, dimensions)
+    );
+
+  const { kept: qrFilteredItems, droppedCount: qrDroppedCount } = dropQrArtifacts(
+    snapshot.inventoryItems,
+    qrLocations,
+    dimensions
+  );
+
+  if (!qrFilteredItems.length) {
+    const noteList = [
+      ...snapshot.notes,
+      ...codeSnapshot.notes.map((note) => `${codeScanNotesPrefix} ${note}`),
+    ];
+    if (qrDroppedCount > 0) {
+      noteList.push(
+        `Dropped ${qrDroppedCount} detection${qrDroppedCount === 1 ? "" : "s"} that looked like the shelf QR tag, not a product.`
+      );
+    }
+    return { rows: [], detectedCount: 0, notes: noteList };
   }
 
   const refinedItems: RawInventoryItem[] = [];
   const refinementNotes: string[] = [];
   let refinedCount = 0;
 
-  for (const item of snapshot.inventoryItems) {
+  for (const item of qrFilteredItems) {
     if (!isSuspectDetection(item) || !item.location) {
       refinedItems.push(item);
       continue;
@@ -1970,9 +2153,21 @@ async function analyzeOneImage(file: File, shelfName: string): Promise<AnalyzeOn
     shelfName
   );
 
-  const sanitizedItems = itemsWithCodes.map(normalizeBareName);
-  const bareNameRewriteCount = sanitizedItems.reduce(
+  const normalizedItems = itemsWithCodes.map(normalizeBareName);
+  const bareNameRewriteCount = normalizedItems.reduce(
     (count, item, index) => count + (item === itemsWithCodes[index] ? 0 : 1),
+    0
+  );
+
+  // Drop bare "Unknown <type>" detections that spatially overlap a specific
+  // named detection — almost always the same physical package seen twice.
+  const { kept: dedupedItems, droppedCount: overlapDroppedCount } =
+    dropBareNameOverlaps(normalizedItems, dimensions);
+
+  // Hard-cap insane quantities the model sometimes emits (e.g. 102 jars).
+  const sanitizedItems = dedupedItems.map(capItemQuantity);
+  const cappedQuantityCount = sanitizedItems.reduce(
+    (count, item, index) => count + (item === dedupedItems[index] ? 0 : 1),
     0
   );
 
@@ -2025,6 +2220,11 @@ async function analyzeOneImage(file: File, shelfName: string): Promise<AnalyzeOn
   });
 
   const combinedNotes = snapshot.notes.slice();
+  if (qrDroppedCount > 0) {
+    combinedNotes.push(
+      `Dropped ${qrDroppedCount} detection${qrDroppedCount === 1 ? "" : "s"} that sat on the shelf QR tag or leaked its JSON as a name.`
+    );
+  }
   if (refinedCount > 0) {
     combinedNotes.push(
       `Re-verified ${refinedCount} uncertain item${refinedCount === 1 ? "" : "s"} with a tighter crop.`
@@ -2033,6 +2233,16 @@ async function analyzeOneImage(file: File, shelfName: string): Promise<AnalyzeOn
   if (bareNameRewriteCount > 0) {
     combinedNotes.push(
       `Rewrote ${bareNameRewriteCount} placeholder name${bareNameRewriteCount === 1 ? "" : "s"} (e.g. bare category word or "Unknown") to a canonical "Unknown <type>" fallback.`
+    );
+  }
+  if (overlapDroppedCount > 0) {
+    combinedNotes.push(
+      `Dropped ${overlapDroppedCount} bare-name detection${overlapDroppedCount === 1 ? "" : "s"} that overlapped a specific named product (same physical package seen twice).`
+    );
+  }
+  if (cappedQuantityCount > 0) {
+    combinedNotes.push(
+      `Capped ${cappedQuantityCount} quantity estimate${cappedQuantityCount === 1 ? "" : "s"} that exceeded the 4× depth / 60-unit shelf cap.`
     );
   }
   if (codeSnapshot.codes.length > 0) {
