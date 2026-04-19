@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import QRCode from 'qrcode'
 import { QueryFetchPolicy } from 'firebase/data-connect'
 import MapZoneEditor, { SavePayload, MapZoneEditorRef } from '../components/MapZoneEditor'
 import HexPanel from '../../../components/HexPanel'
@@ -14,6 +15,181 @@ import {
   getAllFloorPlansMeta,
   getFloorPlanById,
 } from '../../../../src/dataconnect-generated'
+
+const CATEGORY_LABELS: Record<string, string> = {
+  frozen: 'Frozen',
+  refrigerated: 'Refrigerated',
+  produce: 'Produce',
+  canned_goods: 'Canned Goods',
+  dry_goods: 'Dry Goods',
+  misc_non_food: 'Misc / Non-Food',
+}
+
+function QRCodesModal({
+  sections,
+  planId,
+  onClose,
+}: {
+  sections: SavePayload['sections']
+  planId: string | null
+  onClose: () => void
+}) {
+  const [qrUrls, setQrUrls] = useState<Record<string, string>>({})
+  const [generating, setGenerating] = useState(true)
+
+  useEffect(() => {
+    async function generate() {
+      setGenerating(true)
+      const seen = new Set<string>()
+      const urls: Record<string, string> = {}
+      for (const section of sections) {
+        const catId = section.cat_id
+        if (seen.has(catId)) continue
+        seen.add(catId)
+        const payload = JSON.stringify({
+          category: catId,
+          planId: planId ?? 'unknown',
+        })
+        try {
+          urls[catId] = await QRCode.toDataURL(payload, {
+            width: 240,
+            margin: 2,
+            color: { dark: '#0f1825', light: '#ffffff' },
+          })
+        } catch {
+          // skip failed QRs
+        }
+      }
+      setQrUrls(urls)
+      setGenerating(false)
+    }
+    void generate()
+  }, [sections, planId])
+
+  const downloadQR = (catId: string) => {
+    const dataUrl = qrUrls[catId]
+    if (!dataUrl) return
+    const a = document.createElement('a')
+    a.href = dataUrl
+    a.download = `qr-${catId}.png`
+    a.click()
+  }
+
+  const uniqueCategories = [...new Set(sections.map(s => s.cat_id))]
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        background: 'rgba(10,18,30,0.85)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px 16px',
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          background: 'var(--fp-surface-primary)',
+          border: '1px solid var(--fp-panel-border)',
+          borderRadius: 16,
+          padding: '24px',
+          maxWidth: 640,
+          width: '100%',
+          maxHeight: '80vh',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <p style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--fp-text-muted)' }}>
+              Floor Plan Editor
+            </p>
+            <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--fp-text-primary)' }}>
+              QR Codes
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{ padding: '8px 16px', borderRadius: 9, border: '1px solid var(--fp-panel-border)', background: 'var(--fp-input-bg)', color: 'var(--fp-text-secondary)', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+          >
+            Close
+          </button>
+        </div>
+
+        <p style={{ margin: 0, fontSize: 13, color: 'var(--fp-text-secondary)', lineHeight: 1.6 }}>
+          Print and attach these QR codes to their shelf zones. When photographed during an inventory upload, the AI can associate items with the correct floor plan location.
+        </p>
+
+        {generating ? (
+          <p style={{ textAlign: 'center', color: 'var(--fp-text-muted)', fontSize: 14, padding: '20px 0' }}>
+            Generating QR codes…
+          </p>
+        ) : uniqueCategories.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'var(--fp-text-muted)', fontSize: 14, padding: '20px 0' }}>
+            No shelf zones in this layout. Add zones to generate QR codes.
+          </p>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+            {uniqueCategories.map(catId => (
+              <div
+                key={catId}
+                style={{
+                  background: 'var(--fp-surface-secondary)',
+                  border: '1px solid var(--fp-panel-border)',
+                  borderRadius: 12,
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 10,
+                }}
+              >
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--fp-text-secondary)', textAlign: 'center' }}>
+                  {CATEGORY_LABELS[catId] ?? catId}
+                </p>
+                {qrUrls[catId] ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={qrUrls[catId]} alt={`QR for ${catId}`} style={{ width: 160, height: 160, borderRadius: 8, imageRendering: 'pixelated' }} />
+                ) : (
+                  <div style={{ width: 160, height: 160, background: 'var(--fp-input-bg)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: 12, color: 'var(--fp-text-muted)' }}>Failed</span>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => downloadQR(catId)}
+                  disabled={!qrUrls[catId]}
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: qrUrls[catId] ? 'var(--fp-button-accent)' : 'var(--fp-input-bg)',
+                    color: qrUrls[catId] ? '#fff' : 'var(--fp-text-muted)',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: qrUrls[catId] ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  Download PNG
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 interface PlanMeta {
   id: string
@@ -40,6 +216,7 @@ export default function MapEditorPage() {
   const [status,         setStatus]         = useState<Status>('idle')
   const [loadingPlans,   setLoadingPlans]   = useState(true)
   const [loadingPlan,    setLoadingPlan]    = useState(false)
+  const [showQRModal,    setShowQRModal]    = useState(false)
 
   const newNameInputRef = useRef<HTMLInputElement>(null)
   const editorRef       = useRef<MapZoneEditorRef>(null)
@@ -410,7 +587,7 @@ export default function MapEditorPage() {
               flex: 1,
               minWidth: 0,
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+              gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
               gap: 10,
               alignItems: 'stretch',
             }}
@@ -464,6 +641,15 @@ export default function MapEditorPage() {
             {deleting ? 'Deleting…' : 'Delete'}
           </button>
 
+          <button
+            style={{ ...btn('#7c3aed', '#fff', !editorPayload?.sections.length), ...actionTile }}
+            onClick={() => setShowQRModal(true)}
+            disabled={!editorPayload?.sections.length}
+            title="Generate QR codes for shelf zones"
+          >
+            QR Codes
+          </button>
+
           <a
             href="/map"
             target="_blank"
@@ -507,6 +693,15 @@ export default function MapEditorPage() {
           />
         )}
       </HexPanel>
+
+      {/* ── QR Codes Modal ── */}
+      {showQRModal && editorPayload && (
+        <QRCodesModal
+          sections={editorPayload.sections}
+          planId={selectedPlanId}
+          onClose={() => setShowQRModal(false)}
+        />
+      )}
 
     </main>
   )

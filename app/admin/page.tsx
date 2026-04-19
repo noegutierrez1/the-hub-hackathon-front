@@ -2,11 +2,12 @@ import Link from "next/link";
 import HexPanel from "../components/HexPanel";
 
 const adminCards = [
-  { title: "AI Inventory Upload", detail: "Upload shelf photos and parse brand/name/count with Gemini.", href: "/inventory" },
+  { title: "AI Inventory Upload", detail: "Upload shelf photos and parse brand/name/count with AI.", href: "/inventory" },
   { title: "Manual Stock Edit", detail: "Correct quantities and categories when needed.", href: "/admin/stock" },
   { title: "Hours Management", detail: "Update open hours and location details for students.", href: "/admin/hours" },
   { title: "Event Management", detail: "Create events and configure queue windows.", href: "/admin/events" },
   { title: "Checkout Scanner", detail: "Take table photos and decrement shelf inventory.", href: "/checkout" },
+  { title: "Floor Plan Editor", detail: "Edit zones, walls, markers and generate QR codes for shelves.", href: "/admin/settings/map-editor" },
 ];
 
 export default function AdminPage() {

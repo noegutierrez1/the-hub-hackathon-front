@@ -71,10 +71,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/api/dataconnect/inventory-items") {
-    if (method === "GET" && !session) {
-      return unauthorized("Sign-in is required.", 401);
-    }
-
+    // GET is public — guests can browse inventory without logging in
     if (["POST", "DELETE"].includes(method)) {
       if (!session) {
         return unauthorized("Sign-in is required.", 401);

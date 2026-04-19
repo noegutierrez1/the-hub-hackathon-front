@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Nunito } from "next/font/google";
+import NavBar from "./components/NavBar";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -17,9 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Hub Inventory Platform",
+  title: "Open Shelf",
   description:
-    "AI-powered inventory visibility for The Hub with student-facing stock views and admin operations.",
+    "See what's available at The Hub before you arrive. Students browse inventory, admins manage stock.",
 };
 
 export default function RootLayout({
@@ -33,7 +34,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <NavBar />
+        {children}
+      </body>
     </html>
   );
 }

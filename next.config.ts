@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   env: {
     NEXT_PUBLIC_FIREBASE_API_KEY:
       process.env.FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
@@ -43,6 +47,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.example.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
       },
     ],
   },

@@ -16,6 +16,7 @@ export type HubSession = {
   role: HubSessionRole;
   hubDomain: string;
   displayName: string | null;
+  photoUrl: string | null;
   iat: number;
   exp: number;
 };
@@ -26,6 +27,7 @@ type HubSessionTokenPayload = JWTPayload & {
   role: HubSessionRole;
   hubDomain: string;
   displayName?: string | null;
+  photoUrl?: string | null;
 };
 
 type CreateHubSessionInput = {
@@ -34,6 +36,7 @@ type CreateHubSessionInput = {
   role: HubSessionRole;
   hubDomain: string;
   displayName?: string | null;
+  photoUrl?: string | null;
 };
 
 function readSessionSecret() {
@@ -94,6 +97,7 @@ function normalizeHubSessionPayload(payload: JWTPayload) {
     role,
     hubDomain,
     displayName: typeof record.displayName === "string" ? record.displayName.trim() || null : null,
+    photoUrl: typeof record.photoUrl === "string" ? record.photoUrl.trim() || null : null,
     iat: issuedAt,
     exp: expiresAt,
   } as HubSession;
@@ -109,6 +113,7 @@ export async function createHubSessionToken(input: CreateHubSessionInput) {
   }
 
   const displayName = input.displayName?.trim() || null;
+  const photoUrl = input.photoUrl?.trim() || null;
   const maxAgeSeconds = getSessionMaxAgeSeconds();
 
   return new SignJWT({
@@ -117,6 +122,7 @@ export async function createHubSessionToken(input: CreateHubSessionInput) {
     role: input.role,
     hubDomain,
     displayName,
+    photoUrl,
   })
     .setProtectedHeader({ alg: SESSION_ALGORITHM })
     .setIssuedAt()

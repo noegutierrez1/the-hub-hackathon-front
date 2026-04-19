@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { QueryFetchPolicy } from 'firebase/data-connect'
 import FloorPlanCanvas, { CATEGORIES, FLOORPLAN_CANVAS_SIZE, MARKER_CONFIGS, MarkerIcon, type CategoryId } from '../components/FloorPlanCanvas'
 import HexPanel from '../components/HexPanel'
+import LoadingAnimation from '@/components/LoadingAnimation'
 import { dataConnect } from '../../src/lib/firebase'
 import { getAllFloorPlans } from '../../src/dataconnect-generated'
 
@@ -52,11 +53,12 @@ interface FloorPlanRecord {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function MapPage() {
-  const [shelves,    setShelves]    = useState<ShelfRow[]>([])
-  const [walls,      setWalls]      = useState<WallPayload[]>([])
-  const [markers,    setMarkers]    = useState<MarkerPayload[]>([])
-  const [loading,    setLoading]    = useState(true)
-  const [error,      setError]      = useState<string | null>(null)
+  const [shelves,              setShelves]              = useState<ShelfRow[]>([])
+  const [walls,                setWalls]                = useState<WallPayload[]>([])
+  const [markers,              setMarkers]              = useState<MarkerPayload[]>([])
+  const [loading,              setLoading]              = useState(true)
+  const [error,                setError]                = useState<string | null>(null)
+  const [highlightedCategory,  setHighlightedCategory]  = useState<CategoryId | null>(null)
   const canvasSize = FLOORPLAN_CANVAS_SIZE
 
   // Fetch deployed plan
@@ -173,9 +175,14 @@ export default function MapPage() {
       </HexPanel>
 
       {loading && (
-        <HexPanel style={{ width: 'fit-content', alignSelf: 'center', marginTop: 24 }} contentStyle={{ textAlign: 'center', color: 'var(--fp-text-muted)', fontSize: 16, fontWeight: 700, padding: '12px 18px' }}>
-          Loading floor plan…
-        </HexPanel>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
+          <LoadingAnimation
+            message="Loading floor plan…"
+            className="py-2"
+            iconClassName="h-20 w-20"
+            messageClassName="mt-2 text-sm font-medium text-slate-300"
+          />
+        </div>
       )}
       {error && (
         <HexPanel style={{ width: 'fit-content', alignSelf: 'center', marginTop: 24 }} contentStyle={{ textAlign: 'center', color: 'var(--fp-danger)', fontSize: 15, fontWeight: 700, padding: '12px 18px' }}>
@@ -197,13 +204,34 @@ export default function MapPage() {
           width: '100%',
           margin: '0 auto',
         }}>
+          {highlightedCategory && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderRadius: 10, border: '1px solid var(--fp-panel-border)', background: 'var(--fp-surface-secondary)' }}>
+              <span style={{ fontSize: 14, color: 'var(--fp-text-secondary)', fontWeight: 600 }}>
+                Highlighting: <strong style={{ color: 'var(--fp-text-primary)' }}>{CATEGORIES.find(c => c.id === highlightedCategory)?.label ?? highlightedCategory}</strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => setHighlightedCategory(null)}
+                style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid var(--fp-panel-border)', background: 'var(--fp-input-bg)', color: 'var(--fp-text-secondary)', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+              >
+                Clear
+              </button>
+            </div>
+          )}
           <FloorPlanCanvas
             canvasSize={canvasSize}
             zones={renderedZones}
             walls={renderedWalls}
             markers={renderedMarkers}
+            highlightedCategoryId={highlightedCategory}
+            onZoneClick={(catId) => setHighlightedCategory(prev => prev === catId ? null : catId)}
             style={{ width: canvasSize, height: canvasSize, flexShrink: 0 }}
           />
+          {!highlightedCategory && (
+            <p style={{ fontSize: 13, color: 'var(--fp-text-muted)', margin: 0 }}>
+              Tap a zone to highlight its location
+            </p>
+          )}
 
           {/* Legend — compact horizontal grid below canvas */}
           <HexPanel

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import HexPanel from "../components/HexPanel";
+import AuthGate from "../components/AuthGate";
 
 const events = [
   { name: "Fresh Produce Pop-Up", start: "Tuesday 1:00 PM", end: "Tuesday 3:00 PM", seats: "30" },
@@ -7,11 +7,10 @@ const events = [
   { name: "Weekend Grab-and-Go", start: "Friday 4:00 PM", end: "Friday 6:00 PM", seats: "50" },
 ];
 
-const navLink = { padding: "8px 14px", borderRadius: 10, border: "1px solid var(--fp-panel-border)", color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 600, textDecoration: "none", background: "var(--fp-input-bg)" } as React.CSSProperties;
-
 export default function CheckinPage() {
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--fp-page-bg)", padding: "32px 24px", boxSizing: "border-box" }}>
+    <AuthGate>
+    <div style={{ minHeight: "calc(100dvh - 56px)", background: "var(--fp-page-bg)", padding: "32px 24px", boxSizing: "border-box" }}>
       <div style={{ maxWidth: 700, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
 
         <HexPanel contentStyle={{ padding: "20px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
@@ -20,10 +19,6 @@ export default function CheckinPage() {
             <h1 style={{ color: "var(--fp-text-primary)", fontSize: "clamp(22px, 5vw, 30px)", fontWeight: 800, margin: "0 0 4px" }}>Peak-Hour Check-In</h1>
             <p style={{ color: "var(--fp-text-secondary)", fontSize: 14, margin: 0 }}>Join a queue for major Hub events so line management stays predictable.</p>
           </div>
-          <nav style={{ display: "flex", gap: 8 }}>
-            <Link href="/events" style={navLink}>Events</Link>
-            <Link href="/" style={navLink}>Home</Link>
-          </nav>
         </HexPanel>
 
         {/* Step 1 — Select timeslot */}
@@ -61,5 +56,6 @@ export default function CheckinPage() {
 
       </div>
     </div>
+    </AuthGate>
   );
 }

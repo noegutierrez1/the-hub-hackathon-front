@@ -11,6 +11,7 @@ import {
 
 type CreateSessionBody = {
   idToken?: string;
+  photoUrl?: string;
 };
 
 function toPublicSession(session: {
@@ -19,6 +20,7 @@ function toPublicSession(session: {
   role: "admin" | "student";
   hubDomain: string;
   displayName: string | null;
+  photoUrl?: string | null;
 }) {
   return {
     uid: session.uid,
@@ -26,6 +28,7 @@ function toPublicSession(session: {
     role: session.role,
     hubDomain: session.hubDomain,
     displayName: session.displayName,
+    photoUrl: session.photoUrl ?? null,
   };
 }
 
@@ -52,6 +55,7 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as CreateSessionBody;
     const idToken = body.idToken?.trim() || "";
+    const photoUrl = body.photoUrl?.trim() || null;
 
     if (!idToken) {
       return Response.json({ error: "Missing idToken." }, { status: 400 });
@@ -74,7 +78,7 @@ export async function POST(request: Request) {
       return Response.json({ error: identityResult.error }, { status: identityResult.status });
     }
 
-    const sessionToken = await createHubSessionToken(identityResult.identity);
+    const sessionToken = await createHubSessionToken({ ...identityResult.identity, photoUrl });
     const cookieStore = await cookies();
     cookieStore.set(HUB_SESSION_COOKIE_NAME, sessionToken, {
       httpOnly: true,
@@ -85,7 +89,7 @@ export async function POST(request: Request) {
     });
 
     return Response.json({
-      user: toPublicSession(identityResult.identity),
+      user: toPublicSession({ ...identityResult.identity, photoUrl }),
       redirectTo: getRoleDefaultPath(identityResult.identity.role),
     });
   } catch (error) {

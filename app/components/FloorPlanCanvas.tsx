@@ -186,10 +186,12 @@ interface FloorPlanCanvasProps {
   selected?: FloorPlanSelection | null
   ghost?: FloorPlanGhost | null
   ghostCategoryId?: CategoryId
+  highlightedCategoryId?: CategoryId | null
   onCanvasMouseDown?: React.MouseEventHandler<HTMLDivElement>
   onZoneMouseDown?: (event: React.MouseEvent, id: string) => void
   onWallMouseDown?: (event: React.MouseEvent, id: string) => void
   onMarkerMouseDown?: (event: React.MouseEvent, id: string) => void
+  onZoneClick?: (catId: CategoryId) => void
   renderZoneExtras?: (zone: FloorPlanZone, isSelected: boolean) => React.ReactNode
   renderWallExtras?: (wall: FloorPlanWall, isSelected: boolean) => React.ReactNode
   renderMarkerExtras?: (marker: FloorPlanMarker, isSelected: boolean) => React.ReactNode
@@ -205,10 +207,12 @@ export default function FloorPlanCanvas({
   selected = null,
   ghost = null,
   ghostCategoryId = 'frozen',
+  highlightedCategoryId = null,
   onCanvasMouseDown,
   onZoneMouseDown,
   onWallMouseDown,
   onMarkerMouseDown,
+  onZoneClick,
   renderZoneExtras,
   renderWallExtras,
   renderMarkerExtras,
@@ -217,7 +221,14 @@ export default function FloorPlanCanvas({
   const ghostCategory = getCategory(ghostCategoryId)
 
   return (
-    // Outer wrapper — sets dimensions and clips the visible shape
+    <>
+    <style>{`
+      @keyframes zone-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.75; }
+      }
+    `}</style>
+    {/* Outer wrapper — sets dimensions and clips the visible shape */}
     <div
       style={{
         position: 'relative',
@@ -249,22 +260,32 @@ export default function FloorPlanCanvas({
         {zones.map(zone => {
           const category = getCategory(zone.catId)
           const isSelected = selected?.id === zone.id && selected.kind === 'zone'
+          const isHighlighted = highlightedCategoryId === zone.catId
           return (
             <div
               key={zone.id}
               onMouseDown={onZoneMouseDown ? event => onZoneMouseDown(event, zone.id) : undefined}
+              onClick={onZoneClick ? () => onZoneClick(zone.catId) : undefined}
               style={{
                 position: 'absolute',
                 left: zone.x,
                 top: zone.y,
                 width: zone.w,
                 height: zone.h,
-                backgroundColor: category.fill,
-                border: isSelected ? `2px solid ${category.text}` : `1.5px solid ${category.text}55`,
+                backgroundColor: isHighlighted ? category.fill : category.fill,
+                border: isHighlighted
+                  ? `3px solid ${category.text}`
+                  : isSelected
+                  ? `2px solid ${category.text}`
+                  : `1.5px solid ${category.text}55`,
                 borderRadius: 5,
-                cursor: onZoneMouseDown ? 'move' : 'default',
-                zIndex: isSelected ? 10 : 1,
-                boxShadow: isSelected ? `0 0 0 3px ${category.text}30` : '0 1px 4px rgba(0,0,0,0.12)',
+                cursor: onZoneClick ? 'pointer' : onZoneMouseDown ? 'move' : 'default',
+                zIndex: isHighlighted ? 12 : isSelected ? 10 : 1,
+                boxShadow: isHighlighted
+                  ? `0 0 0 5px ${category.text}55, 0 0 18px ${category.text}40`
+                  : isSelected
+                  ? `0 0 0 3px ${category.text}30`
+                  : '0 1px 4px rgba(0,0,0,0.12)',
                 transform: `rotate(${zone.rotation}deg)`,
                 transformOrigin: 'center center',
                 display: 'flex',
@@ -272,6 +293,7 @@ export default function FloorPlanCanvas({
                 alignItems: 'center',
                 justifyContent: 'center',
                 overflow: 'visible',
+                animation: isHighlighted ? 'zone-pulse 1.4s ease-in-out infinite' : undefined,
               }}
             >
               <span style={{ color: category.text, fontSize: 15, fontWeight: 600, pointerEvents: 'none', lineHeight: 1.2, textAlign: 'center', padding: '0 4px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '100%' }}>
@@ -387,5 +409,6 @@ export default function FloorPlanCanvas({
       {/* Hex border overlay — draws gradient lines on BOTH straight and diagonal cut edges */}
       <div style={hexBorderOverlayStyle(CUT, BW, BC)} />
     </div>
+    </>
   )
 }
