@@ -12,6 +12,11 @@ type InventoryItemRow = {
   category?: string;
   description?: string;
   photoUrl?: string;
+  locationCenterX?: number | null;
+  locationCenterY?: number | null;
+  locationRadius?: number | null;
+  imageWidth?: number | null;
+  imageHeight?: number | null;
 };
 
 type SaveInventoryItemsBody = {
@@ -27,6 +32,14 @@ type ShelfSummary = {
   locationDescription: string | null;
 };
 
+type ItemLocation = {
+  centerX: number;
+  centerY: number;
+  radius: number;
+  imageWidth: number;
+  imageHeight: number;
+};
+
 type StudentInventoryItem = {
   id: string;
   shelfId: string | null;
@@ -40,6 +53,7 @@ type StudentInventoryItem = {
   description: string | null;
   photoUrl: string | null;
   size: string | null;
+  location: ItemLocation | null;
 };
 
 type NormalizedRow = {
@@ -54,9 +68,52 @@ type NormalizedRow = {
   photoUrl: string;
   createdAt: string;
   updatedAt: string;
+  location: ItemLocation | null;
 };
 
 const DEFAULT_INSERT_MUTATION = `
+mutation InsertInventoryItem(
+  $id: UUID
+  $shelfId: UUID
+  $name: String
+  $brand: String
+  $quantity: Int
+  $size: String
+  $category: String
+  $description: String
+  $photoUrl: String
+  $locationCenterX: Float
+  $locationCenterY: Float
+  $locationRadius: Float
+  $imageWidth: Float
+  $imageHeight: Float
+  $createdAt: Timestamp
+  $updatedAt: Timestamp
+) {
+  inventoryItem_insert(
+    data: {
+      id: $id
+      shelfId: $shelfId
+      name: $name
+      brand: $brand
+      quantity: $quantity
+      size: $size
+      category: $category
+      description: $description
+      photoUrl: $photoUrl
+      locationCenterX: $locationCenterX
+      locationCenterY: $locationCenterY
+      locationRadius: $locationRadius
+      imageWidth: $imageWidth
+      imageHeight: $imageHeight
+      createdAt: $createdAt
+      updatedAt: $updatedAt
+    }
+  )
+}
+`.trim();
+
+const LEGACY_INSERT_MUTATION = `
 mutation InsertInventoryItem(
   $id: UUID
   $shelfId: UUID
@@ -127,6 +184,34 @@ query StudentInventory {
     description
     photoUrl
     size
+    locationCenterX
+    locationCenterY
+    locationRadius
+    imageWidth
+    imageHeight
+  }
+}
+`.trim();
+
+const LEGACY_LIST_QUERY = `
+query StudentInventory {
+  inventoryItems(limit: __LIMIT__) {
+    id
+    shelfId
+    shelf {
+      id
+      name
+      locationDescription
+    }
+    name
+    brand
+    quantity
+    category
+    createdAt
+    updatedAt
+    description
+    photoUrl
+    size
   }
 }
 `.trim();
@@ -146,6 +231,15 @@ mutation DeleteAllInventoryItems {
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+const LOCATION_MARKER_PREFIX = "[[LOC]]";
+const LOCATION_SCHEMA_FIELDS = [
+  "locationCenterX",
+  "locationCenterY",
+  "locationRadius",
+  "imageWidth",
+  "imageHeight",
+];
+
 function normalizeUuid(value: string | null | undefined) {
   const trimmed = value?.trim() || "";
   if (!trimmed) {
@@ -161,6 +255,125 @@ function normalizeText(value: string | null | undefined) {
     .replace(/[^a-z0-9]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function normalizeNumber(value: unknown) {
+  if (value == null) {
+    return null;
+  }
+
+  if (typeof value === "string" && value.trim() === "") {
+    return null;
+  }
+
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  return parsed;
+}
+
+function normalizeLocationFromInput(item: InventoryItemRow): ItemLocation | null {
+  const centerX = normalizeNumber(item.locationCenterX);
+  const centerY = normalizeNumber(item.locationCenterY);
+  const radius = normalizeNumber(item.locationRadius);
+  const imageWidth = normalizeNumber(item.imageWidth);
+  const imageHeight = normalizeNumber(item.imageHeight);
+
+  if (
+    centerX == null ||
+    centerY == null ||
+    radius == null ||
+    imageWidth == null ||
+    imageHeight == null ||
+    radius <= 0 ||
+    imageWidth <= 0 ||
+    imageHeight <= 0
+  ) {
+    return null;
+  }
+
+  return {
+    centerX,
+    centerY,
+    radius,
+    imageWidth,
+    imageHeight,
+  };
+}
+
+function extractLocationMarker(description: string | null) {
+  if (!description) {
+    return {
+      description: null,
+      location: null as ItemLocation | null,
+    };
+  }
+
+  const markerIndex = description.lastIndexOf(LOCATION_MARKER_PREFIX);
+  if (markerIndex < 0) {
+    return {
+      description,
+      location: null as ItemLocation | null,
+    };
+  }
+
+  const rawJson = description.slice(markerIndex + LOCATION_MARKER_PREFIX.length).trim();
+  const baseDescription = description.slice(0, markerIndex).trim() || null;
+
+  try {
+    const parsed = JSON.parse(rawJson) as Record<string, unknown>;
+    const location = normalizeLocationFromInput({
+      locationCenterX: normalizeNumber(parsed.centerX),
+      locationCenterY: normalizeNumber(parsed.centerY),
+      locationRadius: normalizeNumber(parsed.radius),
+      imageWidth: normalizeNumber(parsed.imageWidth),
+      imageHeight: normalizeNumber(parsed.imageHeight),
+    });
+
+    return {
+      description: baseDescription,
+      location,
+    };
+  } catch {
+    return {
+      description,
+      location: null as ItemLocation | null,
+    };
+  }
+}
+
+function appendLocationMarker(description: string | null, location: ItemLocation | null) {
+  if (!location) {
+    return description;
+  }
+
+  const markerPayload = JSON.stringify({
+    centerX: Number(location.centerX.toFixed(2)),
+    centerY: Number(location.centerY.toFixed(2)),
+    radius: Number(location.radius.toFixed(2)),
+    imageWidth: Number(location.imageWidth.toFixed(2)),
+    imageHeight: Number(location.imageHeight.toFixed(2)),
+  });
+
+  if (!description) {
+    return `${LOCATION_MARKER_PREFIX}${markerPayload}`;
+  }
+
+  return `${description}\n${LOCATION_MARKER_PREFIX}${markerPayload}`;
+}
+
+function isLocationSchemaMismatch(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || "");
+  const mentionsLocationField = LOCATION_SCHEMA_FIELDS.some((field) => message.includes(field));
+
+  if (!mentionsLocationField) {
+    return false;
+  }
+
+  return /(Cannot query field|Unknown argument|Unknown field|not defined by type|not found in type)/i.test(
+    message
+  );
 }
 
 function buildPlaceholderPhotoUrl(id: string, name: string) {
@@ -187,6 +400,8 @@ function normalizeItem(item: InventoryItemRow): NormalizedRow | null {
   const quantityRaw = Number(item.quantity);
   const quantity = Number.isFinite(quantityRaw) && quantityRaw > 0 ? Math.floor(quantityRaw) : 0;
   const photoUrl = item.photoUrl?.trim() || buildPlaceholderPhotoUrl(id, name);
+  const location = normalizeLocationFromInput(item);
+  const cleanDescription = item.description?.trim() || null;
   const nowIso = new Date().toISOString();
 
   return {
@@ -197,10 +412,11 @@ function normalizeItem(item: InventoryItemRow): NormalizedRow | null {
     quantity,
     size,
     category,
-    description: item.description?.trim() || null,
+    description: cleanDescription,
     photoUrl,
     createdAt: nowIso,
     updatedAt: nowIso,
+    location,
   };
 }
 
@@ -288,6 +504,14 @@ function normalizeStudentInventoryItem(value: unknown): StudentInventoryItem | n
 
   const parsedShelf = normalizeShelf(row.shelf);
   const shelfId = readString(row.shelfId) || parsedShelf?.id || null;
+  const locationFromColumns = normalizeLocationFromInput({
+    locationCenterX: normalizeNumber(row.locationCenterX),
+    locationCenterY: normalizeNumber(row.locationCenterY),
+    locationRadius: normalizeNumber(row.locationRadius),
+    imageWidth: normalizeNumber(row.imageWidth),
+    imageHeight: normalizeNumber(row.imageHeight),
+  });
+  const parsedDescription = extractLocationMarker(readString(row.description));
 
   return {
     id: readString(row.id) || randomUUID(),
@@ -299,9 +523,10 @@ function normalizeStudentInventoryItem(value: unknown): StudentInventoryItem | n
     category: readString(row.category),
     createdAt: readString(row.createdAt),
     updatedAt: readString(row.updatedAt),
-    description: readString(row.description),
+    description: parsedDescription.description,
     photoUrl: readString(row.photoUrl),
     size: readString(row.size),
+    location: locationFromColumns || parsedDescription.location,
   };
 }
 
@@ -404,6 +629,88 @@ async function ensureUploadShelf(body: SaveInventoryItemsBody) {
   };
 }
 
+function buildListQuery(limit: number, includeLocationFields: boolean) {
+  const template = includeLocationFields ? DEFAULT_LIST_QUERY : LEGACY_LIST_QUERY;
+  return template.replace("__LIMIT__", String(limit));
+}
+
+async function executeInventoryListQuery(limit: number, customQuery: string | null) {
+  if (customQuery) {
+    try {
+      return await executeDataConnect(customQuery);
+    } catch (error) {
+      if (!isLocationSchemaMismatch(error)) {
+        throw error;
+      }
+    }
+  }
+
+  try {
+    return await executeDataConnect(buildListQuery(limit, true));
+  } catch (error) {
+    if (!isLocationSchemaMismatch(error)) {
+      throw error;
+    }
+
+    return executeDataConnect(buildListQuery(limit, false));
+  }
+}
+
+async function executeDefaultInsertWithFallback(rowsWithShelf: NormalizedRow[]) {
+  let savedCount = 0;
+  let useLegacyMutation = false;
+
+  for (const row of rowsWithShelf) {
+    const baseVariables = {
+      id: row.id,
+      shelfId: row.shelfId,
+      name: row.name,
+      brand: row.brand,
+      quantity: row.quantity,
+      size: row.size,
+      category: row.category,
+      photoUrl: row.photoUrl,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+
+    if (useLegacyMutation) {
+      await executeDataConnect(LEGACY_INSERT_MUTATION, {
+        ...baseVariables,
+        description: appendLocationMarker(row.description, row.location),
+      });
+      savedCount += 1;
+      continue;
+    }
+
+    try {
+      await executeDataConnect(DEFAULT_INSERT_MUTATION, {
+        ...baseVariables,
+        description: row.description,
+        locationCenterX: row.location?.centerX ?? null,
+        locationCenterY: row.location?.centerY ?? null,
+        locationRadius: row.location?.radius ?? null,
+        imageWidth: row.location?.imageWidth ?? null,
+        imageHeight: row.location?.imageHeight ?? null,
+      });
+    } catch (error) {
+      if (!isLocationSchemaMismatch(error)) {
+        throw error;
+      }
+
+      useLegacyMutation = true;
+      await executeDataConnect(LEGACY_INSERT_MUTATION, {
+        ...baseVariables,
+        description: appendLocationMarker(row.description, row.location),
+      });
+    }
+
+    savedCount += 1;
+  }
+
+  return savedCount;
+}
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -411,10 +718,8 @@ export async function GET(request: Request) {
     const search = url.searchParams.get("search") || "";
     const shelfId = url.searchParams.get("shelfId");
 
-    const customQuery = process.env.FIREBASE_DATA_CONNECT_LIST_QUERY?.trim();
-    const query = customQuery || DEFAULT_LIST_QUERY.replace("__LIMIT__", String(limit));
-
-    const { data } = await executeDataConnect(query);
+    const customQuery = process.env.FIREBASE_DATA_CONNECT_LIST_QUERY?.trim() || null;
+    const { data } = await executeInventoryListQuery(limit, customQuery);
     const allItems = extractItemRows(data)
       .map(normalizeStudentInventoryItem)
       .filter((row): row is StudentInventoryItem => row !== null)
@@ -484,18 +789,7 @@ export async function POST(request: Request) {
     const customMutation = process.env.FIREBASE_DATA_CONNECT_INSERT_MUTATION?.trim();
 
     if (customMutation) {
-      const { data } = await executeDataConnect(customMutation, {
-        items: rowsWithShelf,
-      });
-      return Response.json({
-        savedCount: inferSavedCount(data, rowsWithShelf.length),
-        shelf,
-      });
-    }
-
-    let savedCount = 0;
-    for (const row of rowsWithShelf) {
-      await executeDataConnect(DEFAULT_INSERT_MUTATION, {
+      const customMutationItems = rowsWithShelf.map((row) => ({
         id: row.id,
         shelfId: row.shelfId,
         name: row.name,
@@ -505,11 +799,31 @@ export async function POST(request: Request) {
         category: row.category,
         description: row.description,
         photoUrl: row.photoUrl,
+        locationCenterX: row.location?.centerX ?? null,
+        locationCenterY: row.location?.centerY ?? null,
+        locationRadius: row.location?.radius ?? null,
+        imageWidth: row.location?.imageWidth ?? null,
+        imageHeight: row.location?.imageHeight ?? null,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
-      });
-      savedCount += 1;
+      }));
+
+      try {
+        const { data } = await executeDataConnect(customMutation, {
+          items: customMutationItems,
+        });
+        return Response.json({
+          savedCount: inferSavedCount(data, rowsWithShelf.length),
+          shelf,
+        });
+      } catch (error) {
+        if (!isLocationSchemaMismatch(error)) {
+          throw error;
+        }
+      }
     }
+
+    const savedCount = await executeDefaultInsertWithFallback(rowsWithShelf);
 
     return Response.json({ savedCount, shelf });
   } catch (error) {
@@ -568,9 +882,8 @@ export async function DELETE(request: Request) {
         return Response.json({ error: "Missing or invalid shelfId." }, { status: 400 });
       }
 
-      const { data } = await executeDataConnect(
-        DEFAULT_LIST_QUERY.replace("__LIMIT__", "1000")
-      );
+      const customQuery = process.env.FIREBASE_DATA_CONNECT_LIST_QUERY?.trim() || null;
+      const { data } = await executeInventoryListQuery(1000, customQuery);
 
       const shelfItems = extractItemRows(data)
         .map(normalizeStudentInventoryItem)
