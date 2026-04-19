@@ -1,0 +1,86 @@
+type User @table {
+  username: String!
+  role: String!
+  createdAt: Timestamp!
+  email: String
+  studentId: String
+  photoUrl: String
+  firebaseUid: String @unique
+}
+
+type HubInfo @table {
+  name: String!
+  hoursOfOperation: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+  location: String
+}
+
+type Shelf @table {
+  name: String!
+  locationDescription: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type InventoryItem @table {
+  shelf: Shelf
+  name: String!
+  brand: String!
+  quantity: Int!
+  category: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+  photoUrl: String
+  size: String
+}
+
+type ShelfPhoto @table {
+  shelf: Shelf
+  uploadedBy: User
+  photoUrl: String!
+  timestamp: Timestamp!
+  createdAt: Timestamp!
+  aiParsedOutput: String
+}
+
+type Event @table {
+  createdBy: User
+  name: String!
+  startTime: Timestamp!
+  endTime: Timestamp!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+  maxAttendees: Int
+}
+
+type EventCheckIn @table(key: ["event", "student"]) {
+  event: Event!
+  student: User!
+  checkInTime: Timestamp!
+}
+
+type FloorPlanShelf @table {
+  category: String!
+  limitPerStudent: Int!
+  orientation: String!
+  rotation: Int!
+  mapX: Float!
+  mapY: Float!
+  mapW: Float!
+  mapH: Float!
+  createdAt: Timestamp
+}
+
+type FloorPlan @table {
+  name: String
+  isDeployed: Boolean
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  shelves: Any
+  walls: Any
+  markers: Any
+}

@@ -1,0 +1,1000 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `Event` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  event_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Event_Data!
+  ): Event_KeyOutput! @fdc_generated(from: "Event", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `EventCheckIn` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  eventCheckIn_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: EventCheckIn_Data!
+  ): EventCheckIn_KeyOutput! @fdc_generated(from: "EventCheckIn", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `FloorPlan` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  floorPlan_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: FloorPlan_Data!
+  ): FloorPlan_KeyOutput! @fdc_generated(from: "FloorPlan", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `FloorPlanShelf` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  floorPlanShelf_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: FloorPlanShelf_Data!
+  ): FloorPlanShelf_KeyOutput! @fdc_generated(from: "FloorPlanShelf", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `HubInfo` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  hubInfo_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: HubInfo_Data!
+  ): HubInfo_KeyOutput! @fdc_generated(from: "HubInfo", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `InventoryItem` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  inventoryItem_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: InventoryItem_Data!
+  ): InventoryItem_KeyOutput! @fdc_generated(from: "InventoryItem", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Shelf` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  shelf_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Shelf_Data!
+  ): Shelf_KeyOutput! @fdc_generated(from: "Shelf", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `ShelfPhoto` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  shelfPhoto_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: ShelfPhoto_Data!
+  ): ShelfPhoto_KeyOutput! @fdc_generated(from: "ShelfPhoto", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `Event` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  event_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Event_Data!]!
+  ): [Event_KeyOutput!]! @fdc_generated(from: "Event", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `EventCheckIn` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  eventCheckIn_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [EventCheckIn_Data!]!
+  ): [EventCheckIn_KeyOutput!]! @fdc_generated(from: "EventCheckIn", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `FloorPlan` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  floorPlan_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [FloorPlan_Data!]!
+  ): [FloorPlan_KeyOutput!]! @fdc_generated(from: "FloorPlan", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `FloorPlanShelf` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  floorPlanShelf_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [FloorPlanShelf_Data!]!
+  ): [FloorPlanShelf_KeyOutput!]! @fdc_generated(from: "FloorPlanShelf", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `HubInfo` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  hubInfo_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [HubInfo_Data!]!
+  ): [HubInfo_KeyOutput!]! @fdc_generated(from: "HubInfo", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `InventoryItem` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  inventoryItem_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [InventoryItem_Data!]!
+  ): [InventoryItem_KeyOutput!]! @fdc_generated(from: "InventoryItem", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Shelf` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  shelf_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Shelf_Data!]!
+  ): [Shelf_KeyOutput!]! @fdc_generated(from: "Shelf", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `ShelfPhoto` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  shelfPhoto_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [ShelfPhoto_Data!]!
+  ): [ShelfPhoto_KeyOutput!]! @fdc_generated(from: "ShelfPhoto", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `Event` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Event`.
+  """
+  event_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Event_Data!
+  ): Event_KeyOutput! @fdc_generated(from: "Event", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `EventCheckIn` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `EventCheckIn`.
+  """
+  eventCheckIn_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: EventCheckIn_Data!
+  ): EventCheckIn_KeyOutput! @fdc_generated(from: "EventCheckIn", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `FloorPlan` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FloorPlan`.
+  """
+  floorPlan_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: FloorPlan_Data!
+  ): FloorPlan_KeyOutput! @fdc_generated(from: "FloorPlan", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `FloorPlanShelf` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FloorPlanShelf`.
+  """
+  floorPlanShelf_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: FloorPlanShelf_Data!
+  ): FloorPlanShelf_KeyOutput! @fdc_generated(from: "FloorPlanShelf", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `HubInfo` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `HubInfo`.
+  """
+  hubInfo_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: HubInfo_Data!
+  ): HubInfo_KeyOutput! @fdc_generated(from: "HubInfo", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `InventoryItem` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `InventoryItem`.
+  """
+  inventoryItem_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: InventoryItem_Data!
+  ): InventoryItem_KeyOutput! @fdc_generated(from: "InventoryItem", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Shelf` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Shelf`.
+  """
+  shelf_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Shelf_Data!
+  ): Shelf_KeyOutput! @fdc_generated(from: "Shelf", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `ShelfPhoto` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ShelfPhoto`.
+  """
+  shelfPhoto_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: ShelfPhoto_Data!
+  ): ShelfPhoto_KeyOutput! @fdc_generated(from: "ShelfPhoto", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `Event` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Event`.
+  """
+  event_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Event_Data!]!
+  ): [Event_KeyOutput!]! @fdc_generated(from: "Event", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `EventCheckIn` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `EventCheckIn`.
+  """
+  eventCheckIn_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [EventCheckIn_Data!]!
+  ): [EventCheckIn_KeyOutput!]! @fdc_generated(from: "EventCheckIn", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `FloorPlan` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FloorPlan`.
+  """
+  floorPlan_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [FloorPlan_Data!]!
+  ): [FloorPlan_KeyOutput!]! @fdc_generated(from: "FloorPlan", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `FloorPlanShelf` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FloorPlanShelf`.
+  """
+  floorPlanShelf_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [FloorPlanShelf_Data!]!
+  ): [FloorPlanShelf_KeyOutput!]! @fdc_generated(from: "FloorPlanShelf", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `HubInfo` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `HubInfo`.
+  """
+  hubInfo_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [HubInfo_Data!]!
+  ): [HubInfo_KeyOutput!]! @fdc_generated(from: "HubInfo", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `InventoryItem` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `InventoryItem`.
+  """
+  inventoryItem_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [InventoryItem_Data!]!
+  ): [InventoryItem_KeyOutput!]! @fdc_generated(from: "InventoryItem", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Shelf` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Shelf`.
+  """
+  shelf_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Shelf_Data!]!
+  ): [Shelf_KeyOutput!]! @fdc_generated(from: "Shelf", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `ShelfPhoto` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ShelfPhoto`.
+  """
+  shelfPhoto_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [ShelfPhoto_Data!]!
+  ): [ShelfPhoto_KeyOutput!]! @fdc_generated(from: "ShelfPhoto", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `Event` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Event` or `null` if not found.
+  """
+  event_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Event_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Event_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Event_Data!
+  ): Event_KeyOutput @fdc_generated(from: "Event", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `EventCheckIn` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `EventCheckIn` or `null` if not found.
+  """
+  eventCheckIn_update(
+    """
+    The key used to identify the object.
+    """
+    key: EventCheckIn_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: EventCheckIn_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: EventCheckIn_Data!
+  ): EventCheckIn_KeyOutput @fdc_generated(from: "EventCheckIn", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `FloorPlan` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `FloorPlan` or `null` if not found.
+  """
+  floorPlan_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FloorPlan_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FloorPlan_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: FloorPlan_Data!
+  ): FloorPlan_KeyOutput @fdc_generated(from: "FloorPlan", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `FloorPlanShelf` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `FloorPlanShelf` or `null` if not found.
+  """
+  floorPlanShelf_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FloorPlanShelf_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FloorPlanShelf_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: FloorPlanShelf_Data!
+  ): FloorPlanShelf_KeyOutput @fdc_generated(from: "FloorPlanShelf", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `HubInfo` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `HubInfo` or `null` if not found.
+  """
+  hubInfo_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: HubInfo_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: HubInfo_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: HubInfo_Data!
+  ): HubInfo_KeyOutput @fdc_generated(from: "HubInfo", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `InventoryItem` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `InventoryItem` or `null` if not found.
+  """
+  inventoryItem_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: InventoryItem_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: InventoryItem_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: InventoryItem_Data!
+  ): InventoryItem_KeyOutput @fdc_generated(from: "InventoryItem", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Shelf` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Shelf` or `null` if not found.
+  """
+  shelf_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Shelf_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Shelf_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Shelf_Data!
+  ): Shelf_KeyOutput @fdc_generated(from: "Shelf", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `ShelfPhoto` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `ShelfPhoto` or `null` if not found.
+  """
+  shelfPhoto_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ShelfPhoto_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ShelfPhoto_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: ShelfPhoto_Data!
+  ): ShelfPhoto_KeyOutput @fdc_generated(from: "ShelfPhoto", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
+  """
+  user_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: User_Data!
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `Event` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  event_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Event_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Event_Data!
+  ): Int! @fdc_generated(from: "Event", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `EventCheckIn` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  eventCheckIn_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: EventCheckIn_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: EventCheckIn_Data!
+  ): Int! @fdc_generated(from: "EventCheckIn", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `FloorPlan` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  floorPlan_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: FloorPlan_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: FloorPlan_Data!
+  ): Int! @fdc_generated(from: "FloorPlan", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `FloorPlanShelf` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  floorPlanShelf_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: FloorPlanShelf_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: FloorPlanShelf_Data!
+  ): Int! @fdc_generated(from: "FloorPlanShelf", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `HubInfo` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  hubInfo_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: HubInfo_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: HubInfo_Data!
+  ): Int! @fdc_generated(from: "HubInfo", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `InventoryItem` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  inventoryItem_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: InventoryItem_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: InventoryItem_Data!
+  ): Int! @fdc_generated(from: "InventoryItem", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Shelf` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  shelf_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Shelf_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Shelf_Data!
+  ): Int! @fdc_generated(from: "Shelf", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `ShelfPhoto` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  shelfPhoto_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: ShelfPhoto_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: ShelfPhoto_Data!
+  ): Int! @fdc_generated(from: "ShelfPhoto", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  user_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: User_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: User_Data!
+  ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `Event` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  event_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Event_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Event_FirstRow
+  ): Event_KeyOutput @fdc_generated(from: "Event", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `EventCheckIn` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  eventCheckIn_delete(
+    """
+    The key used to identify the object.
+    """
+    key: EventCheckIn_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: EventCheckIn_FirstRow
+  ): EventCheckIn_KeyOutput @fdc_generated(from: "EventCheckIn", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `FloorPlan` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  floorPlan_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FloorPlan_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FloorPlan_FirstRow
+  ): FloorPlan_KeyOutput @fdc_generated(from: "FloorPlan", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `FloorPlanShelf` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  floorPlanShelf_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FloorPlanShelf_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FloorPlanShelf_FirstRow
+  ): FloorPlanShelf_KeyOutput @fdc_generated(from: "FloorPlanShelf", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `HubInfo` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  hubInfo_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: HubInfo_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: HubInfo_FirstRow
+  ): HubInfo_KeyOutput @fdc_generated(from: "HubInfo", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `InventoryItem` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  inventoryItem_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: InventoryItem_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: InventoryItem_FirstRow
+  ): InventoryItem_KeyOutput @fdc_generated(from: "InventoryItem", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Shelf` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  shelf_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Shelf_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Shelf_FirstRow
+  ): Shelf_KeyOutput @fdc_generated(from: "Shelf", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `ShelfPhoto` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  shelfPhoto_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ShelfPhoto_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ShelfPhoto_FirstRow
+  ): ShelfPhoto_KeyOutput @fdc_generated(from: "ShelfPhoto", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  user_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `Event` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  event_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Event_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Event", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `EventCheckIn` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  eventCheckIn_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: EventCheckIn_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "EventCheckIn", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `FloorPlan` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  floorPlan_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: FloorPlan_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `FloorPlanShelf` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  floorPlanShelf_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: FloorPlanShelf_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `HubInfo` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  hubInfo_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: HubInfo_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `InventoryItem` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  inventoryItem_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: InventoryItem_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Shelf` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  shelf_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Shelf_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Shelf", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `ShelfPhoto` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  shelfPhoto_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: ShelfPhoto_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  user_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: User_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+}

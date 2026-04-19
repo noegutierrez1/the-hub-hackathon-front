@@ -1,0 +1,3397 @@
+"""
+✨ `Event_KeyOutput` returns the primary key fields of table type `Event`.
+
+It has the same format as `Event_Key`, but is only used as mutation return value.
+"""
+scalar Event_KeyOutput
+"""
+✨ `EventCheckIn_KeyOutput` returns the primary key fields of table type `EventCheckIn`.
+
+It has the same format as `EventCheckIn_Key`, but is only used as mutation return value.
+"""
+scalar EventCheckIn_KeyOutput
+"""
+✨ `FloorPlan_KeyOutput` returns the primary key fields of table type `FloorPlan`.
+
+It has the same format as `FloorPlan_Key`, but is only used as mutation return value.
+"""
+scalar FloorPlan_KeyOutput
+"""
+✨ `FloorPlanShelf_KeyOutput` returns the primary key fields of table type `FloorPlanShelf`.
+
+It has the same format as `FloorPlanShelf_Key`, but is only used as mutation return value.
+"""
+scalar FloorPlanShelf_KeyOutput
+"""
+✨ `HubInfo_KeyOutput` returns the primary key fields of table type `HubInfo`.
+
+It has the same format as `HubInfo_Key`, but is only used as mutation return value.
+"""
+scalar HubInfo_KeyOutput
+"""
+✨ `InventoryItem_KeyOutput` returns the primary key fields of table type `InventoryItem`.
+
+It has the same format as `InventoryItem_Key`, but is only used as mutation return value.
+"""
+scalar InventoryItem_KeyOutput
+"""
+✨ `Shelf_KeyOutput` returns the primary key fields of table type `Shelf`.
+
+It has the same format as `Shelf_Key`, but is only used as mutation return value.
+"""
+scalar Shelf_KeyOutput
+"""
+✨ `ShelfPhoto_KeyOutput` returns the primary key fields of table type `ShelfPhoto`.
+
+It has the same format as `ShelfPhoto_Key`, but is only used as mutation return value.
+"""
+scalar ShelfPhoto_KeyOutput
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ Generated data input type for table 'Event'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Event_Data {
+  """
+  ✨ Generated from Field `Event`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Event`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`createdById` of type `UUID`
+  """
+  createdById: UUID
+  """
+  ✨ `_expr` server value variant of `createdById` (✨ Generated from Field `Event`.`createdById` of type `UUID`)
+  """
+  createdById_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`createdBy` of type `User`
+  """
+  createdBy: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Event`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Event`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Event`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Event`.`description` of type `String`)
+  """
+  description_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`endTime` of type `Timestamp!`
+  """
+  endTime: Timestamp
+  """
+  ✨ `_expr` server value variant of `endTime` (✨ Generated from Field `Event`.`endTime` of type `Timestamp!`)
+  """
+  endTime_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `endTime` (✨ Generated from Field `Event`.`endTime` of type `Timestamp!`)
+  """
+  endTime_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `endTime` (✨ Generated from Field `Event`.`endTime` of type `Timestamp!`)
+  """
+  endTime_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`maxAttendees` of type `Int`
+  """
+  maxAttendees: Int
+  """
+  ✨ `_expr` server value variant of `maxAttendees` (✨ Generated from Field `Event`.`maxAttendees` of type `Int`)
+  """
+  maxAttendees_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `maxAttendees` (✨ Generated from Field `Event`.`maxAttendees` of type `Int`)
+  """
+  maxAttendees_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Event`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`startTime` of type `Timestamp!`
+  """
+  startTime: Timestamp
+  """
+  ✨ `_expr` server value variant of `startTime` (✨ Generated from Field `Event`.`startTime` of type `Timestamp!`)
+  """
+  startTime_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `startTime` (✨ Generated from Field `Event`.`startTime` of type `Timestamp!`)
+  """
+  startTime_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `startTime` (✨ Generated from Field `Event`.`startTime` of type `Timestamp!`)
+  """
+  startTime_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Event`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `Event`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `Event`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `Event`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'Event'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Event_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Event_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Event_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Event_Filter!]
+  """
+  ✨ Generated from Field `Event`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Event`.`createdById` of type `UUID`
+  """
+  createdById: UUID_Filter
+  """
+  ✨ Generated from Field `Event`.`createdBy` of type `User`
+  """
+  createdBy: User_Filter
+  """
+  ✨ Generated from Field `Event`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Event`.`endTime` of type `Timestamp!`
+  """
+  endTime: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`maxAttendees` of type `Int`
+  """
+  maxAttendees: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Event`.`startTime` of type `Timestamp!`
+  """
+  startTime: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`eventCheckIns_on_event` of type `[EventCheckIn!]!`
+  """
+  eventCheckIns_on_event: EventCheckIn_ListFilter
+  """
+  ✨ Generated from Field `Event`.`users_via_EventCheckIn` of type `[User!]!`
+  """
+  users_via_EventCheckIn: User_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Event'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Event_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Event_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Event_Filter
+}
+"""
+✨ Generated having input type for table 'Event'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Event_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Event_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Event_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Event_Having!]
+  """
+  ✨ Generated from Field `Event`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`createdById_count` of type `Int!`
+  """
+  createdById_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`endTime_count` of type `Int!`
+  """
+  endTime_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_count` of type `Int!`
+  """
+  maxAttendees_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`startTime_count` of type `Int!`
+  """
+  startTime_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_sum` of type `Int`
+  """
+  maxAttendees_sum: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_avg` of type `Float`
+  """
+  maxAttendees_avg: Float_Filter
+  """
+  ✨ Generated from Field `Event`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`endTime_min` of type `Timestamp`
+  """
+  endTime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_min` of type `Int`
+  """
+  maxAttendees_min: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`startTime_min` of type `Timestamp`
+  """
+  startTime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`endTime_max` of type `Timestamp`
+  """
+  endTime_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_max` of type `Int`
+  """
+  maxAttendees_max: Int_Filter
+  """
+  ✨ Generated from Field `Event`.`startTime_max` of type `Timestamp`
+  """
+  startTime_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Event`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Event'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Event_Key {
+  """
+  ✨ Generated from Field `Event`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Event`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Event'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Event_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Event_Filter
+}
+"""
+✨ Generated order input type for table 'Event'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Event_Order {
+  """
+  ✨ Generated from Field `Event`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`createdById` of type `UUID`
+  """
+  createdById: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`createdBy` of type `User`
+  """
+  createdBy: User_Order
+  """
+  ✨ Generated from Field `Event`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`endTime` of type `Timestamp!`
+  """
+  endTime: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`maxAttendees` of type `Int`
+  """
+  maxAttendees: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`startTime` of type `Timestamp!`
+  """
+  startTime: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`createdById_count` of type `Int!`
+  """
+  createdById_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`endTime_count` of type `Int!`
+  """
+  endTime_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_count` of type `Int!`
+  """
+  maxAttendees_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`startTime_count` of type `Int!`
+  """
+  startTime_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_sum` of type `Int`
+  """
+  maxAttendees_sum: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_avg` of type `Float`
+  """
+  maxAttendees_avg: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`endTime_min` of type `Timestamp`
+  """
+  endTime_min: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_min` of type `Int`
+  """
+  maxAttendees_min: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`startTime_min` of type `Timestamp`
+  """
+  startTime_min: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`endTime_max` of type `Timestamp`
+  """
+  endTime_max: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`maxAttendees_max` of type `Int`
+  """
+  maxAttendees_max: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`startTime_max` of type `Timestamp`
+  """
+  startTime_max: OrderDirection
+  """
+  ✨ Generated from Field `Event`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'EventCheckIn'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input EventCheckIn_Data {
+  """
+  ✨ Generated from Field `EventCheckIn`.`eventId` of type `UUID!`
+  """
+  eventId: UUID
+  """
+  ✨ `_expr` server value variant of `eventId` (✨ Generated from Field `EventCheckIn`.`eventId` of type `UUID!`)
+  """
+  eventId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `EventCheckIn`.`studentId` of type `UUID!`
+  """
+  studentId: UUID
+  """
+  ✨ `_expr` server value variant of `studentId` (✨ Generated from Field `EventCheckIn`.`studentId` of type `UUID!`)
+  """
+  studentId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `EventCheckIn`.`event` of type `Event!`
+  """
+  event: Event_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `EventCheckIn`.`student` of type `User!`
+  """
+  student: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime` of type `Timestamp!`
+  """
+  checkInTime: Timestamp
+  """
+  ✨ `_expr` server value variant of `checkInTime` (✨ Generated from Field `EventCheckIn`.`checkInTime` of type `Timestamp!`)
+  """
+  checkInTime_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `checkInTime` (✨ Generated from Field `EventCheckIn`.`checkInTime` of type `Timestamp!`)
+  """
+  checkInTime_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `checkInTime` (✨ Generated from Field `EventCheckIn`.`checkInTime` of type `Timestamp!`)
+  """
+  checkInTime_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'EventCheckIn'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input EventCheckIn_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [EventCheckIn_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: EventCheckIn_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [EventCheckIn_Filter!]
+  """
+  ✨ Generated from Field `EventCheckIn`.`eventId` of type `UUID!`
+  """
+  eventId: UUID_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`studentId` of type `UUID!`
+  """
+  studentId: UUID_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`event` of type `Event!`
+  """
+  event: Event_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`student` of type `User!`
+  """
+  student: User_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime` of type `Timestamp!`
+  """
+  checkInTime: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'EventCheckIn'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input EventCheckIn_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [EventCheckIn_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: EventCheckIn_Filter
+}
+"""
+✨ Generated having input type for table 'EventCheckIn'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input EventCheckIn_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [EventCheckIn_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: EventCheckIn_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [EventCheckIn_Having!]
+  """
+  ✨ Generated from Field `EventCheckIn`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime_count` of type `Int!`
+  """
+  checkInTime_count: Int_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`eventId_count` of type `Int!`
+  """
+  eventId_count: Int_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`studentId_count` of type `Int!`
+  """
+  studentId_count: Int_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime_min` of type `Timestamp`
+  """
+  checkInTime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime_max` of type `Timestamp`
+  """
+  checkInTime_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'EventCheckIn'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input EventCheckIn_Key {
+  """
+  ✨ Generated from Field `EventCheckIn`.`eventId` of type `UUID!`
+  """
+  eventId: UUID
+  """
+  ✨ `_expr` server value variant of `eventId` (✨ Generated from Field `EventCheckIn`.`eventId` of type `UUID!`)
+  """
+  eventId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `EventCheckIn`.`studentId` of type `UUID!`
+  """
+  studentId: UUID
+  """
+  ✨ `_expr` server value variant of `studentId` (✨ Generated from Field `EventCheckIn`.`studentId` of type `UUID!`)
+  """
+  studentId_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'EventCheckIn'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input EventCheckIn_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: EventCheckIn_Filter
+}
+"""
+✨ Generated order input type for table 'EventCheckIn'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input EventCheckIn_Order {
+  """
+  ✨ Generated from Field `EventCheckIn`.`eventId` of type `UUID!`
+  """
+  eventId: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`studentId` of type `UUID!`
+  """
+  studentId: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`event` of type `Event!`
+  """
+  event: Event_Order
+  """
+  ✨ Generated from Field `EventCheckIn`.`student` of type `User!`
+  """
+  student: User_Order
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime` of type `Timestamp!`
+  """
+  checkInTime: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime_count` of type `Int!`
+  """
+  checkInTime_count: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`eventId_count` of type `Int!`
+  """
+  eventId_count: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`studentId_count` of type `Int!`
+  """
+  studentId_count: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime_min` of type `Timestamp`
+  """
+  checkInTime_min: OrderDirection
+  """
+  ✨ Generated from Field `EventCheckIn`.`checkInTime_max` of type `Timestamp`
+  """
+  checkInTime_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'FloorPlan'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input FloorPlan_Data {
+  """
+  ✨ Generated from Field `FloorPlan`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FloorPlan`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `FloorPlan`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `FloorPlan`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `FloorPlan`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlan`.`isDeployed` of type `Boolean`
+  """
+  isDeployed: Boolean
+  """
+  ✨ `_expr` server value variant of `isDeployed` (✨ Generated from Field `FloorPlan`.`isDeployed` of type `Boolean`)
+  """
+  isDeployed_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlan`.`markers` of type `Any`
+  """
+  markers: Any
+  """
+  ✨ `_expr` server value variant of `markers` (✨ Generated from Field `FloorPlan`.`markers` of type `Any`)
+  """
+  markers_expr: Any_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlan`.`name` of type `String`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `FloorPlan`.`name` of type `String`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves` of type `Any`
+  """
+  shelves: Any
+  """
+  ✨ `_expr` server value variant of `shelves` (✨ Generated from Field `FloorPlan`.`shelves` of type `Any`)
+  """
+  shelves_expr: Any_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt` of type `Timestamp`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `FloorPlan`.`updatedAt` of type `Timestamp`)
+  """
+  updatedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `FloorPlan`.`updatedAt` of type `Timestamp`)
+  """
+  updatedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `FloorPlan`.`updatedAt` of type `Timestamp`)
+  """
+  updatedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlan`.`walls` of type `Any`
+  """
+  walls: Any
+  """
+  ✨ `_expr` server value variant of `walls` (✨ Generated from Field `FloorPlan`.`walls` of type `Any`)
+  """
+  walls_expr: Any_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'FloorPlan'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input FloorPlan_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [FloorPlan_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: FloorPlan_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [FloorPlan_Filter!]
+  """
+  ✨ Generated from Field `FloorPlan`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`isDeployed` of type `Boolean`
+  """
+  isDeployed: Boolean_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`markers` of type `Any`
+  """
+  markers: Any_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`name` of type `String`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves` of type `Any`
+  """
+  shelves: Any_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt` of type `Timestamp`
+  """
+  updatedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`walls` of type `Any`
+  """
+  walls: Any_Filter
+}
+"""
+✨ Generated first-row input type for table 'FloorPlan'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input FloorPlan_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [FloorPlan_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: FloorPlan_Filter
+}
+"""
+✨ Generated having input type for table 'FloorPlan'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input FloorPlan_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [FloorPlan_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: FloorPlan_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [FloorPlan_Having!]
+  """
+  ✨ Generated from Field `FloorPlan`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`isDeployed_count` of type `Int!`
+  """
+  isDeployed_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`markers_count` of type `Int!`
+  """
+  markers_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves_count` of type `Int!`
+  """
+  shelves_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`walls_count` of type `Int!`
+  """
+  walls_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`markers_min` of type `Any`
+  """
+  markers_min: Any_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves_min` of type `Any`
+  """
+  shelves_min: Any_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`walls_min` of type `Any`
+  """
+  walls_min: Any_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`markers_max` of type `Any`
+  """
+  markers_max: Any_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves_max` of type `Any`
+  """
+  shelves_max: Any_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlan`.`walls_max` of type `Any`
+  """
+  walls_max: Any_Filter
+}
+"""
+✨ Generated key input type for table 'FloorPlan'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input FloorPlan_Key {
+  """
+  ✨ Generated from Field `FloorPlan`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FloorPlan`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'FloorPlan'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input FloorPlan_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: FloorPlan_Filter
+}
+"""
+✨ Generated order input type for table 'FloorPlan'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input FloorPlan_Order {
+  """
+  ✨ Generated from Field `FloorPlan`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt` of type `Timestamp`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`isDeployed` of type `Boolean`
+  """
+  isDeployed: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`markers` of type `Any`
+  """
+  markers: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`name` of type `String`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves` of type `Any`
+  """
+  shelves: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt` of type `Timestamp`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`walls` of type `Any`
+  """
+  walls: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`isDeployed_count` of type `Int!`
+  """
+  isDeployed_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`markers_count` of type `Int!`
+  """
+  markers_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves_count` of type `Int!`
+  """
+  shelves_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`walls_count` of type `Int!`
+  """
+  walls_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`markers_min` of type `Any`
+  """
+  markers_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves_min` of type `Any`
+  """
+  shelves_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`walls_min` of type `Any`
+  """
+  walls_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`markers_max` of type `Any`
+  """
+  markers_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`shelves_max` of type `Any`
+  """
+  shelves_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlan`.`walls_max` of type `Any`
+  """
+  walls_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'FloorPlanShelf'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input FloorPlanShelf_Data {
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FloorPlanShelf`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`category` of type `String!`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `FloorPlanShelf`.`category` of type `String!`)
+  """
+  category_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `FloorPlanShelf`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `FloorPlanShelf`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `FloorPlanShelf`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent` of type `Int!`
+  """
+  limitPerStudent: Int
+  """
+  ✨ `_expr` server value variant of `limitPerStudent` (✨ Generated from Field `FloorPlanShelf`.`limitPerStudent` of type `Int!`)
+  """
+  limitPerStudent_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `limitPerStudent` (✨ Generated from Field `FloorPlanShelf`.`limitPerStudent` of type `Int!`)
+  """
+  limitPerStudent_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH` of type `Float!`
+  """
+  mapH: Float
+  """
+  ✨ `_expr` server value variant of `mapH` (✨ Generated from Field `FloorPlanShelf`.`mapH` of type `Float!`)
+  """
+  mapH_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `mapH` (✨ Generated from Field `FloorPlanShelf`.`mapH` of type `Float!`)
+  """
+  mapH_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW` of type `Float!`
+  """
+  mapW: Float
+  """
+  ✨ `_expr` server value variant of `mapW` (✨ Generated from Field `FloorPlanShelf`.`mapW` of type `Float!`)
+  """
+  mapW_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `mapW` (✨ Generated from Field `FloorPlanShelf`.`mapW` of type `Float!`)
+  """
+  mapW_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX` of type `Float!`
+  """
+  mapX: Float
+  """
+  ✨ `_expr` server value variant of `mapX` (✨ Generated from Field `FloorPlanShelf`.`mapX` of type `Float!`)
+  """
+  mapX_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `mapX` (✨ Generated from Field `FloorPlanShelf`.`mapX` of type `Float!`)
+  """
+  mapX_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY` of type `Float!`
+  """
+  mapY: Float
+  """
+  ✨ `_expr` server value variant of `mapY` (✨ Generated from Field `FloorPlanShelf`.`mapY` of type `Float!`)
+  """
+  mapY_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `mapY` (✨ Generated from Field `FloorPlanShelf`.`mapY` of type `Float!`)
+  """
+  mapY_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`orientation` of type `String!`
+  """
+  orientation: String
+  """
+  ✨ `_expr` server value variant of `orientation` (✨ Generated from Field `FloorPlanShelf`.`orientation` of type `String!`)
+  """
+  orientation_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation` of type `Int!`
+  """
+  rotation: Int
+  """
+  ✨ `_expr` server value variant of `rotation` (✨ Generated from Field `FloorPlanShelf`.`rotation` of type `Int!`)
+  """
+  rotation_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `rotation` (✨ Generated from Field `FloorPlanShelf`.`rotation` of type `Int!`)
+  """
+  rotation_update: [Int_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'FloorPlanShelf'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input FloorPlanShelf_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [FloorPlanShelf_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: FloorPlanShelf_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [FloorPlanShelf_Filter!]
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`category` of type `String!`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent` of type `Int!`
+  """
+  limitPerStudent: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH` of type `Float!`
+  """
+  mapH: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW` of type `Float!`
+  """
+  mapW: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX` of type `Float!`
+  """
+  mapX: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY` of type `Float!`
+  """
+  mapY: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`orientation` of type `String!`
+  """
+  orientation: String_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation` of type `Int!`
+  """
+  rotation: Int_Filter
+}
+"""
+✨ Generated first-row input type for table 'FloorPlanShelf'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input FloorPlanShelf_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [FloorPlanShelf_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: FloorPlanShelf_Filter
+}
+"""
+✨ Generated having input type for table 'FloorPlanShelf'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input FloorPlanShelf_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [FloorPlanShelf_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: FloorPlanShelf_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [FloorPlanShelf_Having!]
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_count` of type `Int!`
+  """
+  limitPerStudent_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_count` of type `Int!`
+  """
+  mapH_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_count` of type `Int!`
+  """
+  mapW_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_count` of type `Int!`
+  """
+  mapX_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_count` of type `Int!`
+  """
+  mapY_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`orientation_count` of type `Int!`
+  """
+  orientation_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_count` of type `Int!`
+  """
+  rotation_count: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_sum` of type `Int`
+  """
+  limitPerStudent_sum: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_sum` of type `Float`
+  """
+  mapH_sum: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_sum` of type `Float`
+  """
+  mapW_sum: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_sum` of type `Float`
+  """
+  mapX_sum: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_sum` of type `Float`
+  """
+  mapY_sum: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_sum` of type `Int`
+  """
+  rotation_sum: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_avg` of type `Float`
+  """
+  limitPerStudent_avg: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_avg` of type `Float`
+  """
+  mapH_avg: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_avg` of type `Float`
+  """
+  mapW_avg: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_avg` of type `Float`
+  """
+  mapX_avg: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_avg` of type `Float`
+  """
+  mapY_avg: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_avg` of type `Float`
+  """
+  rotation_avg: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_min` of type `Int`
+  """
+  limitPerStudent_min: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_min` of type `Float`
+  """
+  mapH_min: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_min` of type `Float`
+  """
+  mapW_min: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_min` of type `Float`
+  """
+  mapX_min: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_min` of type `Float`
+  """
+  mapY_min: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_min` of type `Int`
+  """
+  rotation_min: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_max` of type `Int`
+  """
+  limitPerStudent_max: Int_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_max` of type `Float`
+  """
+  mapH_max: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_max` of type `Float`
+  """
+  mapW_max: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_max` of type `Float`
+  """
+  mapX_max: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_max` of type `Float`
+  """
+  mapY_max: Float_Filter
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_max` of type `Int`
+  """
+  rotation_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'FloorPlanShelf'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input FloorPlanShelf_Key {
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FloorPlanShelf`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'FloorPlanShelf'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input FloorPlanShelf_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: FloorPlanShelf_Filter
+}
+"""
+✨ Generated order input type for table 'FloorPlanShelf'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input FloorPlanShelf_Order {
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`category` of type `String!`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt` of type `Timestamp`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent` of type `Int!`
+  """
+  limitPerStudent: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH` of type `Float!`
+  """
+  mapH: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW` of type `Float!`
+  """
+  mapW: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX` of type `Float!`
+  """
+  mapX: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY` of type `Float!`
+  """
+  mapY: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`orientation` of type `String!`
+  """
+  orientation: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation` of type `Int!`
+  """
+  rotation: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_count` of type `Int!`
+  """
+  limitPerStudent_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_count` of type `Int!`
+  """
+  mapH_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_count` of type `Int!`
+  """
+  mapW_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_count` of type `Int!`
+  """
+  mapX_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_count` of type `Int!`
+  """
+  mapY_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`orientation_count` of type `Int!`
+  """
+  orientation_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_count` of type `Int!`
+  """
+  rotation_count: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_sum` of type `Int`
+  """
+  limitPerStudent_sum: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_sum` of type `Float`
+  """
+  mapH_sum: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_sum` of type `Float`
+  """
+  mapW_sum: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_sum` of type `Float`
+  """
+  mapX_sum: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_sum` of type `Float`
+  """
+  mapY_sum: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_sum` of type `Int`
+  """
+  rotation_sum: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_avg` of type `Float`
+  """
+  limitPerStudent_avg: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_avg` of type `Float`
+  """
+  mapH_avg: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_avg` of type `Float`
+  """
+  mapW_avg: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_avg` of type `Float`
+  """
+  mapX_avg: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_avg` of type `Float`
+  """
+  mapY_avg: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_avg` of type `Float`
+  """
+  rotation_avg: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_min` of type `Int`
+  """
+  limitPerStudent_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_min` of type `Float`
+  """
+  mapH_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_min` of type `Float`
+  """
+  mapW_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_min` of type `Float`
+  """
+  mapX_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_min` of type `Float`
+  """
+  mapY_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_min` of type `Int`
+  """
+  rotation_min: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`limitPerStudent_max` of type `Int`
+  """
+  limitPerStudent_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapH_max` of type `Float`
+  """
+  mapH_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapW_max` of type `Float`
+  """
+  mapW_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapX_max` of type `Float`
+  """
+  mapX_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`mapY_max` of type `Float`
+  """
+  mapY_max: OrderDirection
+  """
+  ✨ Generated from Field `FloorPlanShelf`.`rotation_max` of type `Int`
+  """
+  rotation_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'HubInfo'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input HubInfo_Data {
+  """
+  ✨ Generated from Field `HubInfo`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `HubInfo`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `HubInfo`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `HubInfo`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `HubInfo`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `HubInfo`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `HubInfo`.`description` of type `String`)
+  """
+  description_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `HubInfo`.`hoursOfOperation` of type `String!`
+  """
+  hoursOfOperation: String
+  """
+  ✨ `_expr` server value variant of `hoursOfOperation` (✨ Generated from Field `HubInfo`.`hoursOfOperation` of type `String!`)
+  """
+  hoursOfOperation_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `HubInfo`.`location` of type `String`
+  """
+  location: String
+  """
+  ✨ `_expr` server value variant of `location` (✨ Generated from Field `HubInfo`.`location` of type `String`)
+  """
+  location_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `HubInfo`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `HubInfo`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `HubInfo`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `HubInfo`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `HubInfo`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'HubInfo'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input HubInfo_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [HubInfo_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: HubInfo_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [HubInfo_Filter!]
+  """
+  ✨ Generated from Field `HubInfo`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`hoursOfOperation` of type `String!`
+  """
+  hoursOfOperation: String_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`location` of type `String`
+  """
+  location: String_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'HubInfo'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input HubInfo_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [HubInfo_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: HubInfo_Filter
+}
+"""
+✨ Generated having input type for table 'HubInfo'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input HubInfo_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [HubInfo_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: HubInfo_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [HubInfo_Having!]
+  """
+  ✨ Generated from Field `HubInfo`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`hoursOfOperation_count` of type `Int!`
+  """
+  hoursOfOperation_count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`location_count` of type `Int!`
+  """
+  location_count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'HubInfo'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input HubInfo_Key {
+  """
+  ✨ Generated from Field `HubInfo`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `HubInfo`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'HubInfo'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input HubInfo_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: HubInfo_Filter
+}
+"""
+✨ Generated order input type for table 'HubInfo'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input HubInfo_Order {
+  """
+  ✨ Generated from Field `HubInfo`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`hoursOfOperation` of type `String!`
+  """
+  hoursOfOperation: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`location` of type `String`
+  """
+  location: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`hoursOfOperation_count` of type `Int!`
+  """
+  hoursOfOperation_count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`location_count` of type `Int!`
+  """
+  location_count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `HubInfo`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'InventoryItem'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input InventoryItem_Data {
+  """
+  ✨ Generated from Field `InventoryItem`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `InventoryItem`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`shelfId` of type `UUID`
+  """
+  shelfId: UUID
+  """
+  ✨ `_expr` server value variant of `shelfId` (✨ Generated from Field `InventoryItem`.`shelfId` of type `UUID`)
+  """
+  shelfId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`shelf` of type `Shelf`
+  """
+  shelf: Shelf_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`brand` of type `String!`
+  """
+  brand: String
+  """
+  ✨ `_expr` server value variant of `brand` (✨ Generated from Field `InventoryItem`.`brand` of type `String!`)
+  """
+  brand_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`category` of type `String`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `InventoryItem`.`category` of type `String`)
+  """
+  category_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `InventoryItem`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `InventoryItem`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `InventoryItem`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `InventoryItem`.`description` of type `String`)
+  """
+  description_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `InventoryItem`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`photoUrl` of type `String`
+  """
+  photoUrl: String
+  """
+  ✨ `_expr` server value variant of `photoUrl` (✨ Generated from Field `InventoryItem`.`photoUrl` of type `String`)
+  """
+  photoUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity` of type `Int!`
+  """
+  quantity: Int
+  """
+  ✨ `_expr` server value variant of `quantity` (✨ Generated from Field `InventoryItem`.`quantity` of type `Int!`)
+  """
+  quantity_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `quantity` (✨ Generated from Field `InventoryItem`.`quantity` of type `Int!`)
+  """
+  quantity_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`size` of type `String`
+  """
+  size: String
+  """
+  ✨ `_expr` server value variant of `size` (✨ Generated from Field `InventoryItem`.`size` of type `String`)
+  """
+  size_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `InventoryItem`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `InventoryItem`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `InventoryItem`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'InventoryItem'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input InventoryItem_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [InventoryItem_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: InventoryItem_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [InventoryItem_Filter!]
+  """
+  ✨ Generated from Field `InventoryItem`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`shelfId` of type `UUID`
+  """
+  shelfId: UUID_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`shelf` of type `Shelf`
+  """
+  shelf: Shelf_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`brand` of type `String!`
+  """
+  brand: String_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`category` of type `String`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`photoUrl` of type `String`
+  """
+  photoUrl: String_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity` of type `Int!`
+  """
+  quantity: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`size` of type `String`
+  """
+  size: String_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'InventoryItem'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input InventoryItem_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [InventoryItem_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: InventoryItem_Filter
+}
+"""
+✨ Generated having input type for table 'InventoryItem'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input InventoryItem_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [InventoryItem_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: InventoryItem_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [InventoryItem_Having!]
+  """
+  ✨ Generated from Field `InventoryItem`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`brand_count` of type `Int!`
+  """
+  brand_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_count` of type `Int!`
+  """
+  quantity_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`shelfId_count` of type `Int!`
+  """
+  shelfId_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`size_count` of type `Int!`
+  """
+  size_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_sum` of type `Int`
+  """
+  quantity_sum: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_avg` of type `Float`
+  """
+  quantity_avg: Float_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_min` of type `Int`
+  """
+  quantity_min: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_max` of type `Int`
+  """
+  quantity_max: Int_Filter
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'InventoryItem'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input InventoryItem_Key {
+  """
+  ✨ Generated from Field `InventoryItem`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `InventoryItem`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'InventoryItem'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input InventoryItem_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: InventoryItem_Filter
+}
+"""
+✨ Generated order input type for table 'InventoryItem'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input InventoryItem_Order {
+  """
+  ✨ Generated from Field `InventoryItem`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`shelfId` of type `UUID`
+  """
+  shelfId: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`shelf` of type `Shelf`
+  """
+  shelf: Shelf_Order
+  """
+  ✨ Generated from Field `InventoryItem`.`brand` of type `String!`
+  """
+  brand: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`category` of type `String`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`photoUrl` of type `String`
+  """
+  photoUrl: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity` of type `Int!`
+  """
+  quantity: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`size` of type `String`
+  """
+  size: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`brand_count` of type `Int!`
+  """
+  brand_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_count` of type `Int!`
+  """
+  quantity_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`shelfId_count` of type `Int!`
+  """
+  shelfId_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`size_count` of type `Int!`
+  """
+  size_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_sum` of type `Int`
+  """
+  quantity_sum: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_avg` of type `Float`
+  """
+  quantity_avg: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_min` of type `Int`
+  """
+  quantity_min: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`quantity_max` of type `Int`
+  """
+  quantity_max: OrderDirection
+  """
+  ✨ Generated from Field `InventoryItem`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Shelf'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Shelf_Data {
+  """
+  ✨ Generated from Field `Shelf`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Shelf`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Shelf`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Shelf`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Shelf`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Shelf`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Shelf`.`locationDescription` of type `String!`
+  """
+  locationDescription: String
+  """
+  ✨ `_expr` server value variant of `locationDescription` (✨ Generated from Field `Shelf`.`locationDescription` of type `String!`)
+  """
+  locationDescription_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Shelf`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Shelf`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `Shelf`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `Shelf`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `Shelf`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'Shelf'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Shelf_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Shelf_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Shelf_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Shelf_Filter!]
+  """
+  ✨ Generated from Field `Shelf`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Shelf`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Shelf`.`locationDescription` of type `String!`
+  """
+  locationDescription: String_Filter
+  """
+  ✨ Generated from Field `Shelf`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Shelf`.`inventoryItems_on_shelf` of type `[InventoryItem!]!`
+  """
+  inventoryItems_on_shelf: InventoryItem_ListFilter
+  """
+  ✨ Generated from Field `Shelf`.`shelfPhotos_on_shelf` of type `[ShelfPhoto!]!`
+  """
+  shelfPhotos_on_shelf: ShelfPhoto_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Shelf'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Shelf_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Shelf_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Shelf_Filter
+}
+"""
+✨ Generated having input type for table 'Shelf'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Shelf_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Shelf_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Shelf_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Shelf_Having!]
+  """
+  ✨ Generated from Field `Shelf`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Shelf`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Shelf`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Shelf`.`locationDescription_count` of type `Int!`
+  """
+  locationDescription_count: Int_Filter
+  """
+  ✨ Generated from Field `Shelf`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Shelf`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Shelf`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Shelf'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Shelf_Key {
+  """
+  ✨ Generated from Field `Shelf`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Shelf`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Shelf'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Shelf_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Shelf_Filter
+}
+"""
+✨ Generated order input type for table 'Shelf'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Shelf_Order {
+  """
+  ✨ Generated from Field `Shelf`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`locationDescription` of type `String!`
+  """
+  locationDescription: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`locationDescription_count` of type `Int!`
+  """
+  locationDescription_count: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Shelf`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'ShelfPhoto'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input ShelfPhoto_Data {
+  """
+  ✨ Generated from Field `ShelfPhoto`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `ShelfPhoto`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelfId` of type `UUID`
+  """
+  shelfId: UUID
+  """
+  ✨ `_expr` server value variant of `shelfId` (✨ Generated from Field `ShelfPhoto`.`shelfId` of type `UUID`)
+  """
+  shelfId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedById` of type `UUID`
+  """
+  uploadedById: UUID
+  """
+  ✨ `_expr` server value variant of `uploadedById` (✨ Generated from Field `ShelfPhoto`.`uploadedById` of type `UUID`)
+  """
+  uploadedById_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelf` of type `Shelf`
+  """
+  shelf: Shelf_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedBy` of type `User`
+  """
+  uploadedBy: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`aiParsedOutput` of type `String`
+  """
+  aiParsedOutput: String
+  """
+  ✨ `_expr` server value variant of `aiParsedOutput` (✨ Generated from Field `ShelfPhoto`.`aiParsedOutput` of type `String`)
+  """
+  aiParsedOutput_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `ShelfPhoto`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `ShelfPhoto`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `ShelfPhoto`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`photoUrl` of type `String!`
+  """
+  photoUrl: String
+  """
+  ✨ `_expr` server value variant of `photoUrl` (✨ Generated from Field `ShelfPhoto`.`photoUrl` of type `String!`)
+  """
+  photoUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp
+  """
+  ✨ `_expr` server value variant of `timestamp` (✨ Generated from Field `ShelfPhoto`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `timestamp` (✨ Generated from Field `ShelfPhoto`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `timestamp` (✨ Generated from Field `ShelfPhoto`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'ShelfPhoto'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input ShelfPhoto_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [ShelfPhoto_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: ShelfPhoto_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [ShelfPhoto_Filter!]
+  """
+  ✨ Generated from Field `ShelfPhoto`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelfId` of type `UUID`
+  """
+  shelfId: UUID_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedById` of type `UUID`
+  """
+  uploadedById: UUID_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelf` of type `Shelf`
+  """
+  shelf: Shelf_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedBy` of type `User`
+  """
+  uploadedBy: User_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`aiParsedOutput` of type `String`
+  """
+  aiParsedOutput: String_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`photoUrl` of type `String!`
+  """
+  photoUrl: String_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'ShelfPhoto'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input ShelfPhoto_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [ShelfPhoto_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: ShelfPhoto_Filter
+}
+"""
+✨ Generated having input type for table 'ShelfPhoto'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input ShelfPhoto_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [ShelfPhoto_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: ShelfPhoto_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [ShelfPhoto_Having!]
+  """
+  ✨ Generated from Field `ShelfPhoto`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`aiParsedOutput_count` of type `Int!`
+  """
+  aiParsedOutput_count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelfId_count` of type `Int!`
+  """
+  shelfId_count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedById_count` of type `Int!`
+  """
+  uploadedById_count: Int_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'ShelfPhoto'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input ShelfPhoto_Key {
+  """
+  ✨ Generated from Field `ShelfPhoto`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `ShelfPhoto`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'ShelfPhoto'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input ShelfPhoto_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: ShelfPhoto_Filter
+}
+"""
+✨ Generated order input type for table 'ShelfPhoto'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input ShelfPhoto_Order {
+  """
+  ✨ Generated from Field `ShelfPhoto`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelfId` of type `UUID`
+  """
+  shelfId: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedById` of type `UUID`
+  """
+  uploadedById: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelf` of type `Shelf`
+  """
+  shelf: Shelf_Order
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedBy` of type `User`
+  """
+  uploadedBy: User_Order
+  """
+  ✨ Generated from Field `ShelfPhoto`.`aiParsedOutput` of type `String`
+  """
+  aiParsedOutput: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`photoUrl` of type `String!`
+  """
+  photoUrl: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`aiParsedOutput_count` of type `Int!`
+  """
+  aiParsedOutput_count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`shelfId_count` of type `Int!`
+  """
+  shelfId_count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`uploadedById_count` of type `Int!`
+  """
+  uploadedById_count: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `ShelfPhoto`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String`)
+  """
+  email_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`firebaseUid` of type `String`
+  """
+  firebaseUid: String
+  """
+  ✨ `_expr` server value variant of `firebaseUid` (✨ Generated from Field `User`.`firebaseUid` of type `String`)
+  """
+  firebaseUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String
+  """
+  ✨ `_expr` server value variant of `photoUrl` (✨ Generated from Field `User`.`photoUrl` of type `String`)
+  """
+  photoUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`role` of type `String!`
+  """
+  role: String
+  """
+  ✨ `_expr` server value variant of `role` (✨ Generated from Field `User`.`role` of type `String!`)
+  """
+  role_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`studentId` of type `String`
+  """
+  studentId: String
+  """
+  ✨ `_expr` server value variant of `studentId` (✨ Generated from Field `User`.`studentId` of type `String`)
+  """
+  studentId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String
+  """
+  ✨ `_expr` server value variant of `username` (✨ Generated from Field `User`.`username` of type `String!`)
+  """
+  username_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`firebaseUid` of type `String`
+  """
+  firebaseUid: String_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String_Filter
+  """
+  ✨ Generated from Field `User`.`role` of type `String!`
+  """
+  role: String_Filter
+  """
+  ✨ Generated from Field `User`.`studentId` of type `String`
+  """
+  studentId: String_Filter
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String_Filter
+  """
+  ✨ Generated from Field `User`.`events_on_createdBy` of type `[Event!]!`
+  """
+  events_on_createdBy: Event_ListFilter
+  """
+  ✨ Generated from Field `User`.`eventCheckIns_on_student` of type `[EventCheckIn!]!`
+  """
+  eventCheckIns_on_student: EventCheckIn_ListFilter
+  """
+  ✨ Generated from Field `User`.`shelfPhotos_on_uploadedBy` of type `[ShelfPhoto!]!`
+  """
+  shelfPhotos_on_uploadedBy: ShelfPhoto_ListFilter
+  """
+  ✨ Generated from Field `User`.`events_via_EventCheckIn` of type `[Event!]!`
+  """
+  events_via_EventCheckIn: Event_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`firebaseUid_count` of type `Int!`
+  """
+  firebaseUid_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`role_count` of type `Int!`
+  """
+  role_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`studentId_count` of type `Int!`
+  """
+  studentId_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`firebaseUid` of type `String`
+  """
+  firebaseUid: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: OrderDirection
+  """
+  ✨ Generated from Field `User`.`role` of type `String!`
+  """
+  role: OrderDirection
+  """
+  ✨ Generated from Field `User`.`studentId` of type `String`
+  """
+  studentId: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`firebaseUid_count` of type `Int!`
+  """
+  firebaseUid_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`role_count` of type `Int!`
+  """
+  role_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`studentId_count` of type `Int!`
+  """
+  studentId_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}

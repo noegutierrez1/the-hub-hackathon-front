@@ -1,0 +1,474 @@
+extend type Query {
+  """
+  ✨ Look up a single `Event` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  event(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Event_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Event_FirstRow
+  ): Event @fdc_generated(from: "Event", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `EventCheckIn` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  eventCheckIn(
+    """
+    The key used to identify the object.
+    """
+    key: EventCheckIn_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: EventCheckIn_FirstRow
+  ): EventCheckIn @fdc_generated(from: "EventCheckIn", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `FloorPlan` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  floorPlan(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FloorPlan_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FloorPlan_FirstRow
+  ): FloorPlan @fdc_generated(from: "FloorPlan", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `FloorPlanShelf` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  floorPlanShelf(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FloorPlanShelf_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FloorPlanShelf_FirstRow
+  ): FloorPlanShelf @fdc_generated(from: "FloorPlanShelf", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `HubInfo` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  hubInfo(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: HubInfo_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: HubInfo_FirstRow
+  ): HubInfo @fdc_generated(from: "HubInfo", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `InventoryItem` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  inventoryItem(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: InventoryItem_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: InventoryItem_FirstRow
+  ): InventoryItem @fdc_generated(from: "InventoryItem", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Shelf` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  shelf(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Shelf_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Shelf_FirstRow
+  ): Shelf @fdc_generated(from: "Shelf", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `ShelfPhoto` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  shelfPhoto(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ShelfPhoto_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ShelfPhoto_FirstRow
+  ): ShelfPhoto @fdc_generated(from: "ShelfPhoto", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ List `Event` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  events(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Event_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Event_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Event_Having
+  ): [Event!]! @fdc_generated(from: "Event", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `EventCheckIn` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  eventCheckIns(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: EventCheckIn_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [EventCheckIn_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: EventCheckIn_Having
+  ): [EventCheckIn!]! @fdc_generated(from: "EventCheckIn", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `FloorPlan` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  floorPlans(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: FloorPlan_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [FloorPlan_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: FloorPlan_Having
+  ): [FloorPlan!]! @fdc_generated(from: "FloorPlan", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `FloorPlanShelf` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  floorPlanShelves(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: FloorPlanShelf_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [FloorPlanShelf_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: FloorPlanShelf_Having
+  ): [FloorPlanShelf!]! @fdc_generated(from: "FloorPlanShelf", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `HubInfo` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  hubInfos(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: HubInfo_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [HubInfo_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: HubInfo_Having
+  ): [HubInfo!]! @fdc_generated(from: "HubInfo", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `InventoryItem` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  inventoryItems(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: InventoryItem_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [InventoryItem_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: InventoryItem_Having
+  ): [InventoryItem!]! @fdc_generated(from: "InventoryItem", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Shelf` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  shelves(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Shelf_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Shelf_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Shelf_Having
+  ): [Shelf!]! @fdc_generated(from: "Shelf", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `ShelfPhoto` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  shelfPhotos(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ShelfPhoto_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ShelfPhoto_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ShelfPhoto_Having
+  ): [ShelfPhoto!]! @fdc_generated(from: "ShelfPhoto", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+}

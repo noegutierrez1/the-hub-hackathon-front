@@ -1,0 +1,74 @@
+extend type Event {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Event", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Event`.`createdBy`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  createdById: UUID @fdc_generated(from: "Event.createdBy", purpose: IMPLICIT_REF_FIELD)
+}
+extend type EventCheckIn {
+  """
+  ✨ Implicit foreign key field based on `EventCheckIn`.`event`. It must match the value of `Event`.`id`. See `@ref` for how to customize it.
+  """
+  eventId: UUID! @fdc_generated(from: "EventCheckIn.event", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `EventCheckIn`.`student`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  studentId: UUID! @fdc_generated(from: "EventCheckIn.student", purpose: IMPLICIT_REF_FIELD)
+}
+extend type FloorPlan {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "FloorPlan", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type FloorPlanShelf {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "FloorPlanShelf", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type HubInfo {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "HubInfo", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type InventoryItem {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "InventoryItem", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `InventoryItem`.`shelf`. It must match the value of `Shelf`.`id`. See `@ref` for how to customize it.
+  """
+  shelfId: UUID @fdc_generated(from: "InventoryItem.shelf", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Shelf {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Shelf", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type ShelfPhoto {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "ShelfPhoto", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `ShelfPhoto`.`shelf`. It must match the value of `Shelf`.`id`. See `@ref` for how to customize it.
+  """
+  shelfId: UUID @fdc_generated(from: "ShelfPhoto.shelf", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `ShelfPhoto`.`uploadedBy`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  uploadedById: UUID @fdc_generated(from: "ShelfPhoto.uploadedBy", purpose: IMPLICIT_REF_FIELD)
+}
+extend type User {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "User", purpose: IMPLICIT_KEY_FIELD)
+}

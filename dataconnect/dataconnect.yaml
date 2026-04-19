@@ -1,0 +1,13 @@
+specVersion: "v1"
+serviceId: "the-hub-hackathon-service"
+location: "us-east4"
+schemas:
+  - source: "./schema"
+    datasource:
+      postgresql:
+        database: "the-hub-hackathon-database"
+        cloudSql:
+          instanceId: "the-hub-hackathon-instance"
+          # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
+          # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+connectorDirs: ["./example"]

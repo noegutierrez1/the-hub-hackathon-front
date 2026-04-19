@@ -1,0 +1,1378 @@
+extend type Event {
+  """
+  ✨ List `EventCheckIn` objects in a one-to-many relationship (where `EventCheckIn`.`event` is this object).
+  """
+  eventCheckIns_on_event(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: EventCheckIn_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [EventCheckIn_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: EventCheckIn_Having
+  ): [EventCheckIn!]! @fdc_generated(from: "EventCheckIn.event", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `User` objects using `EventCheckIn` as the join table (a `EventCheckIn` object exists where its `event` is this and its `student` is that).
+  """
+  users_via_EventCheckIn(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: EventCheckIn_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [EventCheckIn_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: EventCheckIn_Having
+  ): [User!]! @fdc_generated(from: "EventCheckIn", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Event", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Event` table.
+  """
+  _count: Int! @fdc_generated(from: "Event.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `createdById` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdById_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.createdById", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `endTime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  endTime_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.endTime", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `maxAttendees` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  maxAttendees_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.maxAttendees", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `startTime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  startTime_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.startTime", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Event` table where the `updatedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  updatedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Event.updatedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `maxAttendees` field in the `Event` table.
+  """
+  maxAttendees_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Event.maxAttendees", purpose: QUERY_SUM)
+  """
+  ✨ Average the `maxAttendees` field in the `Event` table.
+  """
+  maxAttendees_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Event.maxAttendees", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `createdAt` field in the `Event` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "Event.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `endTime` field in the `Event` table.
+  """
+  endTime_min: Timestamp @fdc_generated(from: "Event.endTime", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `maxAttendees` field in the `Event` table.
+  """
+  maxAttendees_min: Int @fdc_generated(from: "Event.maxAttendees", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `startTime` field in the `Event` table.
+  """
+  startTime_min: Timestamp @fdc_generated(from: "Event.startTime", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `updatedAt` field in the `Event` table.
+  """
+  updatedAt_min: Timestamp @fdc_generated(from: "Event.updatedAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `Event` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "Event.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `endTime` field in the `Event` table.
+  """
+  endTime_max: Timestamp @fdc_generated(from: "Event.endTime", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `maxAttendees` field in the `Event` table.
+  """
+  maxAttendees_max: Int @fdc_generated(from: "Event.maxAttendees", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `startTime` field in the `Event` table.
+  """
+  startTime_max: Timestamp @fdc_generated(from: "Event.startTime", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `updatedAt` field in the `Event` table.
+  """
+  updatedAt_max: Timestamp @fdc_generated(from: "Event.updatedAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Event.id", purpose: ENTITY_ID)
+}
+extend type EventCheckIn {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "EventCheckIn", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `EventCheckIn` table.
+  """
+  _count: Int! @fdc_generated(from: "EventCheckIn.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventCheckIn` table where the `checkInTime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  checkInTime_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventCheckIn.checkInTime", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventCheckIn` table where the `eventId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  eventId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventCheckIn.eventId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventCheckIn` table where the `studentId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  studentId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventCheckIn.studentId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `checkInTime` field in the `EventCheckIn` table.
+  """
+  checkInTime_min: Timestamp @fdc_generated(from: "EventCheckIn.checkInTime", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `checkInTime` field in the `EventCheckIn` table.
+  """
+  checkInTime_max: Timestamp @fdc_generated(from: "EventCheckIn.checkInTime", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "EventCheckIn.eventId,studentId", purpose: ENTITY_ID)
+}
+extend type FloorPlan {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "FloorPlan", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table.
+  """
+  _count: Int! @fdc_generated(from: "FloorPlan.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `isDeployed` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  isDeployed_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.isDeployed", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `markers` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  markers_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.markers", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `shelves` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  shelves_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.shelves", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `updatedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  updatedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.updatedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlan` table where the `walls` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  walls_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlan.walls", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `FloorPlan` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "FloorPlan.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `markers` field in the `FloorPlan` table.
+  """
+  markers_min: Any @fdc_generated(from: "FloorPlan.markers", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `shelves` field in the `FloorPlan` table.
+  """
+  shelves_min: Any @fdc_generated(from: "FloorPlan.shelves", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `updatedAt` field in the `FloorPlan` table.
+  """
+  updatedAt_min: Timestamp @fdc_generated(from: "FloorPlan.updatedAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `walls` field in the `FloorPlan` table.
+  """
+  walls_min: Any @fdc_generated(from: "FloorPlan.walls", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `FloorPlan` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "FloorPlan.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `markers` field in the `FloorPlan` table.
+  """
+  markers_max: Any @fdc_generated(from: "FloorPlan.markers", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `shelves` field in the `FloorPlan` table.
+  """
+  shelves_max: Any @fdc_generated(from: "FloorPlan.shelves", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `updatedAt` field in the `FloorPlan` table.
+  """
+  updatedAt_max: Timestamp @fdc_generated(from: "FloorPlan.updatedAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `walls` field in the `FloorPlan` table.
+  """
+  walls_max: Any @fdc_generated(from: "FloorPlan.walls", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "FloorPlan.id", purpose: ENTITY_ID)
+}
+extend type FloorPlanShelf {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "FloorPlanShelf", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table.
+  """
+  _count: Int! @fdc_generated(from: "FloorPlanShelf.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `category` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  category_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.category", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `limitPerStudent` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  limitPerStudent_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.limitPerStudent", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `mapH` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  mapH_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.mapH", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `mapW` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  mapW_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.mapW", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `mapX` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  mapX_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.mapX", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `mapY` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  mapY_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.mapY", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `orientation` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  orientation_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.orientation", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `FloorPlanShelf` table where the `rotation` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  rotation_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FloorPlanShelf.rotation", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `limitPerStudent` field in the `FloorPlanShelf` table.
+  """
+  limitPerStudent_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "FloorPlanShelf.limitPerStudent", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `mapH` field in the `FloorPlanShelf` table.
+  """
+  mapH_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapH", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `mapW` field in the `FloorPlanShelf` table.
+  """
+  mapW_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapW", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `mapX` field in the `FloorPlanShelf` table.
+  """
+  mapX_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapX", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `mapY` field in the `FloorPlanShelf` table.
+  """
+  mapY_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapY", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `rotation` field in the `FloorPlanShelf` table.
+  """
+  rotation_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "FloorPlanShelf.rotation", purpose: QUERY_SUM)
+  """
+  ✨ Average the `limitPerStudent` field in the `FloorPlanShelf` table.
+  """
+  limitPerStudent_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.limitPerStudent", purpose: QUERY_AVG)
+  """
+  ✨ Average the `mapH` field in the `FloorPlanShelf` table.
+  """
+  mapH_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapH", purpose: QUERY_AVG)
+  """
+  ✨ Average the `mapW` field in the `FloorPlanShelf` table.
+  """
+  mapW_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapW", purpose: QUERY_AVG)
+  """
+  ✨ Average the `mapX` field in the `FloorPlanShelf` table.
+  """
+  mapX_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapX", purpose: QUERY_AVG)
+  """
+  ✨ Average the `mapY` field in the `FloorPlanShelf` table.
+  """
+  mapY_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.mapY", purpose: QUERY_AVG)
+  """
+  ✨ Average the `rotation` field in the `FloorPlanShelf` table.
+  """
+  rotation_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "FloorPlanShelf.rotation", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `createdAt` field in the `FloorPlanShelf` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "FloorPlanShelf.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `limitPerStudent` field in the `FloorPlanShelf` table.
+  """
+  limitPerStudent_min: Int @fdc_generated(from: "FloorPlanShelf.limitPerStudent", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `mapH` field in the `FloorPlanShelf` table.
+  """
+  mapH_min: Float @fdc_generated(from: "FloorPlanShelf.mapH", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `mapW` field in the `FloorPlanShelf` table.
+  """
+  mapW_min: Float @fdc_generated(from: "FloorPlanShelf.mapW", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `mapX` field in the `FloorPlanShelf` table.
+  """
+  mapX_min: Float @fdc_generated(from: "FloorPlanShelf.mapX", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `mapY` field in the `FloorPlanShelf` table.
+  """
+  mapY_min: Float @fdc_generated(from: "FloorPlanShelf.mapY", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `rotation` field in the `FloorPlanShelf` table.
+  """
+  rotation_min: Int @fdc_generated(from: "FloorPlanShelf.rotation", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `FloorPlanShelf` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "FloorPlanShelf.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `limitPerStudent` field in the `FloorPlanShelf` table.
+  """
+  limitPerStudent_max: Int @fdc_generated(from: "FloorPlanShelf.limitPerStudent", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `mapH` field in the `FloorPlanShelf` table.
+  """
+  mapH_max: Float @fdc_generated(from: "FloorPlanShelf.mapH", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `mapW` field in the `FloorPlanShelf` table.
+  """
+  mapW_max: Float @fdc_generated(from: "FloorPlanShelf.mapW", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `mapX` field in the `FloorPlanShelf` table.
+  """
+  mapX_max: Float @fdc_generated(from: "FloorPlanShelf.mapX", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `mapY` field in the `FloorPlanShelf` table.
+  """
+  mapY_max: Float @fdc_generated(from: "FloorPlanShelf.mapY", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `rotation` field in the `FloorPlanShelf` table.
+  """
+  rotation_max: Int @fdc_generated(from: "FloorPlanShelf.rotation", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "FloorPlanShelf.id", purpose: ENTITY_ID)
+}
+extend type HubInfo {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "HubInfo", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `HubInfo` table.
+  """
+  _count: Int! @fdc_generated(from: "HubInfo.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `HubInfo` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `HubInfo` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `HubInfo` table where the `hoursOfOperation` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  hoursOfOperation_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo.hoursOfOperation", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `HubInfo` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `HubInfo` table where the `location` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  location_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo.location", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `HubInfo` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `HubInfo` table where the `updatedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  updatedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "HubInfo.updatedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `HubInfo` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "HubInfo.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `updatedAt` field in the `HubInfo` table.
+  """
+  updatedAt_min: Timestamp @fdc_generated(from: "HubInfo.updatedAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `HubInfo` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "HubInfo.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `updatedAt` field in the `HubInfo` table.
+  """
+  updatedAt_max: Timestamp @fdc_generated(from: "HubInfo.updatedAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "HubInfo.id", purpose: ENTITY_ID)
+}
+extend type InventoryItem {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "InventoryItem", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table.
+  """
+  _count: Int! @fdc_generated(from: "InventoryItem.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `brand` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  brand_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.brand", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `category` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  category_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.category", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `photoUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  photoUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.photoUrl", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `quantity` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  quantity_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.quantity", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `shelfId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  shelfId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.shelfId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `size` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  size_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.size", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `InventoryItem` table where the `updatedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  updatedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem.updatedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `quantity` field in the `InventoryItem` table.
+  """
+  quantity_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "InventoryItem.quantity", purpose: QUERY_SUM)
+  """
+  ✨ Average the `quantity` field in the `InventoryItem` table.
+  """
+  quantity_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "InventoryItem.quantity", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `createdAt` field in the `InventoryItem` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "InventoryItem.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `quantity` field in the `InventoryItem` table.
+  """
+  quantity_min: Int @fdc_generated(from: "InventoryItem.quantity", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `updatedAt` field in the `InventoryItem` table.
+  """
+  updatedAt_min: Timestamp @fdc_generated(from: "InventoryItem.updatedAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `InventoryItem` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "InventoryItem.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `quantity` field in the `InventoryItem` table.
+  """
+  quantity_max: Int @fdc_generated(from: "InventoryItem.quantity", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `updatedAt` field in the `InventoryItem` table.
+  """
+  updatedAt_max: Timestamp @fdc_generated(from: "InventoryItem.updatedAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "InventoryItem.id", purpose: ENTITY_ID)
+}
+extend type Shelf {
+  """
+  ✨ List `InventoryItem` objects in a one-to-many relationship (where `InventoryItem`.`shelf` is this object).
+  """
+  inventoryItems_on_shelf(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: InventoryItem_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [InventoryItem_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: InventoryItem_Having
+  ): [InventoryItem!]! @fdc_generated(from: "InventoryItem.shelf", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `ShelfPhoto` objects in a one-to-many relationship (where `ShelfPhoto`.`shelf` is this object).
+  """
+  shelfPhotos_on_shelf(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ShelfPhoto_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ShelfPhoto_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ShelfPhoto_Having
+  ): [ShelfPhoto!]! @fdc_generated(from: "ShelfPhoto.shelf", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Shelf", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Shelf` table.
+  """
+  _count: Int! @fdc_generated(from: "Shelf.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Shelf` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Shelf.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Shelf` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Shelf.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Shelf` table where the `locationDescription` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  locationDescription_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Shelf.locationDescription", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Shelf` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Shelf.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Shelf` table where the `updatedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  updatedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Shelf.updatedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `Shelf` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "Shelf.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `updatedAt` field in the `Shelf` table.
+  """
+  updatedAt_min: Timestamp @fdc_generated(from: "Shelf.updatedAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `Shelf` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "Shelf.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `updatedAt` field in the `Shelf` table.
+  """
+  updatedAt_max: Timestamp @fdc_generated(from: "Shelf.updatedAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Shelf.id", purpose: ENTITY_ID)
+}
+extend type ShelfPhoto {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "ShelfPhoto", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table.
+  """
+  _count: Int! @fdc_generated(from: "ShelfPhoto.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table where the `aiParsedOutput` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  aiParsedOutput_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto.aiParsedOutput", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table where the `photoUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  photoUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto.photoUrl", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table where the `shelfId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  shelfId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto.shelfId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table where the `timestamp` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  timestamp_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto.timestamp", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ShelfPhoto` table where the `uploadedById` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  uploadedById_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ShelfPhoto.uploadedById", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `ShelfPhoto` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "ShelfPhoto.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `timestamp` field in the `ShelfPhoto` table.
+  """
+  timestamp_min: Timestamp @fdc_generated(from: "ShelfPhoto.timestamp", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `ShelfPhoto` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "ShelfPhoto.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `timestamp` field in the `ShelfPhoto` table.
+  """
+  timestamp_max: Timestamp @fdc_generated(from: "ShelfPhoto.timestamp", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "ShelfPhoto.id", purpose: ENTITY_ID)
+}
+extend type User {
+  """
+  ✨ List `Event` objects in a one-to-many relationship (where `Event`.`createdBy` is this object).
+  """
+  events_on_createdBy(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Event_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Event_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Event_Having
+  ): [Event!]! @fdc_generated(from: "Event.createdBy", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `EventCheckIn` objects in a one-to-many relationship (where `EventCheckIn`.`student` is this object).
+  """
+  eventCheckIns_on_student(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: EventCheckIn_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [EventCheckIn_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: EventCheckIn_Having
+  ): [EventCheckIn!]! @fdc_generated(from: "EventCheckIn.student", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `ShelfPhoto` objects in a one-to-many relationship (where `ShelfPhoto`.`uploadedBy` is this object).
+  """
+  shelfPhotos_on_uploadedBy(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ShelfPhoto_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ShelfPhoto_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ShelfPhoto_Having
+  ): [ShelfPhoto!]! @fdc_generated(from: "ShelfPhoto.uploadedBy", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Event` objects using `EventCheckIn` as the join table (a `EventCheckIn` object exists where its `student` is this and its `event` is that).
+  """
+  events_via_EventCheckIn(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: EventCheckIn_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [EventCheckIn_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: EventCheckIn_Having
+  ): [Event!]! @fdc_generated(from: "EventCheckIn", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "User", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `User` table.
+  """
+  _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `firebaseUid` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  firebaseUid_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.firebaseUid", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `photoUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  photoUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.photoUrl", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `role` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  role_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.role", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `studentId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  studentId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.studentId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  username_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.username", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `User` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "User.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `User` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "User.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "User.id", purpose: ENTITY_ID)
+}

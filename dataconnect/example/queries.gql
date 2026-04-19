@@ -1,0 +1,42 @@
+query GetAllFloorPlansMeta @auth(level: PUBLIC) {
+  floorPlans {
+    id
+    name
+    isDeployed
+    updatedAt
+  }
+}
+
+query GetFloorPlanById($id: UUID!) @auth(level: PUBLIC) {
+  floorPlan(id: $id) {
+    id
+    name
+    isDeployed
+    shelves
+    walls
+    markers
+    updatedAt
+  }
+}
+
+query GetDeployedFloorPlan @auth(level: PUBLIC) {
+  floorPlans(where: { isDeployed: { eq: true } }) {
+    id
+    name
+    shelves
+    walls
+    markers
+  }
+}
+
+query GetAllFloorPlans @auth(level: PUBLIC) {
+  floorPlans {
+    id
+    name
+    isDeployed
+    shelves
+    walls
+    markers
+    updatedAt
+  }
+}

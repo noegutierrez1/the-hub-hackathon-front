@@ -1,0 +1,42 @@
+mutation InsertNamedFloorPlan(
+  $name: String!
+  $shelves: Any
+  $walls: Any
+  $markers: Any
+) @auth(level: PUBLIC) {
+  floorPlan_insert(data: {
+    name: $name
+    shelves: $shelves
+    walls: $walls
+    markers: $markers
+    isDeployed: false
+  })
+}
+
+mutation UpdateFloorPlanData(
+  $id: UUID!
+  $shelves: Any
+  $walls: Any
+  $markers: Any
+) @auth(level: PUBLIC) {
+  floorPlan_update(id: $id, data: {
+    shelves: $shelves
+    walls: $walls
+    markers: $markers
+  })
+}
+
+mutation SetFloorPlanDeployed(
+  $id: UUID!
+  $isDeployed: Boolean!
+) @auth(level: PUBLIC) {
+  floorPlan_update(id: $id, data: { isDeployed: $isDeployed })
+}
+
+mutation DeleteFloorPlanById($id: UUID!) @auth(level: PUBLIC) {
+  floorPlan_delete(id: $id)
+}
+
+mutation DeleteAllFloorPlans @auth(level: PUBLIC) {
+  floorPlan_deleteMany(all: true)
+}

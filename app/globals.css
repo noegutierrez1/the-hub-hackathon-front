@@ -24,3 +24,29 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
 }
+
+.theme-floorplan-admin {
+  --fp-page-bg: #0f1825;
+  --fp-surface-primary: linear-gradient(180deg, #162741 0%, #121f33 100%);
+  --fp-surface-secondary: linear-gradient(180deg, #0f1928 0%, #0c1520 100%);
+  --fp-surface-accent: linear-gradient(180deg, #243d60 0%, #1d3250 100%);
+  --fp-surface-soft: linear-gradient(180deg, rgba(98, 140, 187, 0.46) 0%, rgba(62, 94, 134, 0.54) 100%);
+  --fp-panel-border: #3d5a8a;
+  --fp-panel-glow-1: rgba(107, 160, 210, 0.55);
+  --fp-panel-glow-2: rgba(107, 160, 210, 0.65);
+  --fp-panel-glow-3: rgba(153, 210, 255, 0.60);
+  --fp-panel-drop-1: rgba(80, 140, 210, 0.80);
+  --fp-panel-drop-2: rgba(80, 140, 210, 0.60);
+  --fp-panel-drop-3: rgba(130, 190, 255, 0.50);
+  --fp-text-primary: #e5e7eb;
+  --fp-text-secondary: #c8d8eb;
+  --fp-text-muted: #8ba8c8;
+  --fp-text-subtle: #7a96b0;
+  --fp-input-bg: #18273d;
+  --fp-input-border: #31456b;
+  --fp-input-shadow: 0 0 0 3px rgba(49, 69, 107, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --fp-button-primary: #31456b;
+  --fp-button-accent: #6b92b6;
+  --fp-success: #689466;
+  --fp-danger: #dc2626;
+}
