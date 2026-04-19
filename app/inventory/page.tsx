@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { BarcodeFormat, DecodeHintType, NotFoundException } from "@zxing/library";
@@ -2231,7 +2232,7 @@ function ManualShelfPicker({
               margin: "0 0 4px",
             }}
           >
-            Shelf assignment
+            Assign shelves
           </p>
           <h2
             style={{
@@ -2241,7 +2242,7 @@ function ManualShelfPicker({
               margin: "0 0 4px",
             }}
           >
-            Pick a shelf for each image without a QR
+            Tell us where these photos were taken
           </h2>
           <p
             style={{
@@ -2250,10 +2251,9 @@ function ManualShelfPicker({
               margin: 0,
             }}
           >
-            {picks.length} image{picks.length === 1 ? "" : "s"} need
-            {picks.length === 1 ? "s" : ""} a shelf. Click an image to make it
-            active, then click the shelf on the floor plan where that photo was
-            taken.
+            {picks.length === 1
+              ? "We couldn't read the shelf QR in this photo. Pick the matching shelf on the floor plan."
+              : `We couldn't read the shelf QR in ${picks.length} photos. Select each photo, then click the matching shelf on the floor plan.`}
           </p>
         </div>
 
@@ -2351,7 +2351,7 @@ function ManualShelfPicker({
                       {pick.skipped
                         ? "Skipped"
                         : chosenShelf && categoryLabel
-                          ? `${categoryLabel} · ${chosenShelf.shelfUid.slice(0, 8)}`
+                          ? categoryLabel
                           : "No shelf selected"}
                     </p>
                   </div>
@@ -2385,7 +2385,7 @@ function ManualShelfPicker({
                     margin: "0 0 2px",
                   }}
                 >
-                  Active image
+                  Selected photo
                 </p>
                 <p
                   style={{
@@ -2410,7 +2410,7 @@ function ManualShelfPicker({
                     color: active.skipped ? "#f87171" : "var(--fp-text-secondary)",
                   }}
                 >
-                  {active.skipped ? "Unskip this image" : "Skip this image"}
+                  {active.skipped ? "Include this photo" : "Skip this photo"}
                 </button>
               ) : null}
             </div>
@@ -2463,7 +2463,7 @@ function ManualShelfPicker({
           }}
         >
           <button type="button" onClick={onCancel} style={buttonBase}>
-            Cancel upload
+            Cancel
           </button>
           <button
             type="button"
@@ -2478,7 +2478,7 @@ function ManualShelfPicker({
               opacity: allResolved ? 1 : 0.5,
             }}
           >
-            Save with selected shelves
+            Save inventory
           </button>
         </div>
       </div>
@@ -2487,11 +2487,11 @@ function ManualShelfPicker({
 }
 
 export default function InventoryPage() {
+  const router = useRouter();
   const [selectedImages, setSelectedImages] = useState<SelectedUploadImage[]>([]);
   const [statusMessage, setStatusMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [batchNotes, setBatchNotes] = useState<string[]>([]);
   const [deployedPlan, setDeployedPlan] = useState<DeployedFloorPlan | null>(null);
   const [pendingUpload, setPendingUpload] = useState<PendingUploadState | null>(null);
   const [activePickIndex, setActivePickIndex] = useState(0);
@@ -2541,9 +2541,7 @@ export default function InventoryPage() {
       (file) => file.size > MAX_UPLOAD_BYTES
     ).length;
     if (oversizedCount > 0) {
-      setStatusMessage(
-        `Compressing ${oversizedCount} image${oversizedCount === 1 ? "" : "s"} to under 1 MB…`
-      );
+      setStatusMessage("Preparing photos…");
     } else {
       setStatusMessage("");
     }
@@ -2559,14 +2557,7 @@ export default function InventoryPage() {
     );
 
     if (oversizedCount > 0) {
-      const stillLarge = processed.filter(
-        (file) => file.size > MAX_UPLOAD_BYTES
-      ).length;
-      setStatusMessage(
-        stillLarge > 0
-          ? `Compressed ${oversizedCount - stillLarge}/${oversizedCount} image${oversizedCount === 1 ? "" : "s"} under 1 MB. ${stillLarge} could not be reduced further.`
-          : `Compressed ${oversizedCount} image${oversizedCount === 1 ? "" : "s"} to under 1 MB.`
-      );
+      setStatusMessage("");
     }
 
     setSelectedImages((previous) => {
@@ -2610,7 +2601,6 @@ export default function InventoryPage() {
     });
     setStatusMessage("");
     setErrorMessage("");
-    setBatchNotes([]);
   };
 
   // Phase 2: analyze every image we have a shelf target for, then DELETE +
@@ -2641,7 +2631,7 @@ export default function InventoryPage() {
 
       try {
         setStatusMessage(
-          `Analyzing ${processedCount}/${imagesSnapshot.length}: ${selected.file.name} → ${resolvedShelfName} (uncertain items will be re-verified with a tighter crop)`
+          `Identifying products… (${processedCount} of ${imagesSnapshot.length})`
         );
 
         setSelectedImages((previous) =>
@@ -2679,12 +2669,8 @@ export default function InventoryPage() {
               : image
           )
         );
-      } catch (imageError) {
+      } catch {
         failedCount += 1;
-        const message =
-          imageError instanceof Error
-            ? imageError.message
-            : "Unexpected error while processing this image.";
 
         setSelectedImages((previous) =>
           previous.map((image) =>
@@ -2692,7 +2678,7 @@ export default function InventoryPage() {
               ? {
                   ...image,
                   status: "error",
-                  errorMessage: message,
+                  errorMessage: "We couldn't read this photo.",
                   detectedCount: 0,
                 }
               : image
@@ -2707,59 +2693,37 @@ export default function InventoryPage() {
 
     if (!batches.length) {
       setErrorMessage(
-        "No inventory items were saved. Ensure each image has a readable shelf QR and visible products."
+        "No items were saved. Make sure each photo shows a shelf QR code and visible products, then try again."
       );
-      setBatchNotes(notes);
-      return;
+      return { savedCount: 0, failedCount };
     }
 
     for (const batch of batches) {
-      const { merged, mergedGroupCount, mergedExtraRowCount } = mergeDuplicateRows(
-        batch.rows
-      );
-
-      if (mergedGroupCount > 0) {
-        notes.push(
-          `${batch.shelfName}: merged ${mergedExtraRowCount} duplicate detection${mergedExtraRowCount === 1 ? "" : "s"} into ${mergedGroupCount} consolidated product${mergedGroupCount === 1 ? "" : "s"}.`
-        );
-      }
-
+      const { merged } = mergeDuplicateRows(batch.rows);
       batch.rows = merged;
     }
 
-    let clearedCount = 0;
     let inventoryCleared = false;
-    setStatusMessage("Clearing existing inventory before replacement...");
+    setStatusMessage("Updating inventory…");
     const deleteResponse = await fetch(
       "/api/dataconnect/inventory-items?scope=all",
       { method: "DELETE" }
     );
-    const { json: deleteJson, text: deleteText } = await readApiPayload(deleteResponse);
-    const deletePayload = (deleteJson || {}) as {
-      deletedCount?: number;
-      error?: string;
-    };
+    // Drain the body so the connection releases; we only care about status.
+    await readApiPayload(deleteResponse);
     if (!deleteResponse.ok) {
-      const detail = deleteText.trim().startsWith("<!DOCTYPE")
-        ? "Received HTML instead of JSON while clearing inventory."
-        : deleteText.slice(0, 160);
       throw new Error(
-        deletePayload.error ||
-          `Clear existing inventory failed (${deleteResponse.status}). ${detail}`
+        "We couldn't update the inventory. Please try again."
       );
     }
-    clearedCount = Number(deletePayload.deletedCount ?? 0);
     inventoryCleared = true;
 
-    let requestedCount = 0;
-    let withLocationCount = 0;
     let savedCount = 0;
-    const persistenceModes = new Set<string>();
 
     for (let index = 0; index < batches.length; index += 1) {
       const batch = batches[index];
       setStatusMessage(
-        `Saving shelf ${index + 1}/${batches.length}: ${batch.shelfName} (${batch.rows.length} rows)`
+        `Saving items… (${index + 1} of ${batches.length} shelves)`
       );
 
       const saveResponse = await fetch("/api/dataconnect/inventory-items", {
@@ -2772,58 +2736,33 @@ export default function InventoryPage() {
         }),
       });
 
-      const { json: saveJson, text: saveText } = await readApiPayload(saveResponse);
+      const { json: saveJson } = await readApiPayload(saveResponse);
       const savePayload = (saveJson || {}) as SaveInventoryResponse;
 
       if (!saveResponse.ok) {
-        const detail = saveText.trim().startsWith("<!DOCTYPE")
-          ? "Received HTML instead of JSON while saving inventory."
-          : saveText.slice(0, 160);
-        const baseMessage =
-          savePayload.error || `Save failed (${saveResponse.status}). ${detail}`;
-        const doneBatches = index;
         throw new Error(
           inventoryCleared
-            ? `Inventory was already cleared (${clearedCount} items removed) and ${doneBatches}/${batches.length} shelves saved before this failure. Retry the upload to finish replacing inventory. Cause: ${baseMessage}`
-            : baseMessage
+            ? "Inventory was only partially saved. Please re-upload to finish."
+            : "We couldn't save the inventory. Please try again."
         );
       }
 
-      const batchRequested =
-        savePayload.metadata?.requestedCount ?? batch.rows.length;
-      const batchWithLocation =
-        savePayload.metadata?.withLocationCount ??
-        batch.rows.filter(
-          (row) =>
-            row.locationCenterX !== null &&
-            row.locationCenterX !== undefined &&
-            row.locationCenterY !== null &&
-            row.locationCenterY !== undefined &&
-            row.locationRadius !== null &&
-            row.locationRadius !== undefined
-        ).length;
       const batchSavedCount = Number(savePayload.savedCount ?? batch.rows.length);
-
-      requestedCount += batchRequested;
-      withLocationCount += batchWithLocation;
       savedCount += batchSavedCount;
-
-      if (savePayload.metadata?.persistenceMode) {
-        persistenceModes.add(savePayload.metadata.persistenceMode);
-      }
     }
 
-    const persistenceMode =
-      persistenceModes.size > 0
-        ? Array.from(persistenceModes).join(", ")
-        : "unknown";
+    const itemLabel = savedCount === 1 ? "item" : "items";
+    const shelfLabel = batches.length === 1 ? "shelf" : "shelves";
+    const summary =
+      failedCount > 0
+        ? `Saved ${savedCount} ${itemLabel} across ${batches.length} ${shelfLabel}. ${failedCount} photo${failedCount === 1 ? "" : "s"} couldn't be processed.`
+        : `Saved ${savedCount} ${itemLabel} across ${batches.length} ${shelfLabel}.`;
+    setStatusMessage(summary);
+    // notes were accumulated for debugging but we no longer surface them to the
+    // end user — the per-image cards communicate per-photo state clearly.
+    void notes;
 
-    const replacementSummary = `Cleared ${clearedCount} previous item${clearedCount === 1 ? "" : "s"} then added ${savedCount}`;
-
-    setStatusMessage(
-      `${replacementSummary} item row${savedCount === 1 ? "" : "s"} across ${batches.length} shelf group${batches.length === 1 ? "" : "s"} from ${imagesSnapshot.length} image${imagesSnapshot.length === 1 ? "" : "s"}. Failed images: ${failedCount}. Metadata on ${withLocationCount}/${requestedCount} rows. Persistence mode: ${persistenceMode}.`
-    );
-    setBatchNotes(notes);
+    return { savedCount, failedCount };
   };
 
   // Phase 1: scan every image for a shelf QR. Auto-matched images get their
@@ -2833,10 +2772,9 @@ export default function InventoryPage() {
     event.preventDefault();
     setErrorMessage("");
     setStatusMessage("");
-    setBatchNotes([]);
 
     if (!selectedImages.length) {
-      setErrorMessage("Upload one or more images first.");
+      setErrorMessage("Add one or more shelf photos first.");
       return;
     }
 
@@ -2871,7 +2809,7 @@ export default function InventoryPage() {
         const selected = imagesSnapshot[i];
 
         setStatusMessage(
-          `Scanning shelf QR ${i + 1}/${imagesSnapshot.length}: ${selected.file.name} (native decoder, AI locator fallback)`
+          `Scanning shelves… (${i + 1} of ${imagesSnapshot.length})`
         );
         setSelectedImages((previous) =>
           previous.map((image) =>
@@ -2932,7 +2870,7 @@ export default function InventoryPage() {
                 ? {
                     ...image,
                     status: "pending",
-                    errorMessage: "Shelf QR not detected — awaiting manual pick.",
+                    errorMessage: "Shelf QR not detected",
                   }
                 : image
             )
@@ -2942,8 +2880,9 @@ export default function InventoryPage() {
 
       // Nothing to pick manually → run Phase 2 immediately.
       if (!manualPicks.length) {
+        let saveResult: { savedCount: number; failedCount: number } | undefined;
         try {
-          await runAnalyzeAndSave({
+          saveResult = await runAnalyzeAndSave({
             imagesSnapshot,
             targetsById: autoTargets,
             initialNotes: notes,
@@ -2951,6 +2890,9 @@ export default function InventoryPage() {
           });
         } finally {
           setIsSubmitting(false);
+        }
+        if (saveResult && saveResult.savedCount > 0) {
+          router.push("/student/inventory");
         }
         return;
       }
@@ -2960,8 +2902,7 @@ export default function InventoryPage() {
       if (!deployedPlan || deployedPlan.shelves.length === 0) {
         for (const pick of manualPicks) {
           failedCount += 1;
-          const message =
-            "No shelf QR detected and no deployed floor plan is available for manual assignment.";
+          const message = "Shelf QR not detected";
           notes.push(`${pick.fileName}: ${message}`);
           setSelectedImages((previous) =>
             previous.map((image) =>
@@ -2977,9 +2918,10 @@ export default function InventoryPage() {
           );
         }
 
+        let saveResult: { savedCount: number; failedCount: number } | undefined;
         try {
           if (Object.keys(autoTargets).length) {
-            await runAnalyzeAndSave({
+            saveResult = await runAnalyzeAndSave({
               imagesSnapshot,
               targetsById: autoTargets,
               initialNotes: notes,
@@ -2987,12 +2929,14 @@ export default function InventoryPage() {
             });
           } else {
             setErrorMessage(
-              "No inventory items were saved. No shelf QR was detected and no deployed floor plan is available for manual assignment."
+              "We couldn't find a shelf QR in any photo. Make sure each photo clearly shows the shelf's QR code and try again."
             );
-            setBatchNotes(notes);
           }
         } finally {
           setIsSubmitting(false);
+        }
+        if (saveResult && saveResult.savedCount > 0) {
+          router.push("/student/inventory");
         }
         return;
       }
@@ -3000,7 +2944,9 @@ export default function InventoryPage() {
       // Open the manual shelf picker and let the admin resolve each pending
       // image; Phase 2 runs when they click "Save with selected shelves".
       setStatusMessage(
-        `${manualPicks.length} image${manualPicks.length === 1 ? "" : "s"} need${manualPicks.length === 1 ? "s" : ""} a shelf assignment from the floor plan.`
+        manualPicks.length === 1
+          ? "1 photo needs a shelf — pick it on the floor plan below."
+          : `${manualPicks.length} photos need a shelf — pick them on the floor plan below.`
       );
       setPendingUpload({
         imagesSnapshot,
@@ -3011,12 +2957,8 @@ export default function InventoryPage() {
       });
       setActivePickIndex(0);
       setIsSubmitting(false);
-    } catch (submitError) {
-      setErrorMessage(
-        submitError instanceof Error
-          ? submitError.message
-          : "Unexpected error while scanning images."
-      );
+    } catch {
+      setErrorMessage("Something went wrong while scanning your photos. Please try again.");
       setIsSubmitting(false);
     }
   };
@@ -3041,7 +2983,7 @@ export default function InventoryPage() {
     for (const pick of pendingUpload.manualPicks) {
       if (pick.skipped) {
         failedCount += 1;
-        const message = "Image skipped — no shelf assigned.";
+        const message = "Skipped";
         notes.push(`${pick.fileName}: ${message}`);
         setSelectedImages((previous) =>
           previous.map((image) =>
@@ -3060,7 +3002,7 @@ export default function InventoryPage() {
 
       if (!pick.chosenShelfUid || !planId) {
         failedCount += 1;
-        const message = "No shelf selected for this image.";
+        const message = "No shelf selected";
         notes.push(`${pick.fileName}: ${message}`);
         setSelectedImages((previous) =>
           previous.map((image) =>
@@ -3080,7 +3022,7 @@ export default function InventoryPage() {
       const shelf = shelvesByUid.get(pick.chosenShelfUid);
       if (!shelf) {
         failedCount += 1;
-        const message = "Selected shelf is no longer on the deployed floor plan.";
+        const message = "Selected shelf no longer exists";
         notes.push(`${pick.fileName}: ${message}`);
         setSelectedImages((previous) =>
           previous.map((image) =>
@@ -3100,7 +3042,7 @@ export default function InventoryPage() {
       const target = shelfOptionToQrTarget(shelf, planId);
       targetsById[pick.imageId] = target;
       notes.push(
-        `${pick.fileName}: manually assigned to shelf ${target.shelfUid} (plan ${target.planId}).`
+        `${pick.fileName}: manually assigned to shelf ${target.shelfUid}.`
       );
     }
 
@@ -3108,8 +3050,9 @@ export default function InventoryPage() {
     setActivePickIndex(0);
     setIsSubmitting(true);
 
+    let saveResult: { savedCount: number; failedCount: number } | undefined;
     try {
-      await runAnalyzeAndSave({
+      saveResult = await runAnalyzeAndSave({
         imagesSnapshot: pendingUpload.imagesSnapshot,
         targetsById,
         initialNotes: notes,
@@ -3119,10 +3062,14 @@ export default function InventoryPage() {
       setErrorMessage(
         submitError instanceof Error
           ? submitError.message
-          : "Unexpected error while adding inventory."
+          : "Something went wrong while saving. Please try again."
       );
     } finally {
       setIsSubmitting(false);
+    }
+
+    if (saveResult && saveResult.savedCount > 0) {
+      router.push("/student/inventory");
     }
   };
 
@@ -3187,8 +3134,8 @@ export default function InventoryPage() {
         <HexPanel contentStyle={{ padding: "20px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--fp-text-muted)", margin: "0 0 4px" }}>Admin · Inventory</p>
-            <h1 style={{ color: "var(--fp-text-primary)", fontSize: "clamp(22px, 5vw, 30px)", fontWeight: 800, margin: "0 0 4px" }}>AI Shelf Inventory Uploader</h1>
-            <p style={{ color: "var(--fp-text-secondary)", fontSize: 14, margin: 0 }}>Upload images and add detected items to inventory.</p>
+            <h1 style={{ color: "var(--fp-text-primary)", fontSize: "clamp(22px, 5vw, 30px)", fontWeight: 800, margin: "0 0 4px" }}>Shelf Inventory Upload</h1>
+            <p style={{ color: "var(--fp-text-secondary)", fontSize: 14, margin: 0 }}>Upload shelf photos and we&apos;ll refresh the inventory automatically.</p>
           </div>
           <nav style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Link href="/admin" style={navLink}>Admin Home</Link>
@@ -3213,7 +3160,7 @@ export default function InventoryPage() {
           {isSubmitting ? (
             <HexPanel contentStyle={{ padding: "8px 0" }}>
               <LoadingAnimation
-                message="Analyzing shelf photos and updating inventory..."
+                message="Working on it…"
                 className="py-4"
                 iconClassName="h-24 w-24"
                 messageClassName="mt-2 text-sm font-medium"
@@ -3238,17 +3185,17 @@ export default function InventoryPage() {
             <HexPanel contentStyle={{ padding: "20px 24px" }}>
               <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <p style={{ border: "1px solid rgba(220,50,50,0.4)", background: "rgba(180,30,30,0.10)", color: "#fca5a5", borderRadius: 10, padding: "10px 12px", fontSize: 13, margin: 0, fontWeight: 600 }}>
-                  Upload is always replace-only. All current inventory will be deleted before new items are saved.
+                  Uploading replaces the entire inventory. The current list will be cleared before new items are saved.
                 </p>
 
                 <p style={{ border: "1px solid var(--fp-panel-border)", background: "var(--fp-surface-secondary)", color: "var(--fp-text-secondary)", borderRadius: 10, padding: "10px 12px", fontSize: 13, margin: 0 }}>
-                  We try to decode a shelf QR in every image. If that fails you&apos;ll be asked to click the matching shelf on the floor plan before saving.
+                  Each photo should show the shelf&apos;s QR code. If we can&apos;t read one, we&apos;ll ask you to pick the shelf on the floor plan.
                 </p>
 
                 <div style={{ background: "var(--fp-surface-secondary)", border: "1px solid var(--fp-panel-border)", borderRadius: 12, padding: 16 }}>
                   <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                     <p style={{ color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 700, margin: 0 }}>
-                      Images ({selectedImages.length})
+                      Photos ({selectedImages.length})
                     </p>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button
@@ -3256,7 +3203,7 @@ export default function InventoryPage() {
                         onClick={onOpenFilePicker}
                         style={{ background: "var(--fp-button-accent)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 13, padding: "7px 16px", cursor: "pointer" }}
                       >
-                        Upload images
+                        Add photos
                       </button>
                       <button
                         type="button"
@@ -3298,17 +3245,14 @@ export default function InventoryPage() {
                             <p style={{ color: "var(--fp-text-primary)", fontWeight: 600, fontSize: 13, margin: "0 0 2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                               {index + 1}. {selected.file.name}
                             </p>
-                            <p style={{ color: "var(--fp-text-muted)", fontSize: 12, margin: "0 0 2px" }}>
-                              {(selected.file.size / 1024 / 1024).toFixed(2)} MB
-                            </p>
                             <p style={{ fontSize: 12, margin: 0, color: selected.status === "error" ? "#f87171" : selected.status === "done" ? "#6ee7b7" : "var(--fp-text-muted)" }}>
-                              {selected.status === "pending" ? "Waiting" : null}
-                              {selected.status === "processing" ? "Processing..." : null}
+                              {selected.status === "pending" ? "Ready" : null}
+                              {selected.status === "processing" ? "Working…" : null}
                               {selected.status === "done"
-                                ? `Done · ${selected.detectedCount} detected`
+                                ? `Done · ${selected.detectedCount} item${selected.detectedCount === 1 ? "" : "s"}`
                                 : null}
                               {selected.status === "error"
-                                ? `Failed${selected.errorMessage ? ` · ${selected.errorMessage}` : ""}`
+                                ? selected.errorMessage || "Couldn't read photo"
                                 : null}
                             </p>
                           </div>
@@ -3324,7 +3268,7 @@ export default function InventoryPage() {
                       ))
                     ) : (
                       <p style={{ border: "1px dashed var(--fp-panel-border)", color: "var(--fp-text-muted)", background: "transparent", borderRadius: 10, padding: "24px 16px", textAlign: "center", fontSize: 13, margin: 0 }}>
-                        No images yet. Upload one or more shelf photos.
+                        Add one or more shelf photos to get started.
                       </p>
                     )}
                   </div>
@@ -3342,20 +3286,9 @@ export default function InventoryPage() {
                     boxSizing: "border-box",
                   }}
                 >
-                  Replace Inventory with These Images
+                  Replace inventory
                 </button>
               </form>
-            </HexPanel>
-          ) : null}
-
-          {batchNotes.length ? (
-            <HexPanel contentStyle={{ padding: "16px 20px" }}>
-              <h2 style={{ color: "var(--fp-text-primary)", fontWeight: 700, fontSize: 14, margin: "0 0 10px" }}>Analyzer notes</h2>
-              <ul style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4 }}>
-                {batchNotes.map((note, index) => (
-                  <li key={`${note}-${index}`} style={{ color: "var(--fp-text-secondary)", fontSize: 13 }}>{note}</li>
-                ))}
-              </ul>
             </HexPanel>
           ) : null}
         </div>

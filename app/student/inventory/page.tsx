@@ -937,56 +937,108 @@ export default function StudentInventoryPage() {
                 </p>
               )}
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  maxHeight: "72vh",
-                  overflow: "auto",
-                  paddingBottom: 4,
-                }}
-              >
-                <FloorPlanCanvas
-                  canvasSize={mapSize}
-                  zones={renderedZones}
-                  walls={renderedWalls}
-                  markers={renderedMarkers}
-                  selected={locationZoneId ? { id: locationZoneId, kind: "zone" } : null}
-                  renderZoneExtras={(zone) =>
-                    zone.id === locationZoneId ? (
-                      <>
-                        <span
-                          style={{
-                            position: "absolute",
-                            left: "50%",
-                            top: "50%",
-                            width: 13,
-                            height: 13,
-                            borderRadius: 999,
-                            background: "#ef4444",
-                            transform: "translate(-50%, -50%)",
-                            boxShadow: "0 0 0 2px #fff, 0 0 14px rgba(239,68,68,0.85)",
-                            zIndex: 40,
-                          }}
+              {(() => {
+                const { src: locImageSrc, isServerCropped: locUsesServerCrop } =
+                  resolveItemImageUrl(locationItem, {
+                    outputSize: 600,
+                    padding: 1.25,
+                    minSize: 120,
+                    maxFraction: 0.6,
+                  });
+                const locSrc = locImageSrc ?? locationItem.photoUrl ?? null;
+
+                return (
+                  <div
+                    className="flex flex-col gap-3 md:flex-row md:items-stretch"
+                    style={{
+                      maxHeight: "72vh",
+                      overflow: "auto",
+                      paddingBottom: 4,
+                    }}
+                  >
+                    <div
+                      className="flex shrink-0 items-center justify-center overflow-hidden rounded-xl p-3 md:w-72"
+                      style={{
+                        border: "1px solid var(--fp-panel-border)",
+                        background: "var(--fp-surface-secondary)",
+                        minHeight: 200,
+                      }}
+                    >
+                      {locSrc ? (
+                        <Image
+                          src={locSrc}
+                          alt={`${buildDisplayProductTitle(locationItem)} photo`}
+                          width={600}
+                          height={600}
+                          unoptimized={locUsesServerCrop}
+                          className="h-full w-full object-contain"
+                          style={{ maxHeight: "60vh" }}
                         />
-                        <span
+                      ) : (
+                        <div
                           style={{
-                            position: "absolute",
-                            left: "50%",
-                            top: "50%",
-                            width: 36,
-                            height: 36,
-                            borderRadius: 999,
-                            border: "2px solid rgba(239,68,68,0.68)",
-                            animation: "shelf-dot-pulse 1.35s ease-out infinite",
-                            zIndex: 39,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "var(--fp-text-muted)",
+                            fontSize: 12,
+                            padding: 24,
+                            textAlign: "center",
                           }}
-                        />
-                      </>
-                    ) : null
-                  }
-                />
-              </div>
+                        >
+                          No photo available for this item.
+                        </div>
+                      )}
+                    </div>
+
+                    <div
+                      className="flex flex-1 items-start justify-center overflow-auto"
+                      style={{ minWidth: 0 }}
+                    >
+                      <FloorPlanCanvas
+                        canvasSize={mapSize}
+                        zones={renderedZones}
+                        walls={renderedWalls}
+                        markers={renderedMarkers}
+                        selected={locationZoneId ? { id: locationZoneId, kind: "zone" } : null}
+                        renderZoneExtras={(zone) =>
+                          zone.id === locationZoneId ? (
+                            <>
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  left: "50%",
+                                  top: "50%",
+                                  width: 13,
+                                  height: 13,
+                                  borderRadius: 999,
+                                  background: "#ef4444",
+                                  transform: "translate(-50%, -50%)",
+                                  boxShadow: "0 0 0 2px #fff, 0 0 14px rgba(239,68,68,0.85)",
+                                  zIndex: 40,
+                                }}
+                              />
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  left: "50%",
+                                  top: "50%",
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 999,
+                                  border: "2px solid rgba(239,68,68,0.68)",
+                                  animation: "shelf-dot-pulse 1.35s ease-out infinite",
+                                  zIndex: 39,
+                                }}
+                              />
+                            </>
+                          ) : null
+                        }
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         ) : null}

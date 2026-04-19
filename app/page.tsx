@@ -1,5 +1,10 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import HexPanel from "./components/HexPanel";
+import {
+  HUB_SESSION_COOKIE_NAME,
+  verifyHubSessionToken,
+} from "@/lib/auth/session";
 
 const publicLinks = [
   { href: "/student/inventory", label: "Browse Inventory" },
@@ -22,7 +27,12 @@ const navLinkStyle = {
   transition: "border-color 0.15s, filter 0.15s",
 } as React.CSSProperties;
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get(HUB_SESSION_COOKIE_NAME)?.value;
+  const session = await verifyHubSessionToken(sessionToken);
+  const isLoggedIn = Boolean(session);
+
   return (
     <div
       style={{
@@ -68,43 +78,49 @@ export default function Home() {
             Open{" "}
             <span style={{ color: "var(--fp-button-accent)" }}>Shelf</span>
           </h1>
-          <p
-            style={{
-              color: "var(--fp-text-secondary)",
-              fontSize: 16,
-              margin: "0 0 28px",
-              maxWidth: 520,
-              lineHeight: 1.65,
-            }}
-          >
-            See what&apos;s available at The Hub before you arrive. Browse live
-            inventory, check the floor map, and find out when we&apos;re open.
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-            <Link
-              href="/login"
-              style={{
-                ...navLinkStyle,
-                background: "var(--fp-success)",
-                color: "var(--fp-text-primary)",
-                border: "1px solid color-mix(in srgb, var(--fp-success), white 20%)",
-              }}
-            >
-              Login
-            </Link>
-            <Link
-              href="/student/inventory"
-              style={{
-                ...navLinkStyle,
-                background: "var(--fp-button-primary)",
-                color: "var(--fp-text-primary)",
-                border: "1px solid color-mix(in srgb, var(--fp-button-primary), white 24%)",
-              }}
-            >
-              Student Inventory
-            </Link>
-            <Link href="/inventory" style={navLinkStyle}>Admin Upload</Link>
-          </div>
+          {!isLoggedIn ? (
+            <>
+              <p
+                style={{
+                  color: "var(--fp-text-secondary)",
+                  fontSize: 16,
+                  margin: "0 0 28px",
+                  maxWidth: 520,
+                  lineHeight: 1.65,
+                }}
+              >
+                See what&apos;s available at The Hub before you arrive. Browse live
+                inventory, check the floor map, and find out when we&apos;re open.
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                <Link
+                  href="/login"
+                  style={{
+                    ...navLinkStyle,
+                    background: "var(--fp-success)",
+                    color: "var(--fp-text-primary)",
+                    border: "1px solid color-mix(in srgb, var(--fp-success), white 20%)",
+                  }}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/student/inventory"
+                  style={{
+                    ...navLinkStyle,
+                    background: "var(--fp-button-primary)",
+                    color: "var(--fp-text-primary)",
+                    border: "1px solid color-mix(in srgb, var(--fp-button-primary), white 24%)",
+                  }}
+                >
+                  Student Inventory
+                </Link>
+                <Link href="/inventory" style={navLinkStyle}>
+                  Admin Upload
+                </Link>
+              </div>
+            </>
+          ) : null}
         </HexPanel>
 
         {/* Quick links */}
