@@ -79,5 +79,7 @@ export function isHubVisibleToDomain(
   }
 
   const session = normalizeEmailDomain(sessionDomain);
+  // gmail.com users are not tied to a specific hub — they see all content
+  if (session === "gmail.com") return true;
   return Boolean(session && marker === session);
 }

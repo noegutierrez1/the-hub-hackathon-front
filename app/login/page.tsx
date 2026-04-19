@@ -94,8 +94,7 @@ function LoginContent() {
             return;
           }
           if (!cancelled) {
-            const destination = normalizeNextPath(nextPath, payload.user.role);
-            router.replace(destination);
+            window.location.href = normalizeNextPath(nextPath, payload.user.role);
           }
           return;
         }
@@ -109,8 +108,7 @@ function LoginContent() {
           return;
         }
         if (!cancelled) {
-          const destination = normalizeNextPath(nextPath, payload.user.role);
-          router.replace(destination);
+          window.location.href = normalizeNextPath(nextPath, payload.user.role);
         }
       } catch {
         if (!cancelled) setIsLoadingSession(false);
@@ -160,8 +158,7 @@ function LoginContent() {
       }
 
       setStatus(`Signed in as ${payload.user.email}`);
-      const destination = normalizeNextPath(nextPath, payload.user.role);
-      router.replace(destination);
+      window.location.href = normalizeNextPath(nextPath, payload.user.role);
     } catch (signInError) {
       // Clear firebase session if login API failed
       try { await signOut(getFirebaseClientAuth()); } catch {}
