@@ -411,7 +411,7 @@ export default function CheckoutPage() {
   const navLink = { padding: "8px 14px", borderRadius: 10, border: "1px solid var(--fp-panel-border)", color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 600, textDecoration: "none", background: "var(--fp-input-bg)" } as React.CSSProperties;
 
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--fp-page-bg)", padding: "32px 24px", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100dvh", background: "var(--fp-page-bg)", padding: "clamp(12px, 4vw, 32px) clamp(10px, 3vw, 24px)", boxSizing: "border-box" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
 
         <HexPanel contentStyle={{ padding: "20px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
@@ -420,271 +420,249 @@ export default function CheckoutPage() {
             <h1 style={{ color: "var(--fp-text-primary)", fontSize: "clamp(22px, 5vw, 30px)", fontWeight: 800, margin: "0 0 4px" }}>Minimal Item Checkout</h1>
             <p style={{ color: "var(--fp-text-secondary)", fontSize: 14, margin: 0 }}>Upload one checkout photo, detect selected items, and decrement inventory.</p>
           </div>
-          <nav style={{ display: "flex", gap: 8 }}>
+          <nav style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Link href="/admin" style={navLink}>Admin Dashboard</Link>
             <Link href="/" style={navLink}>Home</Link>
           </nav>
         </HexPanel>
 
         <HexPanel fill="var(--fp-surface-secondary)" contentStyle={{ padding: "20px 24px" }}>
-        <form className="grid gap-6 xl:grid-cols-[1fr_1.1fr]" onSubmit={onProcessCheckout}>
-          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
-            <label className="block text-sm font-semibold text-slate-700">
-              Checkout image
-            </label>
+          <form className="grid gap-6 xl:grid-cols-[1fr_1.1fr]" onSubmit={onProcessCheckout}>
 
-            <div className="grid gap-2 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={onTakePhoto}
-                disabled={isStartingCamera}
-                className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isStartingCamera ? "Opening Camera..." : "Take Photo"}
-              </button>
-              <button
-                type="button"
-                onClick={onUploadPhoto}
-                className="inline-flex w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Upload Existing Photo
-              </button>
-            </div>
+            {/* ── Left: image input ── */}
+            <section style={{ display: "flex", flexDirection: "column", gap: 14, background: "var(--fp-input-bg)", border: "1px solid var(--fp-panel-border)", borderRadius: 14, padding: 18 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--fp-text-muted)", margin: 0 }}>Checkout image</p>
 
-            <input
-              id="checkout-image"
-              ref={cameraInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={onImageChange}
-              className="hidden"
-            />
-            <input
-              id="checkout-image-upload"
-              ref={uploadInputRef}
-              type="file"
-              accept="image/*"
-              onChange={onImageChange}
-              className="hidden"
-            />
-
-            <p className="text-xs text-slate-400">
-              On desktop this opens your webcam preview. On mobile it opens your camera. Captures are used in-app only and are not downloaded to your device.
-            </p>
-
-            {cameraError ? (
-              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
-                {cameraError}
-              </p>
-            ) : null}
-
-            {isCameraOpen ? (
-              <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <video
-                  ref={cameraVideoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="h-64 w-full rounded-lg bg-black object-cover"
-                />
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={onCaptureFromCamera}
-                    className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-700"
-                  >
-                    Capture Photo
-                  </button>
-                  <button
-                    type="button"
-                    onClick={closeCamera}
-                    className="inline-flex w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    Cancel Camera
-                  </button>
-                </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={onTakePhoto}
+                  disabled={isStartingCamera}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", background: "var(--fp-button-accent)", color: "#fff", border: "none", borderRadius: 9, fontWeight: 700, fontSize: 13, padding: "10px 16px", cursor: isStartingCamera ? "not-allowed" : "pointer", opacity: isStartingCamera ? 0.6 : 1, boxSizing: "border-box" }}
+                >
+                  {isStartingCamera ? "Opening Camera…" : "Take Photo"}
+                </button>
+                <button
+                  type="button"
+                  onClick={onUploadPhoto}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", border: "1px solid var(--fp-panel-border)", background: "var(--fp-surface-secondary)", color: "var(--fp-text-secondary)", borderRadius: 9, fontWeight: 600, fontSize: 13, padding: "10px 16px", cursor: "pointer", boxSizing: "border-box" }}
+                >
+                  Upload Existing Photo
+                </button>
               </div>
-            ) : null}
 
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-              {imagePreview ? (
-                <Image
-                  src={imagePreview}
-                  alt="Checkout table preview"
-                  width={1200}
-                  height={900}
-                  unoptimized
-                  className="h-80 w-full object-contain"
-                />
-              ) : (
-                <div className="flex h-80 items-center justify-center px-6 text-center text-sm text-slate-500">
-                  Take or upload a checkout table photo to preview it here.
+              <input id="checkout-image" ref={cameraInputRef} type="file" accept="image/*" capture="environment" onChange={onImageChange} className="hidden" />
+              <input id="checkout-image-upload" ref={uploadInputRef} type="file" accept="image/*" onChange={onImageChange} className="hidden" />
+
+              <p style={{ color: "var(--fp-text-muted)", fontSize: 12, margin: 0 }}>
+                On desktop this opens your webcam preview. On mobile it opens your camera. Captures are used in-app only and are not downloaded to your device.
+              </p>
+
+              {cameraError ? (
+                <p style={{ border: "1px solid #7f2020", background: "rgba(180,30,30,0.12)", color: "#f87171", borderRadius: 9, padding: "8px 12px", fontSize: 12, margin: 0 }}>
+                  {cameraError}
+                </p>
+              ) : null}
+
+              {isCameraOpen ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, background: "var(--fp-surface-secondary)", border: "1px solid var(--fp-panel-border)", borderRadius: 12, padding: 12 }}>
+                  <video
+                    ref={cameraVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    style={{ width: "100%", height: 240, borderRadius: 9, background: "#000", objectFit: "cover" }}
+                  />
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={onCaptureFromCamera}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", background: "var(--fp-button-accent)", color: "#fff", border: "none", borderRadius: 9, fontWeight: 700, fontSize: 13, padding: "9px 16px", cursor: "pointer", boxSizing: "border-box" }}
+                    >
+                      Capture Photo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={closeCamera}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", border: "1px solid var(--fp-panel-border)", background: "var(--fp-input-bg)", color: "var(--fp-text-secondary)", borderRadius: 9, fontWeight: 600, fontSize: 13, padding: "9px 16px", cursor: "pointer", boxSizing: "border-box" }}
+                    >
+                      Cancel Camera
+                    </button>
+                  </div>
                 </div>
-              )}
-            </div>
-          </section>
+              ) : null}
 
-          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
-            <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-              Uses your configured server Gemini key and a fixed checkout parser prompt.
-            </p>
+              <div style={{ overflow: "hidden", borderRadius: 12, border: "1px solid var(--fp-panel-border)", background: "var(--fp-surface-secondary)" }}>
+                {imagePreview ? (
+                  <Image
+                    src={imagePreview}
+                    alt="Checkout table preview"
+                    width={1200}
+                    height={900}
+                    unoptimized
+                    style={{ width: "100%", height: 280, objectFit: "contain", display: "block" }}
+                  />
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200, color: "var(--fp-text-muted)", fontSize: 13, textAlign: "center", padding: "0 20px" }}>
+                    Take or upload a checkout table photo to preview it here.
+                  </div>
+                )}
+              </div>
+            </section>
 
-            <button
-              type="submit"
-              disabled={isProcessing}
-              className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isProcessing ? "Processing checkout..." : "Process Photo and Update DB"}
-            </button>
-
-            {error ? (
-              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {error}
+            {/* ── Right: analysis + results ── */}
+            <section style={{ display: "flex", flexDirection: "column", gap: 14, background: "var(--fp-input-bg)", border: "1px solid var(--fp-panel-border)", borderRadius: 14, padding: 18 }}>
+              <p style={{ border: "1px solid var(--fp-panel-border)", background: "var(--fp-surface-secondary)", color: "var(--fp-text-muted)", borderRadius: 9, padding: "8px 12px", fontSize: 12, margin: 0 }}>
+                Uses your configured server Gemini key and a fixed checkout parser prompt.
               </p>
-            ) : null}
 
-            {status ? (
-              <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-                {status}
-              </p>
-            ) : null}
+              <button
+                type="submit"
+                disabled={isProcessing}
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", background: "var(--fp-button-accent)", color: "#fff", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 14, padding: "12px 20px", cursor: isProcessing ? "not-allowed" : "pointer", opacity: isProcessing ? 0.6 : 1, boxSizing: "border-box" }}
+              >
+                {isProcessing ? "Processing checkout…" : "Process Photo and Update DB"}
+              </button>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <h2 className="mb-3 text-sm font-semibold text-slate-800">Detected checkout items</h2>
+              {error ? (
+                <p style={{ border: "1px solid #7f2020", background: "rgba(180,30,30,0.12)", color: "#f87171", borderRadius: 9, padding: "10px 14px", fontSize: 13, margin: 0 }}>
+                  {error}
+                </p>
+              ) : null}
 
-              {isProcessing ? (
-                <LoadingAnimation
-                  message="Analyzing checkout photo and updating inventory counts..."
-                  className="py-4"
-                  iconClassName="h-24 w-24"
-                  messageClassName="mt-2 text-sm font-medium text-slate-600"
-                />
-              ) : (
-                <>
+              {status ? (
+                <p style={{ border: "1px solid #2d6a4a", background: "rgba(30,160,90,0.10)", color: "#6ee7b7", borderRadius: 9, padding: "10px 14px", fontSize: 13, margin: 0 }}>
+                  {status}
+                </p>
+              ) : null}
 
-                <div className="hidden max-h-88 overflow-auto rounded-lg border border-slate-200 bg-white md:block">
-                  <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
-                    <thead className="bg-slate-100 text-slate-700">
-                      <tr>
-                        <th className="px-3 py-2 font-semibold">Brand</th>
-                        <th className="px-3 py-2 font-semibold">Item</th>
-                        <th className="px-3 py-2 font-semibold">Quantity</th>
-                        <th className="px-3 py-2 font-semibold">Category</th>
-                        <th className="px-3 py-2 font-semibold">Size</th>
-                        <th className="px-3 py-2 font-semibold">Confidence</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 text-slate-700">
+              <div style={{ background: "var(--fp-surface-secondary)", border: "1px solid var(--fp-panel-border)", borderRadius: 12, padding: 14 }}>
+                <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--fp-text-muted)", margin: "0 0 12px" }}>Detected checkout items</p>
+
+                {isProcessing ? (
+                  <LoadingAnimation
+                    message="Analyzing checkout photo and updating inventory counts..."
+                    className="py-4"
+                    iconClassName="h-24 w-24"
+                    messageClassName="mt-2 text-sm font-medium"
+                  />
+                ) : (
+                  <>
+                    {/* Desktop table */}
+                    <div className="hidden md:block" style={{ maxHeight: 340, overflowY: "auto", borderRadius: 9, border: "1px solid var(--fp-panel-border)" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, textAlign: "left" }}>
+                        <thead>
+                          <tr style={{ background: "var(--fp-input-bg)", borderBottom: "1px solid var(--fp-panel-border)" }}>
+                            {["Brand", "Item", "Qty", "Category", "Size", "Confidence"].map((h) => (
+                              <th key={h} style={{ padding: "8px 12px", color: "var(--fp-text-muted)", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em" }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {snapshot.items.length ? (
+                            snapshot.items.map((item, index) => (
+                              <tr key={`${item.brand}-${item.itemName}-${index}`} style={{ borderBottom: "1px solid var(--fp-panel-border)" }}>
+                                <td style={{ padding: "8px 12px", color: "var(--fp-text-muted)", fontSize: 13 }}>{item.brand}</td>
+                                <td style={{ padding: "8px 12px", color: "var(--fp-text-primary)", fontWeight: 600, fontSize: 13 }}>{item.itemName}</td>
+                                <td style={{ padding: "8px 12px", color: "var(--fp-text-secondary)", fontSize: 13 }}>{item.quantity}</td>
+                                <td style={{ padding: "8px 12px", color: "var(--fp-text-secondary)", fontSize: 13 }}>{item.category || "other"}</td>
+                                <td style={{ padding: "8px 12px", color: "var(--fp-text-muted)", fontSize: 13 }}>{item.size || "—"}</td>
+                                <td style={{ padding: "8px 12px", color: "var(--fp-text-muted)", fontSize: 13 }}>{item.confidence}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={6} style={{ padding: "16px 12px", textAlign: "center", color: "var(--fp-text-muted)", fontSize: 13 }}>
+                                No detected checkout items yet.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile cards */}
+                    <div className="md:hidden" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {snapshot.items.length ? (
                         snapshot.items.map((item, index) => (
-                          <tr key={`${item.brand}-${item.itemName}-${index}`}>
-                            <td className="px-3 py-2">{item.brand}</td>
-                            <td className="px-3 py-2 font-medium text-slate-900">{item.itemName}</td>
-                            <td className="px-3 py-2">{item.quantity}</td>
-                            <td className="px-3 py-2">{item.category || "other"}</td>
-                            <td className="px-3 py-2">{item.size || "-"}</td>
-                            <td className="px-3 py-2">{item.confidence}</td>
-                          </tr>
+                          <article
+                            key={`${item.brand}-${item.itemName}-${index}`}
+                            style={{ background: "var(--fp-input-bg)", border: "1px solid var(--fp-panel-border)", borderRadius: 10, padding: "10px 12px" }}
+                          >
+                            <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--fp-text-muted)", margin: "0 0 4px" }}>{item.category || "other"}</p>
+                            <p style={{ fontWeight: 700, color: "var(--fp-text-primary)", fontSize: 14, margin: "0 0 4px" }}>{item.brand} {item.itemName}</p>
+                            <p style={{ color: "var(--fp-text-secondary)", fontSize: 13, margin: "0 0 2px" }}>Qty: {item.quantity}</p>
+                            <p style={{ color: "var(--fp-text-muted)", fontSize: 12, margin: "0 0 2px" }}>Size: {item.size || "—"}</p>
+                            <p style={{ color: "var(--fp-text-muted)", fontSize: 12, margin: 0 }}>Confidence: {item.confidence}</p>
+                          </article>
                         ))
                       ) : (
-                        <tr>
-                          <td colSpan={6} className="px-3 py-4 text-center text-slate-500">
-                            No detected checkout items yet.
-                          </td>
-                        </tr>
+                        <p style={{ border: "1px dashed var(--fp-panel-border)", color: "var(--fp-text-muted)", borderRadius: 9, padding: "16px 12px", textAlign: "center", fontSize: 13, margin: 0 }}>
+                          No detected checkout items yet.
+                        </p>
                       )}
-                    </tbody>
-                  </table>
-                </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </section>
+          </form>
 
-                <div className="space-y-2 md:hidden">
-                  {snapshot.items.length ? (
-                    snapshot.items.map((item, index) => (
-                      <article
-                        key={`${item.brand}-${item.itemName}-${index}`}
-                        className="rounded-lg border border-slate-200 bg-white p-3 text-sm"
-                      >
-                        <p className="text-xs uppercase tracking-wide text-slate-500">
-                          {item.category || "other"}
-                        </p>
-                        <p className="mt-1 font-semibold text-slate-900">
-                          {item.brand} {item.itemName}
-                        </p>
-                        <p className="mt-1 text-slate-700">Qty: {item.quantity}</p>
-                        <p className="text-slate-600">Size: {item.size || "-"}</p>
-                        <p className="text-slate-600">Confidence: {item.confidence}</p>
-                      </article>
-                    ))
-                  ) : (
-                    <p className="rounded-lg border border-slate-200 bg-white px-3 py-4 text-center text-sm text-slate-500">
-                      No detected checkout items yet.
-                    </p>
-                  )}
-                </div>
-                </>
-              )}
-            </div>
-          </section>
-        </form>
+          {updates.length ? (
+            <div style={{ marginTop: 20 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--fp-text-muted)", margin: "0 0 12px" }}>Applied inventory updates</p>
 
-        {updates.length ? (
-          <section className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
-            <h2 className="mb-3 text-sm font-semibold text-slate-800">Applied inventory updates</h2>
-            <div className="hidden overflow-auto rounded-lg border border-slate-200 bg-white md:block">
-              <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
-                <thead className="bg-slate-100 text-slate-700">
-                  <tr>
-                    <th className="px-3 py-2 font-semibold">Brand</th>
-                    <th className="px-3 py-2 font-semibold">Item</th>
-                    <th className="px-3 py-2 font-semibold">Before</th>
-                    <th className="px-3 py-2 font-semibold">Decremented</th>
-                    <th className="px-3 py-2 font-semibold">After</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200 text-slate-700">
-                  {updates.map((item) => (
-                    <tr key={item.id}>
-                      <td className="px-3 py-2">{item.brand}</td>
-                      <td className="px-3 py-2 font-medium text-slate-900">{item.name}</td>
-                      <td className="px-3 py-2">{item.beforeQuantity}</td>
-                      <td className="px-3 py-2 text-rose-700">-{item.decrementedBy}</td>
-                      <td className="px-3 py-2 text-emerald-700">{item.afterQuantity}</td>
+              {/* Desktop table */}
+              <div className="hidden md:block" style={{ overflowX: "auto", borderRadius: 12, border: "1px solid var(--fp-panel-border)" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, textAlign: "left" }}>
+                  <thead>
+                    <tr style={{ background: "var(--fp-input-bg)", borderBottom: "1px solid var(--fp-panel-border)" }}>
+                      {["Brand", "Item", "Before", "Decremented", "After"].map((h) => (
+                        <th key={h} style={{ padding: "8px 14px", color: "var(--fp-text-muted)", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em" }}>{h}</th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {updates.map((item) => (
+                      <tr key={item.id} style={{ borderBottom: "1px solid var(--fp-panel-border)" }}>
+                        <td style={{ padding: "8px 14px", color: "var(--fp-text-muted)", fontSize: 13 }}>{item.brand}</td>
+                        <td style={{ padding: "8px 14px", color: "var(--fp-text-primary)", fontWeight: 600, fontSize: 13 }}>{item.name}</td>
+                        <td style={{ padding: "8px 14px", color: "var(--fp-text-secondary)", fontSize: 13 }}>{item.beforeQuantity}</td>
+                        <td style={{ padding: "8px 14px", color: "#f87171", fontSize: 13, fontWeight: 600 }}>−{item.decrementedBy}</td>
+                        <td style={{ padding: "8px 14px", color: "#6ee7b7", fontSize: 13, fontWeight: 600 }}>{item.afterQuantity}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-            <div className="space-y-2 md:hidden">
-              {updates.map((item) => (
-                <article
-                  key={item.id}
-                  className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm"
-                >
-                  <p className="font-semibold text-slate-900">{item.brand} {item.name}</p>
-                  <p className="mt-1 text-slate-700">Before: {item.beforeQuantity}</p>
-                  <p className="text-rose-700">Decremented: -{item.decrementedBy}</p>
-                  <p className="text-emerald-700">After: {item.afterQuantity}</p>
-                </article>
-              ))}
+              {/* Mobile cards */}
+              <div className="md:hidden" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {updates.map((item) => (
+                  <article key={item.id} style={{ background: "var(--fp-input-bg)", border: "1px solid var(--fp-panel-border)", borderRadius: 10, padding: "10px 14px" }}>
+                    <p style={{ fontWeight: 700, color: "var(--fp-text-primary)", fontSize: 14, margin: "0 0 4px" }}>{item.brand} {item.name}</p>
+                    <p style={{ color: "var(--fp-text-secondary)", fontSize: 13, margin: "0 0 2px" }}>Before: {item.beforeQuantity}</p>
+                    <p style={{ color: "#f87171", fontSize: 13, fontWeight: 600, margin: "0 0 2px" }}>Decremented: −{item.decrementedBy}</p>
+                    <p style={{ color: "#6ee7b7", fontSize: 13, fontWeight: 600, margin: 0 }}>After: {item.afterQuantity}</p>
+                  </article>
+                ))}
+              </div>
             </div>
-          </section>
-        ) : null}
+          ) : null}
 
-        {unmatched.length ? (
-          <section className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <h2 className="text-sm font-semibold text-amber-800">Unmatched detected items</h2>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-900">
-              {unmatched.map((item, index) => (
-                <li key={`${item.name}-${index}`}>
-                  {item.brand ? `${item.brand} ` : ""}
-                  {item.name} (qty {item.quantity})
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+          {unmatched.length ? (
+            <div style={{ marginTop: 16, border: "1px solid rgba(180,120,20,0.35)", background: "rgba(180,120,20,0.08)", borderRadius: 12, padding: "14px 18px" }}>
+              <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "#d97706", margin: "0 0 10px" }}>Unmatched detected items</p>
+              <ul style={{ margin: 0, paddingLeft: 18, display: "flex", flexDirection: "column", gap: 4 }}>
+                {unmatched.map((item, index) => (
+                  <li key={`${item.name}-${index}`} style={{ color: "#fbbf24", fontSize: 13 }}>
+                    {item.brand ? `${item.brand} ` : ""}
+                    {item.name} (qty {item.quantity})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </HexPanel>
       </div>
     </div>

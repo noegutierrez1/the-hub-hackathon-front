@@ -222,155 +222,155 @@ export default function AdminHoursPage() {
 
   const navLink = { padding: "8px 14px", borderRadius: 10, border: "1px solid var(--fp-panel-border)", color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 600, textDecoration: "none", background: "var(--fp-input-bg)" } as React.CSSProperties;
 
+  const inputStyle: React.CSSProperties = {
+    background: "var(--fp-input-bg)",
+    border: "1px solid var(--fp-panel-border)",
+    color: "var(--fp-text-primary)",
+    borderRadius: 8,
+    padding: "8px 12px",
+    fontSize: 13,
+    outline: "none",
+    width: "100%",
+    boxSizing: "border-box",
+  };
+
+  const sectionStyle: React.CSSProperties = {
+    background: "var(--fp-input-bg)",
+    border: "1px solid var(--fp-panel-border)",
+    borderRadius: 14,
+    padding: 18,
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+    color: "var(--fp-text-secondary)",
+    fontSize: 13,
+    fontWeight: 600,
+  };
+
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--fp-page-bg)", padding: "32px 24px", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100dvh", background: "var(--fp-page-bg)", padding: "clamp(12px, 4vw, 32px) clamp(10px, 3vw, 24px)", boxSizing: "border-box" }}>
       <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
-      <HexPanel contentStyle={{ padding: "20px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
-        <div>
-          <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--fp-text-muted)", margin: "0 0 4px" }}>Admin Settings</p>
-          <h1 style={{ color: "var(--fp-text-primary)", fontSize: "clamp(22px, 5vw, 30px)", fontWeight: 800, margin: "0 0 4px" }}>Manage Hub Hours</h1>
-          <p style={{ color: "var(--fp-text-secondary)", fontSize: 14, margin: 0 }}>Configure the Hub details that appear on the student-facing hours page.</p>
-        </div>
-        <nav style={{ display: "flex", gap: 8 }}>
-          <Link href="/admin" style={navLink}>Admin Dashboard</Link>
-          <Link href="/hours" style={navLink}>Student Hours</Link>
-        </nav>
-      </HexPanel>
+        <HexPanel contentStyle={{ padding: "20px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--fp-text-muted)", margin: "0 0 4px" }}>Admin Settings</p>
+            <h1 style={{ color: "var(--fp-text-primary)", fontSize: "clamp(22px, 5vw, 30px)", fontWeight: 800, margin: "0 0 4px" }}>Manage Hub Hours</h1>
+            <p style={{ color: "var(--fp-text-secondary)", fontSize: 14, margin: 0 }}>Configure the Hub details that appear on the student-facing hours page.</p>
+          </div>
+          <nav style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <Link href="/admin" style={navLink}>Admin Dashboard</Link>
+            <Link href="/hours" style={navLink}>Student Hours</Link>
+          </nav>
+        </HexPanel>
 
-      <HexPanel fill="var(--fp-surface-secondary)" contentStyle={{ padding: "20px 24px" }}>
+        <HexPanel fill="var(--fp-surface-secondary)" contentStyle={{ padding: "20px 24px" }}>
+          <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
-        <form onSubmit={handleSave} className="mt-6 space-y-6">
-          <section className="rounded-2xl border border-[#1D4ED8]/10 bg-[#FCFDFF] p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-[#123B7A]">Hub information</h2>
-              <p className="text-sm text-[#486581]">
-                {isLoading ? "Loading current settings..." : hubInfoId ? "Editing existing HubInfo" : "Creating first HubInfo record"}
-              </p>
-            </div>
-
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <label className="text-sm font-medium text-[#243B53]">
-                Hub name
-                <input
-                  type="text"
-                  value={hubName}
-                  onChange={(event) => setHubName(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-[#1D4ED8]/15 bg-white px-3 py-2.5 text-sm text-[#243B53] outline-none transition focus:border-[#1D4ED8]/50"
-                />
-              </label>
-
-              <label className="text-sm font-medium text-[#243B53]">
-                Location
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(event) => setLocation(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-[#1D4ED8]/15 bg-white px-3 py-2.5 text-sm text-[#243B53] outline-none transition focus:border-[#1D4ED8]/50"
-                />
-              </label>
-
-              <label className="text-sm font-medium text-[#243B53] md:col-span-2">
-                Description
-                <textarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  rows={3}
-                  className="mt-1 w-full rounded-xl border border-[#1D4ED8]/15 bg-white px-3 py-2.5 text-sm text-[#243B53] outline-none transition focus:border-[#1D4ED8]/50"
-                />
-              </label>
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-[#1D4ED8]/10 bg-white p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-semibold text-[#123B7A]">Weekly hours</h2>
-                <p className="mt-1 text-sm text-[#486581]">
-                  Enter the display text for each day exactly as it should appear.
+            {/* Hub information */}
+            <section style={sectionStyle}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 16 }}>
+                <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--fp-text-muted)", margin: 0 }}>Hub information</p>
+                <p style={{ color: "var(--fp-text-muted)", fontSize: 12, margin: 0 }}>
+                  {isLoading ? "Loading current settings…" : hubInfoId ? "Editing existing HubInfo" : "Creating first HubInfo record"}
                 </p>
               </div>
-            </div>
 
-            <div className="mt-4 space-y-3">
-              {weeklyHours.map((entry) => (
-                <div
-                  key={entry.day}
-                  className="grid gap-3 rounded-xl border border-[#1D4ED8]/10 bg-[#FCFDFF] px-4 py-3 md:grid-cols-[180px_1fr]"
-                >
-                  <div className="flex items-center text-sm font-semibold text-[#123B7A]">
-                    {entry.day}
-                  </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <label style={labelStyle}>
+                  Hub name
+                  <input type="text" value={hubName} onChange={(e) => setHubName(e.target.value)} style={inputStyle} />
+                </label>
 
-                  <input
-                    type="text"
-                    value={entry.hours}
-                    onChange={(event) => updateHours(entry.day, event.target.value)}
-                    placeholder="9:00 AM - 5:00 PM or Closed"
-                    className="w-full rounded-xl border border-[#1D4ED8]/15 bg-white px-3 py-2.5 text-sm text-[#243B53] outline-none transition focus:border-[#1D4ED8]/50"
+                <label style={labelStyle}>
+                  Location
+                  <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} style={inputStyle} />
+                </label>
+
+                <label style={{ ...labelStyle, gridColumn: "1 / -1" }}>
+                  Description
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                    style={{ ...inputStyle, resize: "vertical" }}
                   />
-                </div>
-              ))}
+                </label>
+              </div>
+            </section>
+
+            {/* Weekly hours */}
+            <section style={sectionStyle}>
+              <div style={{ marginBottom: 14 }}>
+                <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--fp-text-muted)", margin: "0 0 4px" }}>Weekly hours</p>
+                <p style={{ color: "var(--fp-text-muted)", fontSize: 12, margin: 0 }}>Enter the display text for each day exactly as it should appear.</p>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {weeklyHours.map((entry) => (
+                  <div
+                    key={entry.day}
+                    className="grid gap-3 md:grid-cols-[160px_1fr]"
+                    style={{ background: "var(--fp-surface-secondary)", border: "1px solid var(--fp-panel-border)", borderRadius: 10, padding: "10px 14px", alignItems: "center" }}
+                  >
+                    <p style={{ color: "var(--fp-text-primary)", fontWeight: 700, fontSize: 13, margin: 0 }}>{entry.day}</p>
+                    <input
+                      type="text"
+                      value={entry.hours}
+                      onChange={(e) => updateHours(entry.day, e.target.value)}
+                      placeholder="9:00 AM – 5:00 PM or Closed"
+                      style={inputStyle}
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {error ? (
+              <p style={{ border: "1px solid #7f2020", background: "rgba(180,30,30,0.12)", color: "#f87171", borderRadius: 10, padding: "10px 14px", fontSize: 13, margin: 0 }}>
+                {error}
+              </p>
+            ) : null}
+
+            {saveMessage ? (
+              <p style={{ border: "1px solid #2d6a4a", background: "rgba(30,160,90,0.10)", color: "#6ee7b7", borderRadius: 10, padding: "10px 14px", fontSize: 13, margin: 0 }}>
+                {saveMessage}
+              </p>
+            ) : null}
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              <button
+                type="submit"
+                disabled={isSaving}
+                style={{ background: "var(--fp-button-accent)", color: "#fff", border: "none", borderRadius: 9, fontWeight: 700, fontSize: 13, padding: "10px 20px", cursor: isSaving ? "not-allowed" : "pointer", opacity: isSaving ? 0.6 : 1 }}
+              >
+                {isSaving ? "Saving…" : "Save Hub Hours"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setWeeklyHours(defaultWeeklyHours); setSaveMessage(""); setError(""); }}
+                style={{ border: "1px solid var(--fp-panel-border)", background: "var(--fp-input-bg)", color: "var(--fp-text-secondary)", borderRadius: 9, fontWeight: 600, fontSize: 13, padding: "10px 18px", cursor: "pointer" }}
+              >
+                Reset to defaults
+              </button>
+
+              <button
+                type="button"
+                onClick={() => void loadHubInfo()}
+                style={{ border: "1px solid var(--fp-panel-border)", background: "var(--fp-input-bg)", color: "var(--fp-text-secondary)", borderRadius: 9, fontWeight: 600, fontSize: 13, padding: "10px 18px", cursor: "pointer" }}
+              >
+                Reload saved values
+              </button>
             </div>
-          </section>
+          </form>
 
-          {error ? (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
-          ) : null}
-
-          {saveMessage ? (
-            <div className="rounded-xl border border-[#D4A62A]/25 bg-[#FFF9EA] px-4 py-3 text-sm text-[#9A6B00]">
-              {saveMessage}
-            </div>
-          ) : null}
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="rounded-lg bg-[#D4A62A] px-4 py-2.5 font-medium text-white transition hover:bg-[#B98F1E] disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSaving ? "Saving..." : "Save Hub Hours"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setWeeklyHours(defaultWeeklyHours);
-                setSaveMessage("");
-                setError("");
-              }}
-              className="rounded-lg border border-[#1D4ED8]/15 bg-white px-4 py-2.5 font-medium text-[#35507A] transition hover:border-[#1D4ED8]/40 hover:text-[#123B7A]"
-            >
-              Reset to defaults
-            </button>
-
-            <button
-              type="button"
-              onClick={() => void loadHubInfo()}
-              className="rounded-lg border border-[#1D4ED8]/15 bg-white px-4 py-2.5 font-medium text-[#35507A] transition hover:border-[#1D4ED8]/40 hover:text-[#123B7A]"
-            >
-              Reload saved values
-            </button>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 20 }}>
+            <Link href="/admin" style={navLink}>Admin Dashboard</Link>
+            <Link href="/hours" style={navLink}>Student Hours Page</Link>
           </div>
-        </form>
-
-        <div className="mt-6 flex flex-wrap gap-2 text-sm">
-          <Link
-            href="/admin"
-            className="rounded-lg border border-[#1D4ED8]/15 bg-white px-3 py-2 text-[#35507A] transition hover:border-[#1D4ED8]/40 hover:text-[#123B7A]"
-          >
-            Admin Dashboard
-          </Link>
-          <Link
-            href="/hours"
-            className="rounded-lg border border-[#1D4ED8]/15 bg-white px-3 py-2 text-[#35507A] transition hover:border-[#1D4ED8]/40 hover:text-[#123B7A]"
-          >
-            Student Hours Page
-          </Link>
-        </div>
-      </HexPanel>
+        </HexPanel>
       </div>
     </div>
   );

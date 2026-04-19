@@ -113,7 +113,7 @@ export default function Home() {
             >
               <Link
                 href={link.href}
-                style={{ textDecoration: "none", display: "block" }}
+                style={{ textDecoration: "none", display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}
               >
                 <span
                   style={{

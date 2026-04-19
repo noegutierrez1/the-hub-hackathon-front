@@ -1434,7 +1434,7 @@ export default function InventoryPage() {
   const navLink = { padding: "8px 14px", borderRadius: 10, border: "1px solid var(--fp-panel-border)", color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 600, textDecoration: "none", background: "var(--fp-input-bg)" } as React.CSSProperties;
 
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--fp-page-bg)", padding: "32px 24px", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100dvh", background: "var(--fp-page-bg)", padding: "clamp(12px, 4vw, 32px) clamp(10px, 3vw, 24px)", boxSizing: "border-box" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
         <HexPanel contentStyle={{ padding: "20px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
           <div>
@@ -1442,199 +1442,211 @@ export default function InventoryPage() {
             <h1 style={{ color: "var(--fp-text-primary)", fontSize: "clamp(22px, 5vw, 30px)", fontWeight: 800, margin: "0 0 4px" }}>AI Shelf Inventory Uploader</h1>
             <p style={{ color: "var(--fp-text-secondary)", fontSize: 14, margin: 0 }}>Upload images and add detected items to inventory.</p>
           </div>
-          <nav style={{ display: "flex", gap: 8 }}>
+          <nav style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Link href="/admin" style={navLink}>Admin Home</Link>
             <Link href="/" style={navLink}>Back Home</Link>
           </nav>
         </HexPanel>
-        <div className="space-y-5">
 
-        {errorMessage ? (
-          <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-            {errorMessage}
-          </p>
-        ) : null}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-        {statusMessage ? (
-          <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-            {statusMessage}
-          </p>
-        ) : null}
+          {errorMessage ? (
+            <p style={{ border: "1px solid #7f2020", background: "rgba(180,30,30,0.12)", color: "#f87171", borderRadius: 10, padding: "10px 14px", fontSize: 13, margin: 0 }}>
+              {errorMessage}
+            </p>
+          ) : null}
 
-        {isSubmitting ? (
-          <section className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-            <LoadingAnimation
-              message="Analyzing shelf photos and updating inventory..."
-              className="py-4"
-              iconClassName="h-24 w-24"
-              messageClassName="mt-2 text-sm font-medium text-slate-600"
-            />
-          </section>
-        ) : null}
+          {statusMessage ? (
+            <p style={{ border: "1px solid #2d6a4a", background: "rgba(30,160,90,0.10)", color: "#6ee7b7", borderRadius: 10, padding: "10px 14px", fontSize: 13, margin: 0 }}>
+              {statusMessage}
+            </p>
+          ) : null}
 
-        <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="grid gap-3 md:grid-cols-2">
-            <label className="text-sm font-medium text-slate-700">
-              Shelf group name
-              <input
-                type="text"
-                value={shelfName}
-                onChange={(event) => setShelfName(event.target.value)}
-                placeholder="e.g. Dry Shelf - Week 4"
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
-                required
+          {isSubmitting ? (
+            <HexPanel contentStyle={{ padding: "8px 0" }}>
+              <LoadingAnimation
+                message="Analyzing shelf photos and updating inventory..."
+                className="py-4"
+                iconClassName="h-24 w-24"
+                messageClassName="mt-2 text-sm font-medium"
               />
-            </label>
+            </HexPanel>
+          ) : null}
 
-            <label className="text-sm font-medium text-slate-700">
-              Shelf location (optional)
-              <input
-                type="text"
-                value={shelfLocationDescription}
-                onChange={(event) => setShelfLocationDescription(event.target.value)}
-                placeholder="e.g. Back wall, aisle 2"
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
-              />
-            </label>
-          </div>
+          <HexPanel contentStyle={{ padding: "20px 24px" }}>
+            <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div className="grid gap-3 md:grid-cols-2">
+                <label style={{ display: "flex", flexDirection: "column", gap: 6, color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 600 }}>
+                  Shelf group name
+                  <input
+                    type="text"
+                    value={shelfName}
+                    onChange={(event) => setShelfName(event.target.value)}
+                    placeholder="e.g. Dry Shelf - Week 4"
+                    style={{ background: "var(--fp-input-bg)", border: "1px solid var(--fp-panel-border)", color: "var(--fp-text-primary)", borderRadius: 8, padding: "8px 12px", fontSize: 13, outline: "none", width: "100%", boxSizing: "border-box" }}
+                    required
+                  />
+                </label>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-slate-700">
-                Images ({selectedImages.length})
-              </p>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={onOpenFilePicker}
-                  className="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
-                  Upload images
-                </button>
-                <button
-                  type="button"
-                  onClick={onClearAll}
-                  disabled={!selectedImages.length || isSubmitting}
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  Clear all
-                </button>
+                <label style={{ display: "flex", flexDirection: "column", gap: 6, color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 600 }}>
+                  Shelf location (optional)
+                  <input
+                    type="text"
+                    value={shelfLocationDescription}
+                    onChange={(event) => setShelfLocationDescription(event.target.value)}
+                    placeholder="e.g. Back wall, aisle 2"
+                    style={{ background: "var(--fp-input-bg)", border: "1px solid var(--fp-panel-border)", color: "var(--fp-text-primary)", borderRadius: 8, padding: "8px 12px", fontSize: 13, outline: "none", width: "100%", boxSizing: "border-box" }}
+                  />
+                </label>
               </div>
-            </div>
 
-            <input
-              ref={uploadInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={onImagesChange}
-              className="hidden"
-            />
-
-            <div className="mt-3 space-y-2">
-              {selectedImages.length ? (
-                selectedImages.map((selected, index) => (
-                  <article
-                    key={selected.id}
-                    className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-2"
-                  >
-                    <Image
-                      src={selected.previewUrl}
-                      alt={`${selected.file.name} preview`}
-                      width={72}
-                      height={72}
-                      unoptimized
-                      className="h-16 w-16 rounded-md border border-slate-200 object-cover"
-                    />
-
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-slate-900">
-                        {index + 1}. {selected.file.name}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {(selected.file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {selected.status === "pending" ? "Waiting" : null}
-                        {selected.status === "processing" ? "Processing..." : null}
-                        {selected.status === "done"
-                          ? `Done · ${selected.detectedCount} detected`
-                          : null}
-                        {selected.status === "error"
-                          ? `Failed${selected.errorMessage ? ` · ${selected.errorMessage}` : ""}`
-                          : null}
-                      </p>
-                    </div>
-
+              <div style={{ background: "var(--fp-surface-secondary)", border: "1px solid var(--fp-panel-border)", borderRadius: 12, padding: 16 }}>
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                  <p style={{ color: "var(--fp-text-secondary)", fontSize: 13, fontWeight: 700, margin: 0 }}>
+                    Images ({selectedImages.length})
+                  </p>
+                  <div style={{ display: "flex", gap: 8 }}>
                     <button
                       type="button"
-                      onClick={() => onRemoveImage(selected.id)}
-                      disabled={isSubmitting}
-                      className="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                      onClick={onOpenFilePicker}
+                      style={{ background: "var(--fp-button-accent)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 13, padding: "7px 16px", cursor: "pointer" }}
                     >
-                      Remove
+                      Upload images
                     </button>
-                  </article>
-                ))
-              ) : (
-                <p className="rounded-lg border border-dashed border-slate-200 bg-white px-3 py-6 text-center text-sm text-slate-500">
-                  No images yet. Upload one or more shelf photos.
-                </p>
-              )}
-            </div>
-          </div>
+                    <button
+                      type="button"
+                      onClick={onClearAll}
+                      disabled={!selectedImages.length || isSubmitting}
+                      style={{ border: "1px solid var(--fp-panel-border)", background: "var(--fp-input-bg)", color: "var(--fp-text-secondary)", borderRadius: 8, fontSize: 13, fontWeight: 600, padding: "7px 14px", cursor: "pointer", opacity: (!selectedImages.length || isSubmitting) ? 0.5 : 1 }}
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                </div>
 
-          <label
-            className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-sm transition ${
-              replaceExistingInventory
-                ? "border-rose-200 bg-rose-50 text-rose-800"
-                : "border-slate-200 bg-slate-50 text-slate-700"
-            }`}
-          >
-            <input
-              type="checkbox"
-              checked={replaceExistingInventory}
-              onChange={(event) => setReplaceExistingInventory(event.target.checked)}
-              disabled={isSubmitting}
-              className="mt-0.5 h-4 w-4 cursor-pointer accent-rose-600 disabled:cursor-not-allowed"
-            />
-            <span className="flex-1">
-              <span className="block text-sm font-semibold">
-                Replace existing inventory
-              </span>
-              <span className="block text-xs">
-                {replaceExistingInventory
-                  ? "All current inventory will be deleted before the new items are saved. This cannot be undone."
-                  : "Existing items will stay. The detected items will be added alongside them."}
-              </span>
-            </span>
-          </label>
+                <input
+                  ref={uploadInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={onImagesChange}
+                  className="hidden"
+                />
 
-          <button
-            type="submit"
-            disabled={isSubmitting || !selectedImages.length || !shelfName.trim()}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSubmitting
-              ? replaceExistingInventory
-                ? "Clearing inventory and uploading..."
-                : "Uploading and adding inventory..."
-              : replaceExistingInventory
-                ? "Replace Inventory with These Images"
-                : "Upload Images and Add to Inventory"}
-          </button>
-        </form>
+                <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                  {selectedImages.length ? (
+                    selectedImages.map((selected, index) => (
+                      <article
+                        key={selected.id}
+                        style={{ display: "flex", alignItems: "center", gap: 12, background: "var(--fp-input-bg)", border: "1px solid var(--fp-panel-border)", borderRadius: 10, padding: "8px 10px" }}
+                      >
+                        <Image
+                          src={selected.previewUrl}
+                          alt={`${selected.file.name} preview`}
+                          width={72}
+                          height={72}
+                          unoptimized
+                          style={{ height: 56, width: 56, borderRadius: 8, border: "1px solid var(--fp-panel-border)", objectFit: "cover", flexShrink: 0 }}
+                        />
 
-        {batchNotes.length ? (
-          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-slate-800">Analyzer notes</h2>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-              {batchNotes.map((note, index) => (
-                <li key={`${note}-${index}`}>{note}</li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <p style={{ color: "var(--fp-text-primary)", fontWeight: 600, fontSize: 13, margin: "0 0 2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {index + 1}. {selected.file.name}
+                          </p>
+                          <p style={{ color: "var(--fp-text-muted)", fontSize: 12, margin: "0 0 2px" }}>
+                            {(selected.file.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                          <p style={{ fontSize: 12, margin: 0, color: selected.status === "error" ? "#f87171" : selected.status === "done" ? "#6ee7b7" : "var(--fp-text-muted)" }}>
+                            {selected.status === "pending" ? "Waiting" : null}
+                            {selected.status === "processing" ? "Processing..." : null}
+                            {selected.status === "done"
+                              ? `Done · ${selected.detectedCount} detected`
+                              : null}
+                            {selected.status === "error"
+                              ? `Failed${selected.errorMessage ? ` · ${selected.errorMessage}` : ""}`
+                              : null}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => onRemoveImage(selected.id)}
+                          disabled={isSubmitting}
+                          style={{ border: "1px solid var(--fp-panel-border)", background: "var(--fp-input-bg)", color: "var(--fp-text-secondary)", borderRadius: 8, fontSize: 12, fontWeight: 600, padding: "5px 12px", cursor: "pointer", flexShrink: 0, opacity: isSubmitting ? 0.5 : 1 }}
+                        >
+                          Remove
+                        </button>
+                      </article>
+                    ))
+                  ) : (
+                    <p style={{ border: "1px dashed var(--fp-panel-border)", color: "var(--fp-text-muted)", background: "transparent", borderRadius: 10, padding: "24px 16px", textAlign: "center", fontSize: 13, margin: 0 }}>
+                      No images yet. Upload one or more shelf photos.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <label
+                style={{
+                  display: "flex", alignItems: "flex-start", gap: 12,
+                  borderRadius: 12, padding: "12px 16px", fontSize: 13, cursor: "pointer",
+                  border: replaceExistingInventory ? "1px solid rgba(220,50,50,0.4)" : "1px solid var(--fp-panel-border)",
+                  background: replaceExistingInventory ? "rgba(180,30,30,0.10)" : "rgba(50,80,130,0.12)",
+                  color: replaceExistingInventory ? "#f87171" : "var(--fp-text-secondary)",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={replaceExistingInventory}
+                  onChange={(event) => setReplaceExistingInventory(event.target.checked)}
+                  disabled={isSubmitting}
+                  style={{ marginTop: 2, width: 16, height: 16, cursor: "pointer", accentColor: "#dc2626", flexShrink: 0 }}
+                />
+                <span style={{ flex: 1 }}>
+                  <span style={{ display: "block", fontWeight: 700, fontSize: 13, marginBottom: 2 }}>
+                    Replace existing inventory
+                  </span>
+                  <span style={{ display: "block", fontSize: 12 }}>
+                    {replaceExistingInventory
+                      ? "All current inventory will be deleted before the new items are saved. This cannot be undone."
+                      : "Existing items will stay. The detected items will be added alongside them."}
+                  </span>
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                disabled={isSubmitting || !selectedImages.length || !shelfName.trim()}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: "100%", background: "var(--fp-button-accent)", color: "#fff",
+                  border: "none", borderRadius: 10, fontWeight: 700, fontSize: 14,
+                  padding: "11px 20px", cursor: (isSubmitting || !selectedImages.length || !shelfName.trim()) ? "not-allowed" : "pointer",
+                  opacity: (isSubmitting || !selectedImages.length || !shelfName.trim()) ? 0.5 : 1,
+                  boxSizing: "border-box",
+                }}
+              >
+                {isSubmitting
+                  ? replaceExistingInventory
+                    ? "Clearing inventory and uploading..."
+                    : "Uploading and adding inventory..."
+                  : replaceExistingInventory
+                    ? "Replace Inventory with These Images"
+                    : "Upload Images and Add to Inventory"}
+              </button>
+            </form>
+          </HexPanel>
+
+          {batchNotes.length ? (
+            <HexPanel contentStyle={{ padding: "16px 20px" }}>
+              <h2 style={{ color: "var(--fp-text-primary)", fontWeight: 700, fontSize: 14, margin: "0 0 10px" }}>Analyzer notes</h2>
+              <ul style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4 }}>
+                {batchNotes.map((note, index) => (
+                  <li key={`${note}-${index}`} style={{ color: "var(--fp-text-secondary)", fontSize: 13 }}>{note}</li>
+                ))}
+              </ul>
+            </HexPanel>
+          ) : null}
         </div>
       </div>
     </div>
