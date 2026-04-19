@@ -699,9 +699,16 @@ export default function StudentInventoryPage() {
           </div>
         ) : (
           <div className="rounded-2xl border border-slate-200 bg-white px-4 py-10 text-center shadow-sm">
-            <p className="text-base font-medium text-slate-800">
-              {isLoading ? "Loading inventory..." : "No items match your search."}
-            </p>
+            {isLoading ? (
+              <LoadingAnimation
+                message="Loading latest inventory..."
+                className="py-2"
+                iconClassName="h-20 w-20"
+                messageClassName="mt-2 text-sm font-medium text-slate-600"
+              />
+            ) : (
+              <p className="text-base font-medium text-slate-800">No items match your search.</p>
+            )}
             {!isLoading ? (
               <p className="mt-1 text-sm text-slate-500">
                 Try searching for chips, cereal, pasta, or clearing the search box.

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { Suspense, useEffect, useMemo, useState } from "react";
 
+import LoadingAnimation from "@/components/LoadingAnimation";
 import { createGoogleProvider, getFirebaseClientAuth, isFirebaseClientConfigured } from "@/lib/firebase-client";
 
 type SessionResponse = {
@@ -251,6 +252,17 @@ function LoginContent() {
         </div>
 
         <div className="mt-6 space-y-3">
+          {isLoadingSession ? (
+            <div className="rounded-xl border border-white/10 bg-slate-950/45 p-2">
+              <LoadingAnimation
+                message="Checking your session..."
+                className="py-2"
+                iconClassName="h-20 w-20"
+                messageClassName="mt-2 text-sm font-medium text-slate-300"
+              />
+            </div>
+          ) : null}
+
           <button
             type="button"
             disabled={!firebaseConfigured || isLoggingIn || isLoadingSession}
@@ -284,7 +296,12 @@ export default function LoginPage() {
       fallback={
         <div className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100 md:px-8">
           <main className="mx-auto w-full max-w-2xl rounded-3xl border border-white/10 bg-slate-900/50 p-5 shadow-2xl md:p-8">
-            <p className="text-sm text-slate-300">Loading login...</p>
+            <LoadingAnimation
+              message="Loading login..."
+              className="py-2"
+              iconClassName="h-20 w-20"
+              messageClassName="mt-2 text-sm font-medium text-slate-300"
+            />
           </main>
         </div>
       }

@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
+import LoadingAnimation from "@/components/LoadingAnimation";
+
 type AnalyzeResponse = {
   text?: string;
   error?: string;
@@ -555,65 +557,77 @@ export default function CheckoutPage() {
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
               <h2 className="mb-3 text-sm font-semibold text-slate-800">Detected checkout items</h2>
 
-              <div className="hidden max-h-88 overflow-auto rounded-lg border border-slate-200 bg-white md:block">
-                <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
-                  <thead className="bg-slate-100 text-slate-700">
-                    <tr>
-                      <th className="px-3 py-2 font-semibold">Brand</th>
-                      <th className="px-3 py-2 font-semibold">Item</th>
-                      <th className="px-3 py-2 font-semibold">Quantity</th>
-                      <th className="px-3 py-2 font-semibold">Category</th>
-                      <th className="px-3 py-2 font-semibold">Size</th>
-                      <th className="px-3 py-2 font-semibold">Confidence</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 text-slate-700">
-                    {snapshot.items.length ? (
-                      snapshot.items.map((item, index) => (
-                        <tr key={`${item.brand}-${item.itemName}-${index}`}>
-                          <td className="px-3 py-2">{item.brand}</td>
-                          <td className="px-3 py-2 font-medium text-slate-900">{item.itemName}</td>
-                          <td className="px-3 py-2">{item.quantity}</td>
-                          <td className="px-3 py-2">{item.category || "other"}</td>
-                          <td className="px-3 py-2">{item.size || "-"}</td>
-                          <td className="px-3 py-2">{item.confidence}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={6} className="px-3 py-4 text-center text-slate-500">
-                          No detected checkout items yet.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              {isProcessing ? (
+                <LoadingAnimation
+                  message="Analyzing checkout photo and updating inventory counts..."
+                  className="py-4"
+                  iconClassName="h-24 w-24"
+                  messageClassName="mt-2 text-sm font-medium text-slate-600"
+                />
+              ) : (
+                <>
 
-              <div className="space-y-2 md:hidden">
-                {snapshot.items.length ? (
-                  snapshot.items.map((item, index) => (
-                    <article
-                      key={`${item.brand}-${item.itemName}-${index}`}
-                      className="rounded-lg border border-slate-200 bg-white p-3 text-sm"
-                    >
-                      <p className="text-xs uppercase tracking-wide text-slate-500">
-                        {item.category || "other"}
-                      </p>
-                      <p className="mt-1 font-semibold text-slate-900">
-                        {item.brand} {item.itemName}
-                      </p>
-                      <p className="mt-1 text-slate-700">Qty: {item.quantity}</p>
-                      <p className="text-slate-600">Size: {item.size || "-"}</p>
-                      <p className="text-slate-600">Confidence: {item.confidence}</p>
-                    </article>
-                  ))
-                ) : (
-                  <p className="rounded-lg border border-slate-200 bg-white px-3 py-4 text-center text-sm text-slate-500">
-                    No detected checkout items yet.
-                  </p>
-                )}
-              </div>
+                <div className="hidden max-h-88 overflow-auto rounded-lg border border-slate-200 bg-white md:block">
+                  <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+                    <thead className="bg-slate-100 text-slate-700">
+                      <tr>
+                        <th className="px-3 py-2 font-semibold">Brand</th>
+                        <th className="px-3 py-2 font-semibold">Item</th>
+                        <th className="px-3 py-2 font-semibold">Quantity</th>
+                        <th className="px-3 py-2 font-semibold">Category</th>
+                        <th className="px-3 py-2 font-semibold">Size</th>
+                        <th className="px-3 py-2 font-semibold">Confidence</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200 text-slate-700">
+                      {snapshot.items.length ? (
+                        snapshot.items.map((item, index) => (
+                          <tr key={`${item.brand}-${item.itemName}-${index}`}>
+                            <td className="px-3 py-2">{item.brand}</td>
+                            <td className="px-3 py-2 font-medium text-slate-900">{item.itemName}</td>
+                            <td className="px-3 py-2">{item.quantity}</td>
+                            <td className="px-3 py-2">{item.category || "other"}</td>
+                            <td className="px-3 py-2">{item.size || "-"}</td>
+                            <td className="px-3 py-2">{item.confidence}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="px-3 py-4 text-center text-slate-500">
+                            No detected checkout items yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="space-y-2 md:hidden">
+                  {snapshot.items.length ? (
+                    snapshot.items.map((item, index) => (
+                      <article
+                        key={`${item.brand}-${item.itemName}-${index}`}
+                        className="rounded-lg border border-slate-200 bg-white p-3 text-sm"
+                      >
+                        <p className="text-xs uppercase tracking-wide text-slate-500">
+                          {item.category || "other"}
+                        </p>
+                        <p className="mt-1 font-semibold text-slate-900">
+                          {item.brand} {item.itemName}
+                        </p>
+                        <p className="mt-1 text-slate-700">Qty: {item.quantity}</p>
+                        <p className="text-slate-600">Size: {item.size || "-"}</p>
+                        <p className="text-slate-600">Confidence: {item.confidence}</p>
+                      </article>
+                    ))
+                  ) : (
+                    <p className="rounded-lg border border-slate-200 bg-white px-3 py-4 text-center text-sm text-slate-500">
+                      No detected checkout items yet.
+                    </p>
+                  )}
+                </div>
+                </>
+              )}
             </div>
           </section>
         </form>

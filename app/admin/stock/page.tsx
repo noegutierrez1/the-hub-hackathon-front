@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import LoadingAnimation from "@/components/LoadingAnimation";
+
 type ShelfSummary = {
   id: string;
   name: string | null;
@@ -422,7 +424,18 @@ export default function AdminStockPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10 bg-slate-900/60 text-slate-200">
-                {filteredItems.length ? (
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={8} className="px-3 py-5 text-center text-slate-400">
+                      <LoadingAnimation
+                        message="Loading inventory..."
+                        className="py-2"
+                        iconClassName="h-20 w-20"
+                        messageClassName="mt-2 text-sm font-medium text-slate-300"
+                      />
+                    </td>
+                  </tr>
+                ) : filteredItems.length ? (
                   filteredItems.map((item) => (
                     <tr key={item.id}>
                       <td className="px-3 py-2 text-emerald-100">
@@ -461,7 +474,7 @@ export default function AdminStockPage() {
                 ) : (
                   <tr>
                     <td colSpan={8} className="px-3 py-5 text-center text-slate-400">
-                      {isLoading ? "Loading inventory..." : "No inventory items match your filters."}
+                      No inventory items match your filters.
                     </td>
                   </tr>
                 )}

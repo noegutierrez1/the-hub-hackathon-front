@@ -77,7 +77,141 @@ type AnalyzeOneResult = {
   notes: string[];
 };
 
+// Canonical output vocabulary — the prompt and all downstream checks share this
+// list so there is exactly one source of truth for what the model is allowed to
+// emit for `type` and `category`. Nothing else in this file hardcodes product
+// words or keyword patterns.
+const ALLOWED_TYPES: string[] = [
+  "cereal",
+  "granola",
+  "oatmeal",
+  "chips",
+  "crackers",
+  "cookies",
+  "snack bar",
+  "candy",
+  "dried fruit",
+  "nuts",
+  "trail mix",
+  "popcorn",
+  "pasta",
+  "rice",
+  "grain",
+  "beans",
+  "lentils",
+  "canned soup",
+  "canned vegetable",
+  "canned fruit",
+  "canned meat",
+  "sauce",
+  "condiment",
+  "peanut butter",
+  "jam",
+  "bread",
+  "tortilla",
+  "baking",
+  "seasoning",
+  "sugar",
+  "flour",
+  "oil",
+  "tea",
+  "coffee",
+  "juice",
+  "soda",
+  "water",
+  "milk",
+  "plant milk",
+  "yogurt",
+  "cheese",
+  "egg",
+  "produce",
+  "frozen meal",
+  "frozen vegetable",
+  "frozen fruit",
+  "hygiene",
+  "toiletry",
+  "paper goods",
+  "cleaning",
+  "other",
+];
+
+const ALLOWED_CATEGORIES: string[] = [
+  "dry",
+  "refrigerated",
+  "frozen",
+  "beverage",
+  "produce",
+  "hygiene",
+  "other",
+];
+
+function normalizeType(value: string): string {
+  const trimmed = (value || "").trim().toLowerCase();
+  return ALLOWED_TYPES.includes(trimmed) ? trimmed : "other";
+}
+
+function normalizeCategory(value: string): string {
+  const trimmed = (value || "").trim().toLowerCase();
+  return ALLOWED_CATEGORIES.includes(trimmed) ? trimmed : "other";
+}
+
+function escapeRegex(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function tokenizeWords(value: string): string[] {
+  return (value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s']/g, " ")
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
+// Remove any of the given (possibly multi-word) phrases from a string. Longer
+// phrases are removed first so that a phrase like "snack bar" is not broken by
+// pre-removing "bar".
+function stripPhrases(source: string, phrases: string[]): string {
+  let padded = ` ${(source || "").toLowerCase()} `;
+  const sorted = [...phrases]
+    .map((phrase) => (phrase || "").trim().toLowerCase())
+    .filter((phrase) => phrase.length > 0)
+    .sort((a, b) => b.length - a.length);
+  for (const phrase of sorted) {
+    padded = padded.replace(
+      new RegExp(`\\s${escapeRegex(phrase)}\\s`, "g"),
+      " "
+    );
+  }
+  return padded.replace(/\s+/g, " ").trim();
+}
+
+function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
+  if (a.size === 0 && b.size === 0) return 1;
+  if (a.size === 0 || b.size === 0) return 0;
+  let intersection = 0;
+  for (const token of a) {
+    if (b.has(token)) intersection += 1;
+  }
+  const union = a.size + b.size - intersection;
+  return union === 0 ? 0 : intersection / union;
+}
+
+// A name is "bare" when, after removing enumerated type words and the
+// placeholder word "unknown", there is no content left. This catches
+// names like "", "Unknown", "Unknown cereal", "Cereal", "Snack Bar",
+// "Dried Fruit" without maintaining any keyword list — the only inputs
+// are ALLOWED_TYPES (the model's declared vocabulary).
+function nameIsBareLabel(name: string): boolean {
+  const trimmed = (name || "").trim().toLowerCase();
+  if (!trimmed) return true;
+  const stripped = stripPhrases(trimmed, [...ALLOWED_TYPES, "unknown"]);
+  return stripped.length === 0;
+}
+
 function buildInventoryPrompt(imageWidth: number, imageHeight: number) {
+  const typeEnum = ALLOWED_TYPES.join("|");
+  const categoryEnum = ALLOWED_CATEGORIES.join("|");
   return `
 You are cataloguing the inventory of a university basic-needs food pantry from a shelf photo.
 Accuracy matters more than completeness. It is better to label an item as unknown than to invent a product.
@@ -97,8 +231,8 @@ Schema:
       "visibleQuantity": 1,
       "quantity": 1,
       "quantityEstimated": false,
-      "category": "dry|refrigerated|frozen|beverage|produce|hygiene|other",
-      "type": "cereal|granola|oatmeal|chips|crackers|cookies|snack bar|candy|dried fruit|nuts|trail mix|popcorn|pasta|rice|grain|beans|lentils|canned soup|canned vegetable|canned fruit|canned meat|sauce|condiment|peanut butter|jam|bread|tortilla|baking|seasoning|sugar|flour|oil|tea|coffee|juice|soda|water|milk|plant milk|yogurt|cheese|egg|produce|frozen meal|frozen vegetable|frozen fruit|hygiene|toiletry|paper goods|cleaning|other",
+      "category": "${categoryEnum}",
+      "type": "${typeEnum}",
       "confidence": "high|medium|low",
       "location": {
         "centerX": 0,
@@ -305,8 +439,8 @@ function parseInventoryJson(raw: string): InventorySnapshot {
           quantity: totalQuantity,
           visibleQuantity: normalizedVisible,
           quantityEstimated,
-          category: String(record.category ?? "other").trim().toLowerCase(),
-          type: String(record.type ?? "").trim().toLowerCase() || "other",
+          category: normalizeCategory(String(record.category ?? "")),
+          type: normalizeType(String(record.type ?? "")),
           confidence: String(record.confidence ?? "low").trim().toLowerCase(),
           location: parseLocation(record.location),
         };
@@ -414,203 +548,179 @@ function createUploadImageId(file: File, index: number) {
   return `${file.name}-${file.lastModified}-${index}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-const GENERIC_NAME_PATTERNS: RegExp[] = [
-  /^$/,
-  /^unknown(\s|$)/i,
-  /^other$/i,
-  /^item$/i,
-  /^product$/i,
-  /^cereal$/i,
-  /^chips$/i,
-  /^snack$/i,
-  /^food$/i,
-  /^assorted\b/i,
-];
-
-const HALLUCINATION_SUBSTRINGS: string[] = [
-  "purple maize",
-  "purple corn",
-  "crimson crunch",
-  "mystery cereal",
-  "mystery snack",
-  "rainbow crunch",
-  "magic crunch",
-  "fantasy",
-];
-
-const HALLUCINATION_WORDS: string[] = [
-  "maize",
-];
-
-function nameHasHallucinatedLanguage(name: string) {
-  const lowered = (name || "").toLowerCase();
-  if (!lowered) {
-    return false;
-  }
-  if (HALLUCINATION_SUBSTRINGS.some((token) => lowered.includes(token))) {
-    return true;
-  }
-  return HALLUCINATION_WORDS.some((word) => {
-    const pattern = new RegExp(`\\b${word}\\b`, "i");
-    return pattern.test(lowered);
-  });
-}
-
+// Detection is "suspect" — and therefore sent through a tighter-crop refinement
+// pass — when structural checks fail. No keyword lists: just checks against
+// ALLOWED_TYPES (the canonical vocabulary) and the confidence level the model
+// itself reported.
 function isSuspectDetection(item: {
   name: string;
   brand: string;
   confidence: string;
-}) {
-  const name = (item.name || "").trim();
+}): boolean {
   const brand = (item.brand || "").trim();
   const confidence = (item.confidence || "").trim().toLowerCase();
 
-  if (!name) return true;
-  if (nameHasHallucinatedLanguage(name)) return true;
-  if (GENERIC_NAME_PATTERNS.some((pattern) => pattern.test(name))) {
-    return true;
-  }
+  if (nameIsBareLabel(item.name)) return true;
   if (confidence === "low" || confidence === "medium") return true;
   if (!brand && confidence !== "high") return true;
-
   return false;
 }
 
-function sanitizeHallucinatedNames(item: RawInventoryItem): RawInventoryItem {
-  const nameIsBad = nameHasHallucinatedLanguage(item.name);
-  const brandIsBad = nameHasHallucinatedLanguage(item.brand);
-
-  if (!nameIsBad && !brandIsBad) {
+// If a detected name has no content beyond enumerated type words / "unknown",
+// rewrite to the canonical "Unknown <type>" fallback so downstream UI and
+// dedup behave predictably. Dynamic — uses ALLOWED_TYPES only.
+function normalizeBareName(item: RawInventoryItem): RawInventoryItem {
+  if (!nameIsBareLabel(item.name)) return item;
+  const type = normalizeType(item.type);
+  const fallback = type === "other" ? "Unknown item" : `Unknown ${type}`;
+  if ((item.name || "").trim().toLowerCase() === fallback.toLowerCase()) {
     return item;
   }
-
-  const fallbackType = (item.type || "item").trim() || "item";
   return {
     ...item,
-    name: `Unknown ${fallbackType}`,
-    brand: brandIsBad ? "" : item.brand,
+    name: fallback,
     confidence: "low",
-    description: nameIsBad
-      ? `Label not legible; classified by visible packaging only. ${item.description || ""}`.trim()
-      : item.description,
   };
 }
 
-const TYPE_KEYWORD_RULES: Array<{
-  type: string;
-  category: string;
-  patterns: RegExp[];
-}> = [
-  {
-    type: "dried fruit",
-    category: "dry",
-    patterns: [
-      /\bdried\s+fruit\b/i,
-      /\bdried\s+(blueberr|strawberr|cranberr|cherr|mango|apricot|fig|pineapple|banana)\w*/i,
-      /\braisin/i,
-      /\bfruit\s+(pouch|bag|mix|medley)\b/i,
-      /\bfruit\s+and\s+nut\b/i,
-    ],
-  },
-  {
-    type: "nuts",
-    category: "dry",
-    patterns: [
-      /\balmond/i,
-      /\bcashew/i,
-      /\bwalnut/i,
-      /\bpistachio/i,
-      /\bpecan/i,
-      /\broasted\s+peanuts?\b/i,
-      /\bmixed\s+nuts?\b/i,
-    ],
-  },
-  {
-    type: "trail mix",
-    category: "dry",
-    patterns: [/\btrail\s+mix\b/i],
-  },
-  {
-    type: "snack bar",
-    category: "dry",
-    patterns: [
-      /\b(granola|protein|energy|breakfast|fiber|fruit|nut)\s+bar\b/i,
-      /\bclif\b/i,
-      /\bkind\s+bar\b/i,
-      /\brx\s*bar\b/i,
-    ],
-  },
-  {
-    type: "chips",
-    category: "dry",
-    patterns: [
-      /\b(potato|tortilla|veggie|pita|kale|plantain)\s+chips?\b/i,
-      /\bcrisps?\b/i,
-    ],
-  },
-  {
-    type: "peanut butter",
-    category: "dry",
-    patterns: [/\bpeanut\s+butter\b/i, /\balmond\s+butter\b/i, /\bnut\s+butter\b/i],
-  },
-  {
-    type: "canned soup",
-    category: "dry",
-    patterns: [/\bcanned?\s+soup\b/i, /\bchicken\s+noodle\s+soup\b/i],
-  },
-  {
-    type: "pasta",
-    category: "dry",
-    patterns: [/\bspaghetti\b/i, /\bpenne\b/i, /\bfusilli\b/i, /\brigatoni\b/i, /\bmacaroni\b/i, /\bpasta\b/i],
-  },
-  {
-    type: "rice",
-    category: "dry",
-    patterns: [/\b(white|brown|jasmine|basmati)\s+rice\b/i, /\brice\s+(bag|pouch)\b/i],
-  },
-];
+type SaveRow = Record<string, unknown>;
 
-const BARE_GENERIC_NAME_REGEX = /^(cereal|chips?|snacks?|food|item|product|candy|bars?|pasta|rice)$/i;
+// Content tokens for dedup: everything left over after stripping the brand
+// phrase and any enumerated type word / "unknown" placeholder. Pure numbers
+// and very short tokens are discarded. No filler list.
+function dedupContentTokens(row: SaveRow): Set<string> {
+  const name = String(row.name ?? "");
+  const brand = String(row.brand ?? "");
+  const phrasesToStrip = [brand, ...ALLOWED_TYPES, "unknown"];
+  const residual = stripPhrases(name, phrasesToStrip);
+  const tokens = tokenizeWords(residual).filter(
+    (token) => token.length >= 3 && !/^\d+$/.test(token)
+  );
+  return new Set(tokens);
+}
 
-function correctObviousTypeMismatches(item: RawInventoryItem): RawInventoryItem {
-  const haystack = `${item.name || ""} ${item.description || ""}`.toLowerCase();
-  if (!haystack.trim()) {
-    return item;
+function normalizeSizeKey(value: string): string {
+  return (value || "")
+    .toLowerCase()
+    .replace(/\(estimated\)/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function mergeRowGroup(rows: SaveRow[]): SaveRow {
+  const withBrand = rows.filter(
+    (row) => String(row.brand ?? "").trim().length > 0
+  );
+  const brandPool = withBrand.length ? withBrand : rows;
+  const primary = brandPool.reduce((a, b) =>
+    String(a.name ?? "").length >= String(b.name ?? "").length ? a : b
+  );
+
+  const biggestPhoto = rows.reduce((a, b) =>
+    Number(a.locationRadius ?? 0) >= Number(b.locationRadius ?? 0) ? a : b
+  );
+
+  const totalQuantity = rows.reduce(
+    (sum, row) => sum + Math.max(0, Number(row.quantity ?? 0)),
+    0
+  );
+
+  const descriptions = rows
+    .map((row) => String(row.description ?? "").trim())
+    .filter((value) => value.length > 0);
+  const longestDescription = descriptions.reduce(
+    (a, b) => (a.length >= b.length ? a : b),
+    ""
+  );
+
+  return {
+    ...primary,
+    quantity: Math.max(1, Math.round(totalQuantity)),
+    description: longestDescription || primary.description,
+    photoUrl: biggestPhoto.photoUrl ?? primary.photoUrl,
+    locationCenterX: biggestPhoto.locationCenterX ?? primary.locationCenterX,
+    locationCenterY: biggestPhoto.locationCenterY ?? primary.locationCenterY,
+    locationRadius: biggestPhoto.locationRadius ?? primary.locationRadius,
+    imageWidth: biggestPhoto.imageWidth ?? primary.imageWidth,
+    imageHeight: biggestPhoto.imageHeight ?? primary.imageHeight,
+  };
+}
+
+// Greedy agglomerative dedup per (type, size) bucket using Jaccard similarity
+// on content tokens. Two rows merge when they share enough content tokens and
+// do not come from distinct non-empty brands. No hardcoded filler words: the
+// only phrases stripped before token comparison are the canonical type words
+// from ALLOWED_TYPES and the per-row brand string.
+function mergeDuplicateRows(rows: SaveRow[]): {
+  merged: SaveRow[];
+  mergedGroupCount: number;
+  mergedExtraRowCount: number;
+} {
+  const SIMILARITY_THRESHOLD = 0.5;
+  const buckets = new Map<string, SaveRow[]>();
+  for (const row of rows) {
+    const type = normalizeType(String(row.type ?? ""));
+    const sizeKey = normalizeSizeKey(String(row.size ?? ""));
+    const bucketKey = `${type}|${sizeKey}`;
+    if (!buckets.has(bucketKey)) buckets.set(bucketKey, []);
+    buckets.get(bucketKey)!.push(row);
   }
 
-  for (const rule of TYPE_KEYWORD_RULES) {
-    if (rule.patterns.some((pattern) => pattern.test(haystack))) {
-      if ((item.type || "").toLowerCase() === rule.type && (item.category || "").toLowerCase() === rule.category) {
-        return item;
+  let mergedGroupCount = 0;
+  let mergedExtraRowCount = 0;
+  const merged: SaveRow[] = [];
+
+  type Cluster = {
+    rows: SaveRow[];
+    tokens: Set<string>;
+    brands: Set<string>;
+  };
+
+  for (const bucket of buckets.values()) {
+    const clusters: Cluster[] = [];
+    for (const row of bucket) {
+      const tokens = dedupContentTokens(row);
+      const brand = String(row.brand ?? "").trim().toLowerCase();
+
+      let bestCluster: Cluster | null = null;
+      let bestSim = 0;
+      for (const cluster of clusters) {
+        // Don't fuse distinct real brands.
+        if (brand && cluster.brands.size > 0 && !cluster.brands.has(brand)) {
+          continue;
+        }
+        const sim = jaccardSimilarity(tokens, cluster.tokens);
+        if (sim >= SIMILARITY_THRESHOLD && sim > bestSim) {
+          bestCluster = cluster;
+          bestSim = sim;
+        }
       }
-      return {
-        ...item,
-        type: rule.type,
-        category: rule.category,
-      };
+
+      if (bestCluster) {
+        bestCluster.rows.push(row);
+        for (const token of tokens) bestCluster.tokens.add(token);
+        if (brand) bestCluster.brands.add(brand);
+      } else {
+        clusters.push({
+          rows: [row],
+          tokens: new Set(tokens),
+          brands: brand ? new Set([brand]) : new Set(),
+        });
+      }
+    }
+
+    for (const cluster of clusters) {
+      if (cluster.rows.length === 1) {
+        merged.push(cluster.rows[0]);
+        continue;
+      }
+      mergedGroupCount += 1;
+      mergedExtraRowCount += cluster.rows.length - 1;
+      merged.push(mergeRowGroup(cluster.rows));
     }
   }
 
-  return item;
-}
-
-function rewriteBareGenericName(item: RawInventoryItem): RawInventoryItem {
-  const trimmedName = (item.name || "").trim();
-  if (!trimmedName || !BARE_GENERIC_NAME_REGEX.test(trimmedName)) {
-    return item;
-  }
-
-  const fallbackType = (item.type || "item").trim() || "item";
-  const newName = `Unknown ${fallbackType}`;
-  if (newName.toLowerCase() === trimmedName.toLowerCase()) {
-    return item;
-  }
-
-  return {
-    ...item,
-    name: newName,
-    confidence: "low",
-  };
+  return { merged, mergedGroupCount, mergedExtraRowCount };
 }
 
 async function cropImageToBase64(
@@ -677,6 +787,8 @@ async function cropImageToBase64(
 }
 
 function buildRefinementPrompt() {
+  const typeEnum = ALLOWED_TYPES.join("|");
+  const categoryEnum = ALLOWED_CATEGORIES.join("|");
   return `
 You are looking at a tightly cropped image of a SINGLE product from a university food pantry shelf.
 Forget any prior labels — classify this item fresh from what you can actually see.
@@ -687,8 +799,8 @@ Return ONLY valid JSON, no markdown, with this exact schema:
   "brand": "string",
   "description": "string",
   "size": "string",
-  "category": "dry|refrigerated|frozen|beverage|produce|hygiene|other",
-  "type": "cereal|granola|oatmeal|chips|crackers|cookies|snack bar|candy|dried fruit|nuts|trail mix|popcorn|pasta|rice|grain|beans|lentils|canned soup|canned vegetable|canned fruit|canned meat|sauce|condiment|peanut butter|jam|bread|tortilla|baking|seasoning|sugar|flour|oil|tea|coffee|juice|soda|water|milk|plant milk|yogurt|cheese|egg|produce|frozen meal|frozen vegetable|frozen fruit|hygiene|toiletry|paper goods|cleaning|other",
+  "category": "${categoryEnum}",
+  "type": "${typeEnum}",
   "confidence": "high|medium|low"
 }
 
@@ -739,8 +851,8 @@ function parseRefinementJson(raw: string): RefinementResult | null {
       brand: String(parsed.brand ?? "").trim(),
       description: String(parsed.description ?? "").trim(),
       size: ensurePackageDetails(parsed.size),
-      category: String(parsed.category ?? "other").trim().toLowerCase() || "other",
-      type: String(parsed.type ?? "other").trim().toLowerCase() || "other",
+      category: normalizeCategory(String(parsed.category ?? "")),
+      type: normalizeType(String(parsed.type ?? "")),
       confidence: String(parsed.confidence ?? "low").trim().toLowerCase(),
     };
   } catch {
@@ -787,32 +899,98 @@ function confidenceRank(value: string): number {
   return 0;
 }
 
+// Compare the original shelf-wide detection with the tight-crop refinement.
+// Inter-pass disagreement is how we detect unreliable guesses, instead of
+// maintaining hardcoded hallucination / keyword lists. If the two passes
+// disagree strongly on name tokens AND on type, the shelf-wide pass was
+// almost certainly wrong about this item.
+function passesDisagreeStrongly(
+  original: RawInventoryItem,
+  refined: RefinementResult
+): boolean {
+  const originalTokens = new Set(
+    tokenizeWords(original.name).filter((token) => token.length >= 3)
+  );
+  const refinedTokens = new Set(
+    tokenizeWords(refined.name).filter((token) => token.length >= 3)
+  );
+  const similarity = jaccardSimilarity(originalTokens, refinedTokens);
+  const typesDiffer = normalizeType(original.type) !== normalizeType(refined.type);
+
+  if (typesDiffer && similarity < 0.3) return true;
+
+  const refinedIsMoreConfident =
+    confidenceRank(refined.confidence) > confidenceRank(original.confidence);
+  if (
+    refinedIsMoreConfident &&
+    !nameIsBareLabel(original.name) &&
+    similarity < 0.2
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 function mergeRefinedItem(
   original: RawInventoryItem,
   refined: RefinementResult
 ): { item: RawInventoryItem; improved: boolean } {
-  const originalNameWasBad = nameHasHallucinatedLanguage(original.name);
-  const refinedNameIsBad = nameHasHallucinatedLanguage(refined.name);
-  const refinedNameIsUsable =
-    Boolean(refined.name) &&
-    !GENERIC_NAME_PATTERNS.some((r) => r.test(refined.name)) &&
-    !refinedNameIsBad;
-  const refinedBrandIsReadable = Boolean(refined.brand) && !nameHasHallucinatedLanguage(refined.brand);
-
   const originalRank = confidenceRank(original.confidence);
   const refinedRank = confidenceRank(refined.confidence);
 
-  if (originalNameWasBad) {
+  const refinedNameIsUsable =
+    Boolean(refined.name) && !nameIsBareLabel(refined.name);
+  const refinedBrandIsReadable = Boolean(refined.brand.trim());
+  const originalNameWasBare = nameIsBareLabel(original.name);
+
+  // Strong disagreement between the two passes — the shelf-wide guess is
+  // almost certainly unreliable. Prefer the tight-crop refinement, but if its
+  // own name is still a bare label, collapse to the canonical unknown form.
+  if (passesDisagreeStrongly(original, refined)) {
+    const fallbackType = normalizeType(refined.type || original.type);
     return {
       item: {
         ...original,
-        name: refinedNameIsUsable ? refined.name : `Unknown ${refined.type || original.type || "item"}`,
+        name: refinedNameIsUsable
+          ? refined.name
+          : fallbackType === "other"
+            ? "Unknown item"
+            : `Unknown ${fallbackType}`,
         brand: refinedBrandIsReadable ? refined.brand : "",
-        description: refined.description || "Label not legible; classified by visible packaging only.",
+        description: refined.description || original.description,
         size: refined.size || original.size,
-        category: refined.category || original.category,
-        type: refined.type || original.type,
-        confidence: refinedNameIsUsable && refinedBrandIsReadable ? refined.confidence : "low",
+        category: normalizeCategory(refined.category || original.category),
+        type: fallbackType,
+        confidence:
+          refinedNameIsUsable && refinedBrandIsReadable
+            ? refined.confidence
+            : "low",
+      },
+      improved: true,
+    };
+  }
+
+  // Original was a bare placeholder — always adopt the refined result.
+  if (originalNameWasBare) {
+    const fallbackType = normalizeType(refined.type || original.type);
+    return {
+      item: {
+        ...original,
+        name: refinedNameIsUsable
+          ? refined.name
+          : fallbackType === "other"
+            ? "Unknown item"
+            : `Unknown ${fallbackType}`,
+        brand: refinedBrandIsReadable ? refined.brand : original.brand,
+        description: refined.description || original.description,
+        size: refined.size || original.size,
+        category: normalizeCategory(refined.category || original.category),
+        type: fallbackType,
+        confidence:
+          refinedNameIsUsable && refinedBrandIsReadable
+            ? refined.confidence
+            : "low",
       },
       improved: true,
     };
@@ -832,8 +1010,8 @@ function mergeRefinedItem(
       brand: refinedBrandIsReadable ? refined.brand : original.brand,
       description: refined.description || original.description,
       size: refined.size || original.size,
-      category: refined.category || original.category,
-      type: refined.type || original.type,
+      category: normalizeCategory(refined.category || original.category),
+      type: normalizeType(refined.type || original.type),
       confidence: refined.confidence || original.confidence,
     },
     improved: true,
@@ -910,21 +1088,9 @@ async function analyzeOneImage(file: File, shelfName: string): Promise<AnalyzeOn
     shelfName
   );
 
-  const hallucinationSanitized = refinedItems.map(sanitizeHallucinatedNames);
-  const sanitizedCount = hallucinationSanitized.reduce(
+  const sanitizedItems = refinedItems.map(normalizeBareName);
+  const bareNameRewriteCount = sanitizedItems.reduce(
     (count, item, index) => count + (item === refinedItems[index] ? 0 : 1),
-    0
-  );
-
-  const typeCorrected = hallucinationSanitized.map(correctObviousTypeMismatches);
-  const typeCorrectedCount = typeCorrected.reduce(
-    (count, item, index) => count + (item === hallucinationSanitized[index] ? 0 : 1),
-    0
-  );
-
-  const sanitizedItems = typeCorrected.map(rewriteBareGenericName);
-  const genericNameRewriteCount = sanitizedItems.reduce(
-    (count, item, index) => count + (item === typeCorrected[index] ? 0 : 1),
     0
   );
 
@@ -978,21 +1144,13 @@ async function analyzeOneImage(file: File, shelfName: string): Promise<AnalyzeOn
 
   const combinedNotes = snapshot.notes.slice();
   if (refinedCount > 0) {
-    combinedNotes.push(`Re-verified ${refinedCount} uncertain item${refinedCount === 1 ? "" : "s"} with a tighter crop.`);
-  }
-  if (sanitizedCount > 0) {
     combinedNotes.push(
-      `Rewrote ${sanitizedCount} item name${sanitizedCount === 1 ? "" : "s"} that looked fabricated as "Unknown <type>".`
+      `Re-verified ${refinedCount} uncertain item${refinedCount === 1 ? "" : "s"} with a tighter crop.`
     );
   }
-  if (typeCorrectedCount > 0) {
+  if (bareNameRewriteCount > 0) {
     combinedNotes.push(
-      `Corrected type/category for ${typeCorrectedCount} item${typeCorrectedCount === 1 ? "" : "s"} whose name or description clearly indicated a different product class (e.g. dried fruit mislabeled as cereal).`
-    );
-  }
-  if (genericNameRewriteCount > 0) {
-    combinedNotes.push(
-      `Rewrote ${genericNameRewriteCount} bare generic name${genericNameRewriteCount === 1 ? "" : "s"} (like "Cereal") to "Unknown <type>".`
+      `Rewrote ${bareNameRewriteCount} placeholder name${bareNameRewriteCount === 1 ? "" : "s"} (e.g. bare category word or "Unknown") to a canonical "Unknown <type>" fallback.`
     );
   }
   if (estimatedQuantityCount > 0) {
@@ -1179,6 +1337,18 @@ export default function InventoryPage() {
         return;
       }
 
+      const { merged: dedupedRows, mergedGroupCount, mergedExtraRowCount } =
+        mergeDuplicateRows(rowsForSave);
+
+      if (mergedGroupCount > 0) {
+        notes.push(
+          `Merged ${mergedExtraRowCount} duplicate detection${mergedExtraRowCount === 1 ? "" : "s"} into ${mergedGroupCount} consolidated product${mergedGroupCount === 1 ? "" : "s"} (same type + core name + size).`
+        );
+      }
+
+      rowsForSave.length = 0;
+      rowsForSave.push(...dedupedRows);
+
       let clearedCount = 0;
       if (replaceExistingInventory) {
         setStatusMessage("Clearing existing inventory before replacement...");
@@ -1301,6 +1471,17 @@ export default function InventoryPage() {
           <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
             {statusMessage}
           </p>
+        ) : null}
+
+        {isSubmitting ? (
+          <section className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+            <LoadingAnimation
+              message="Analyzing shelf photos and updating inventory..."
+              className="py-4"
+              iconClassName="h-24 w-24"
+              messageClassName="mt-2 text-sm font-medium text-slate-600"
+            />
+          </section>
         ) : null}
 
         <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
