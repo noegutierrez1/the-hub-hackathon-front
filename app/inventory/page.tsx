@@ -125,16 +125,23 @@ Identification rules (STRICT):
 
 Counting rules:
 - One row per DISTINCT product (same brand + same product + same size). Combine all units of that product into a single row.
-- visibleQuantity must be the number of units of that product you can actually see in the photo (including clearly visible back-row items whose tops, labels, or edges peek over or beside the front row).
-- quantity must be your best-estimate TOTAL number of units on the shelf for that product, including units likely stacked behind the visible front row based on shelf-depth cues. Use these cues to estimate depth:
-    * Front row count: if you see N identical front-facing units in a row, assume the row is likely filled the same way behind unless the back wall or an empty gap is clearly visible.
-    * Shelf depth vs package depth: compare the shelf's apparent depth (from the front lip to the back wall or next shelf's lip) against the depth of one package. If the shelf looks ~2x as deep as the package, assume ~2 rows; ~3x → ~3 rows; and so on.
-    * Visible back-row evidence: box tops, corners, or partial labels peeking behind the front row are strong evidence of additional rows.
-    * Gaps: if you can see the back wall, empty shelf liner, or daylight between the front row and the back, do NOT assume a full back row.
-- quantity MUST be >= visibleQuantity. If you have no reason to believe anything is behind the front row, quantity = visibleQuantity.
-- quantityEstimated = true whenever quantity > visibleQuantity (you inferred extra units), and false when quantity equals visibleQuantity.
-- Cap the behind-front-row multiplier at 4 unless depth evidence is overwhelming. Prefer a conservative estimate.
-- When quantity is estimated, briefly justify it in description (e.g. "~5 visible in front; shelf is ~2 rows deep with matching box tops peeking behind, estimated ~10 total").
+- visibleQuantity = the number of units you can directly see in the photo (front-facing units PLUS any back-row units whose tops, corners, or partial labels are visible peeking behind/above the front row).
+- quantity = best-estimate TOTAL number of units stocked, including ones fully hidden behind the visible front row. Pantry shelves are almost always stocked multiple deep — DEFAULT to assuming there are hidden units behind the front row unless the image proves otherwise.
+
+Depth estimation procedure (follow in order):
+  1. Start from the assumption that this is a stocked pantry shelf and rows are typically 2–3 deep.
+  2. Look for positive depth evidence — box tops peeking over the front row, corners/edges of matching packages beside the front row, a back wall that is clearly far behind the front row, or the shelf above/below showing obvious depth. ANY of these = treat the product as at least 2 rows deep. Multiple tops visible = 3 rows deep. Stacks clearly filling to the back wall = assume filled (2–4 rows depending on apparent depth).
+  3. Only reduce below 2 rows when you have NEGATIVE evidence: you can plainly see empty shelf liner behind the front row, the back wall is directly touching the rear of the front-row packages, or a clear gap/daylight between the front row and the back wall with nothing in between.
+  4. If you genuinely cannot tell (shelf is dark, back is occluded, etc.), default to assuming ~2 rows deep rather than 1. Under-counting a well-stocked pantry is worse than slightly over-counting.
+
+- So: quantity = visibleQuantity × estimated number of rows deep. Typical outcomes:
+    * Clear evidence of back-row items → quantity ≈ visibleQuantity × 2 (or 3 if multiple back rows are evident).
+    * No evidence either way on a normally stocked shelf → quantity ≈ visibleQuantity × 2.
+    * Clearly empty behind → quantity = visibleQuantity.
+- quantity MUST be >= visibleQuantity.
+- quantityEstimated = true whenever quantity > visibleQuantity; false only when you have direct evidence nothing is behind.
+- Cap the behind-front-row multiplier at 4 rows deep.
+- When quantity is estimated, briefly note the reasoning in description (e.g. "5 visible in front, matching box tops peek behind → estimated ~10 total (2 rows deep)").
 - quantity and visibleQuantity must be positive integers.
 - size is REQUIRED. If package size/count is not readable, estimate and suffix with "(estimated)".
 
