@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import LoadingAnimation from "@/components/LoadingAnimation";
 import HexPanel from "../../components/HexPanel";
@@ -35,17 +34,6 @@ type StudentInventoryItem = {
   photoUrl: string | null;
   size: string | null;
   location: ItemLocation | null;
-};
-
-type ClaimResponse = {
-  message?: string;
-  error?: string;
-};
-
-type SessionUser = {
-  uid: string;
-  email: string;
-  role: "admin" | "student";
 };
 
 const CATEGORIES = [
@@ -265,25 +253,31 @@ async function readInventoryPayload(response: Response): Promise<{
   }
 }
 
+function timeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  const days = Math.floor(hours / 24);
+  return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
 export default function StudentInventoryPage() {
   const [items, setItems] = useState<StudentInventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [claimStatus, setClaimStatus] = useState("");
-  const [claimError, setClaimError] = useState("");
-  const [claimingItemId, setClaimingItemId] = useState<string | null>(null);
   const [zoomItem, setZoomItem] = useState<StudentInventoryItem | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1.8);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sessionUser, setSessionUser] = useState<SessionUser | null | undefined>(undefined);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [, setTick] = useState(0);
 
-  // Check session for claim access
   useEffect(() => {
-    fetch("/api/auth/session", { method: "GET" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => setSessionUser((data?.user as SessionUser) ?? null))
-      .catch(() => setSessionUser(null));
+    const id = setInterval(() => setTick((t) => t + 1), 30_000);
+    return () => clearInterval(id);
   }, []);
 
   const loadInventory = useCallback(async () => {
@@ -302,6 +296,7 @@ export default function StudentInventoryPage() {
         throw new Error(details || `Failed to load inventory (${response.status}).`);
       }
       setItems(Array.isArray(payload.items) ? payload.items : []);
+      setLastUpdated(new Date());
     } catch (loadError) {
       setItems([]);
       setError(
@@ -316,42 +311,6 @@ export default function StudentInventoryPage() {
     const timerId = setTimeout(() => { void loadInventory(); }, 0);
     return () => { clearTimeout(timerId); };
   }, [loadInventory]);
-
-  const onClaimItem = useCallback(
-    async (itemId: string) => {
-      setClaimError("");
-      setClaimStatus("");
-      setClaimingItemId(itemId);
-      try {
-        const response = await fetch("/api/dataconnect/claim", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ itemId, quantity: 1 }),
-        });
-        const { json, text } = await readInventoryPayload(response);
-        const payload = (json || {}) as ClaimResponse;
-        if (!response.ok) {
-          const details =
-            payload.error ||
-            (text.trim().startsWith("<!DOCTYPE")
-              ? "Received HTML instead of JSON from claim API."
-              : text.slice(0, 160));
-          throw new Error(details || `Claim failed (${response.status}).`);
-        }
-        setClaimStatus(payload.message || "Item claimed.");
-        await loadInventory();
-      } catch (claimRequestError) {
-        setClaimError(
-          claimRequestError instanceof Error
-            ? claimRequestError.message
-            : "Could not claim this item right now."
-        );
-      } finally {
-        setClaimingItemId(null);
-      }
-    },
-    [loadInventory]
-  );
 
   const filteredItems = useMemo(() => {
     const normalizedSearch = normalizeText(searchTerm);
@@ -435,35 +394,6 @@ export default function StudentInventoryPage() {
             {error}
           </div>
         )}
-        {claimError && (
-          <div
-            style={{
-              padding: "12px 16px",
-              borderRadius: 10,
-              border: "1px solid rgba(220,38,38,0.4)",
-              background: "rgba(220,38,38,0.08)",
-              color: "#fca5a5",
-              fontSize: 13,
-            }}
-          >
-            {claimError}
-          </div>
-        )}
-        {claimStatus && (
-          <div
-            style={{
-              padding: "12px 16px",
-              borderRadius: 10,
-              border: "1px solid rgba(104,148,102,0.4)",
-              background: "rgba(104,148,102,0.08)",
-              color: "#86efac",
-              fontSize: 13,
-            }}
-          >
-            {claimStatus}
-          </div>
-        )}
-
         {/* Search + filter */}
         <HexPanel
           fill="var(--fp-surface-secondary)"
@@ -555,11 +485,18 @@ export default function StudentInventoryPage() {
               flexWrap: "wrap",
             }}
           >
-            <p style={{ fontSize: 13, color: "var(--fp-text-secondary)", margin: 0 }}>
-              {isLoading
-                ? "Loading…"
-                : `${filteredItems.length} item${filteredItems.length === 1 ? "" : "s"} · ${totalUnits} unit${totalUnits === 1 ? "" : "s"}`}
-            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <p style={{ fontSize: 13, color: "var(--fp-text-secondary)", margin: 0 }}>
+                {isLoading
+                  ? "Loading…"
+                  : `${filteredItems.length} item${filteredItems.length === 1 ? "" : "s"} · ${totalUnits} unit${totalUnits === 1 ? "" : "s"}`}
+              </p>
+              {lastUpdated && !isLoading && (
+                <p style={{ fontSize: 11, color: "var(--fp-text-muted)", margin: 0 }}>
+                  Last updated: {timeAgo(lastUpdated)}
+                </p>
+              )}
+            </div>
             <button
               type="button"
               onClick={() => void loadInventory()}
@@ -589,7 +526,6 @@ export default function StudentInventoryPage() {
             {filteredItems.map((item) => {
               const productTitle = buildDisplayProductTitle(item);
               const isOutOfStock = item.quantity <= 0;
-              const isClaimingThisItem = claimingItemId === item.id;
               const { src: cardImageSrc, isServerCropped: cardUsesServerCrop } =
                 resolveItemImageUrl(item, { outputSize: 480, padding: 1.2, minSize: 96 });
               const cardZoomStyle = cardUsesServerCrop
@@ -672,70 +608,26 @@ export default function StudentInventoryPage() {
                   {/* Info area */}
                   <div className="flex flex-1 flex-col gap-1 p-3">
                     <h2
-                      className="line-clamp-2 min-h-10 text-sm font-semibold leading-5"
+                      className="line-clamp-2 min-h-10 text-base font-semibold leading-6"
                       style={{ color: "var(--fp-text-primary)" }}
                     >
                       {productTitle}
                     </h2>
-                    <p className="text-xs" style={{ color: "var(--fp-text-muted)" }}>
+                    <p className="text-sm" style={{ color: "var(--fp-text-muted)" }}>
                       {item.size || "Size not listed"}
                     </p>
-                    <p className="text-xs font-medium" style={{ color: "var(--fp-text-secondary)" }}>
+                    <p className="text-sm font-medium" style={{ color: "var(--fp-text-secondary)" }}>
                       Qty: {item.quantity}
                       {isOutOfStock ? " · Out of stock" : ""}
                     </p>
-
-                    {/* Claim button */}
-                    {sessionUser ? (
-                      <button
-                        type="button"
-                        disabled={isOutOfStock || isClaimingThisItem}
-                        onClick={() => void onClaimItem(item.id)}
-                        style={{
-                          marginTop: "auto",
-                          width: "100%",
-                          padding: "8px 12px",
-                          borderRadius: 8,
-                          border: "none",
-                          background: isOutOfStock
-                            ? "var(--fp-input-bg)"
-                            : "var(--fp-button-accent)",
-                          color: "white",
-                          fontSize: 13,
-                          fontWeight: 700,
-                          cursor:
-                            isOutOfStock || isClaimingThisItem ? "not-allowed" : "pointer",
-                          opacity: isOutOfStock || isClaimingThisItem ? 0.6 : 1,
-                        }}
+                    {item.updatedAt && (
+                      <p
+                        className="text-xs"
+                        style={{ color: "var(--fp-text-muted)", marginTop: "auto", paddingTop: 4 }}
                       >
-                        {isClaimingThisItem
-                          ? "Claiming…"
-                          : isOutOfStock
-                          ? "Unavailable"
-                          : "Claim"}
-                      </button>
-                    ) : sessionUser === null ? (
-                      <Link
-                        href="/login?next=/student/inventory"
-                        style={{
-                          marginTop: "auto",
-                          display: "block",
-                          width: "100%",
-                          boxSizing: "border-box",
-                          padding: "8px 12px",
-                          borderRadius: 8,
-                          border: "1px solid var(--fp-panel-border)",
-                          background: "var(--fp-input-bg)",
-                          color: "var(--fp-text-secondary)",
-                          fontSize: 13,
-                          fontWeight: 700,
-                          textAlign: "center",
-                          textDecoration: "none",
-                        }}
-                      >
-                        Log in to claim
-                      </Link>
-                    ) : null}
+                        Updated {timeAgo(new Date(item.updatedAt))}
+                      </p>
+                    )}
                   </div>
                 </article>
               );
