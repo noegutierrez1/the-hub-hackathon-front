@@ -135,7 +135,28 @@ function normalizeUnknownDisplayValue(value: string | null | undefined) {
   ) {
     return "";
   }
+  // If the original text was "Unknown <single word>" (e.g. "Unknown crackers",
+  // "Unknown juice"), stripping the prefix leaves a lone category word that
+  // looks misleading as a product name. Keep the "Unknown " so it reads as
+  // "Unknown crackers" on the student page — that's honest, whereas just
+  // "Crackers" pretends we know what brand of crackers this is.
+  const startedWithUnknown = /^unknown\b/i.test(text);
+  if (startedWithUnknown) {
+    const cleanedTokens = normalizedCleaned.split(" ").filter(Boolean);
+    if (cleanedTokens.length <= 1) {
+      return text;
+    }
+  }
   return withoutUnknownPrefix || text;
+}
+
+// A product name is "bare" from a display perspective when it only carries
+// a single generic word (after stripping the brand) — e.g. "Mango", "Juice",
+// "Seasoning", "Baking". On the student page we surface those as
+// "Unknown <word>" so students don't mistake the category for a real product.
+function looksLikeBareSingleWordName(value: string): boolean {
+  const tokens = normalizeText(value).split(" ").filter(Boolean);
+  return tokens.length === 1 && tokens[0].length >= 3;
 }
 
 function toTitleCase(value: string) {
@@ -150,16 +171,69 @@ function toTitleCase(value: string) {
     .join(" ");
 }
 
+// Collapse a string that accidentally contains its own prefix twice, e.g.
+// "Bay Area Bee Co. Bay Area Bee Co." or "Trader Joe's Trader Joe's Apples".
+// We compare at the normalized-token level so punctuation doesn't matter.
+function collapseRepeatedPrefix(value: string): string {
+  const tokens = value.trim().split(/\s+/).filter(Boolean);
+  if (tokens.length < 2) return value;
+  const normalized = tokens.map((token) =>
+    token.toLowerCase().replace(/[^a-z0-9]/g, "")
+  );
+  const maxRepeat = Math.floor(tokens.length / 2);
+  for (let n = maxRepeat; n >= 1; n -= 1) {
+    let isRepeat = true;
+    for (let i = 0; i < n; i += 1) {
+      if (!normalized[i] || normalized[i] !== normalized[i + n]) {
+        isRepeat = false;
+        break;
+      }
+    }
+    if (isRepeat) {
+      return tokens.slice(n).join(" ").trim() || value;
+    }
+  }
+  return value;
+}
+
+function stripLeadingBrand(name: string, brand: string): string {
+  const brandTokens = normalizeText(brand).split(" ").filter(Boolean);
+  if (!brandTokens.length) return name;
+  const rawTokens = name.trim().split(/\s+/).filter(Boolean);
+  if (rawTokens.length <= brandTokens.length) return name;
+  const normalizedRaw = rawTokens.map((token) =>
+    token.toLowerCase().replace(/[^a-z0-9]/g, "")
+  );
+  const matches = brandTokens.every(
+    (token, index) => normalizedRaw[index] === token
+  );
+  if (!matches) return name;
+  return rawTokens.slice(brandTokens.length).join(" ").trim() || name;
+}
+
 function buildDisplayProductTitle(item: Pick<StudentInventoryItem, "brand" | "name">) {
   const rawBrand = (item.brand || "").trim();
   const rawName = (item.name || "").trim();
   const cleanBrand = normalizeUnknownDisplayValue(rawBrand);
   const cleanName = normalizeUnknownDisplayValue(rawName);
   const nameStartedAsUnknown = /^unknown\b/i.test(rawName);
-  const displayName =
+  const displayNameCased =
     cleanName && nameStartedAsUnknown ? toTitleCase(cleanName) : cleanName;
-  const combined = [cleanBrand, displayName].filter(Boolean).join(" ").trim();
-  return combined || "Unknown item";
+
+  // Collapse a name that got stamped twice (the model sometimes does this).
+  const dedupedName = collapseRepeatedPrefix(displayNameCased);
+  // If the name still starts with the brand, drop the leading brand from the
+  // name so we don't render "Trader Joe's Trader Joe's Apple Chip Duo".
+  const nameWithoutBrand = stripLeadingBrand(dedupedName, cleanBrand);
+
+  const combined = [cleanBrand, nameWithoutBrand].filter(Boolean).join(" ").trim();
+  if (!combined) return "Unknown item";
+  // Guard against the bare "Crackers" / "Juice" / "Mango" case: if what we'd
+  // ultimately display is a single generic word, prepend "Unknown".
+  if (looksLikeBareSingleWordName(combined)) {
+    return `Unknown ${combined.toLowerCase()}`;
+  }
+  return combined;
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -434,6 +508,27 @@ export default function StudentInventoryPage() {
   const filteredItems = useMemo(() => {
     const normalizedSearch = normalizeText(searchTerm);
     return items.filter((item) => {
+      // Safety net: hide any item whose name/brand/description leaked a
+      // shelf-QR JSON payload. The inventory upload pipeline now drops these,
+      // but we keep this guard so stale rows that pre-date the fix don't
+      // surface to students.
+      const blobs = [item.name, item.brand, item.description];
+      for (const blob of blobs) {
+        if (!blob) continue;
+        const trimmed = blob.trim();
+        if (/^["']?\s*[{[]/.test(trimmed)) return false;
+        const lowered = trimmed.toLowerCase();
+        if (
+          lowered.includes("hub-shelf") ||
+          lowered.includes("shelfuid") ||
+          lowered.includes("shelf_uid") ||
+          lowered.includes("planid") ||
+          lowered.includes("plan_id")
+        ) {
+          return false;
+        }
+        if (/"[a-z_][a-z0-9_]*"\s*:/i.test(trimmed)) return false;
+      }
       if (selectedCategory !== "all") {
         const itemCategory = item.category?.trim().toLowerCase() || "other";
         if (itemCategory !== selectedCategory.toLowerCase()) return false;

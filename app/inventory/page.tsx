@@ -281,15 +281,30 @@ function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
 }
 
 // A name is "bare" when, after removing enumerated type words and the
-// placeholder word "unknown", there is no content left. This catches
-// names like "", "Unknown", "Unknown cereal", "Cereal", "Snack Bar",
-// "Dried Fruit" without maintaining any keyword list — the only inputs
-// are ALLOWED_TYPES (the model's declared vocabulary).
+// placeholder word "unknown", there isn't enough content left to uniquely
+// identify a product. Purely structural — no fruit/veg/brand keyword lists.
+//
+// Concretely a name is bare when the residual contains fewer than 2 content
+// tokens of length >= 3. That catches:
+//   - ""                  → 0 tokens → bare
+//   - "Unknown"           → 0 tokens → bare
+//   - "Cereal"            → 0 tokens (type stripped) → bare
+//   - "Unknown Cereal"    → 0 tokens → bare
+//   - "Juice"             → 0 tokens (type stripped) → bare
+//   - "Mango"             → 1 token → bare (too generic on its own)
+//   - "Baking"            → 0 tokens (type stripped) → bare
+//   - "Berry Medley"      → 2 tokens → NOT bare
+//   - "Clover Honey"      → 2 tokens → NOT bare
+//   - "Trader Joe's Cornbread Crisps" → many tokens → NOT bare
 function nameIsBareLabel(name: string): boolean {
   const trimmed = (name || "").trim().toLowerCase();
   if (!trimmed) return true;
   const stripped = stripPhrases(trimmed, [...ALLOWED_TYPES, "unknown"]);
-  return stripped.length === 0;
+  if (!stripped) return true;
+  const contentTokens = tokenizeWords(stripped).filter(
+    (token) => token.length >= 3 && !/^\d+$/.test(token)
+  );
+  return contentTokens.length < 2;
 }
 
 function buildInventoryPrompt(imageWidth: number, imageHeight: number) {
@@ -1868,21 +1883,34 @@ function assignCodesToItems(input: {
 
 // Heuristic: a detected "product" whose text field looks like a shelf-QR
 // payload is the model hallucinating a product out of the QR tag. Reject it.
-// Matches JSON-ish text or our known shelf-QR keys, independent of brand lists.
+// Matches JSON-ish text or any of our known shelf-QR keys. We intentionally
+// cast a wide net — false positives here are better than letting a literal
+// QR payload leak onto the student page as a "product".
 function looksLikeShelfQrPayloadText(value: string): boolean {
   const text = (value || "").trim();
   if (!text) return false;
-  if (/^[\s]*[{[]/.test(text)) return true;
+  // Starts with a JSON open bracket (with optional leading quote / whitespace).
+  if (/^["']?\s*[{[]/.test(text)) return true;
   const lowered = text.toLowerCase();
+  // Any of our known shelf-QR JSON keys.
   if (
     lowered.includes("hub-shelf") ||
-    lowered.includes('"shelfuid"') ||
-    lowered.includes('"shelf_uid"') ||
-    lowered.includes('"planid"') ||
-    lowered.includes('"kind"')
+    lowered.includes("shelfuid") ||
+    lowered.includes("shelf_uid") ||
+    lowered.includes("planid") ||
+    lowered.includes("plan_id") ||
+    lowered.includes('"kind"') ||
+    lowered.includes('"version"') ||
+    lowered.includes('"category"')
   ) {
     return true;
   }
+  // JSON-ish density: if the string contains a `"key":` pattern it's almost
+  // certainly a leaked payload, not a product name.
+  if (/"[a-z_][a-z0-9_]*"\s*:/i.test(text)) return true;
+  // Unusual punctuation load — real product names don't look like this.
+  const punct = (text.match(/[{}":,]/g) || []).length;
+  if (punct >= 3) return true;
   return false;
 }
 
