@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { signInWithPopup, signOut } from "firebase/auth";
+import { getRedirectResult, signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import HexPanel from "../components/HexPanel";
 import LoadingAnimation from "@/components/LoadingAnimation";
@@ -68,6 +68,39 @@ function LoginContent() {
       setIsLoadingSession(true);
       setError("");
       try {
+        // Handle redirect result from signInWithRedirect (mobile fallback)
+        const auth = getFirebaseClientAuth();
+        const redirectResult = await getRedirectResult(auth).catch(() => null);
+        if (redirectResult && !cancelled) {
+          const idToken = await redirectResult.user.getIdToken(true);
+          const photoUrl = redirectResult.user.photoURL ?? null;
+          const response = await fetch("/api/auth/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken, photoUrl }),
+          });
+          const { json, text } = await readApiPayload(response);
+          const payload = (json || {}) as SessionResponse;
+          if (!response.ok || !payload.user) {
+            const message =
+              payload.error ||
+              (text.trim().startsWith("<!DOCTYPE")
+                ? "Received HTML instead of JSON while creating session."
+                : text.slice(0, 160));
+            if (!cancelled) {
+              setError(message || "Login failed.");
+              setIsLoadingSession(false);
+            }
+            return;
+          }
+          if (!cancelled) {
+            const destination = normalizeNextPath(nextPath, payload.user.role);
+            router.replace(destination);
+          }
+          return;
+        }
+
+        // No redirect result — check for existing session cookie
         const response = await fetch("/api/auth/session", { method: "GET" });
         const { json } = await readApiPayload(response);
         const payload = (json || {}) as SessionResponse;
@@ -94,7 +127,17 @@ function LoginContent() {
     setIsLoggingIn(true);
     try {
       const auth = getFirebaseClientAuth();
-      const credential = await signInWithPopup(auth, createGoogleProvider());
+      const provider = createGoogleProvider();
+      let credential;
+      try {
+        credential = await signInWithPopup(auth, provider);
+      } catch (popupError) {
+        if ((popupError as { code?: string })?.code === "auth/popup-blocked") {
+          await signInWithRedirect(auth, provider);
+          return; // page navigates away; result handled in loadSession on return
+        }
+        throw popupError;
+      }
       const idToken = await credential.user.getIdToken(true);
       const photoUrl = credential.user.photoURL ?? null;
 
